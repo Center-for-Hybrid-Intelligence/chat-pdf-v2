@@ -1,3 +1,52 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.heading1 {
+    @apply font-semibold
+    capitalize
+    text-3xl
+    h8:text-4xl
+    k15:text-5xl
+    my-10;
+}
+
+.hover{
+    scale: 1;
+    transition: all;
+    transition-duration: 300ms;
+}
+.hover:hover{
+    scale: 1.05;
+}
+
+.button{
+    width: 10rem;
+    color: white;
+    border-radius: .25rem;
+    padding: .75rem;
+    background-color: rgba(50, 205, 50, 1);
+    transition: background-color;
+    transition-duration: 200ms;
+    cursor: pointer;
+    border: none;
+}
+.button:hover{
+    background-color: rgba(50, 205, 50, 0.8);
+}
+.buttonSecondary{
+    width: 10rem;
+    color: rgba(50, 205, 50, 1);
+    border-radius: .25rem;
+    padding: .75rem;
+    background-color: white;
+    border: 2px solid rgba(50, 205, 50, 1);
+    transition: background-color;
+    transition-duration: 200ms;
+    cursor: pointer;
+}
+.buttonSecondary:hover{
+    background-color: rgba(50, 205, 50, 0.8);
+    color:white;
+}
+
