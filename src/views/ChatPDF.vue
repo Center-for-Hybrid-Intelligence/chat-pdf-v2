@@ -9,7 +9,7 @@
       </label>
 
       <div
-          class="flex gap-4 flex-col justify-center transition-all border-4 border-transparent p-8 bg-white rounded-xl shadow-gray-300 shadow-2xl w-4/5"
+          class="flex gap-4 flex-col justify-center border-4 border-transparent p-8 bg-white rounded-xl shadow-gray-300 shadow-2xl w-4/5"
           @dragenter="handleDragEnter"
           @dragover="handleDragOver"
           @dragleave="handleDragLeave"
@@ -30,8 +30,7 @@
             <span
                 class="flex m-4 gap-2 bg-blue-600 hover:bg-blue-800 transition-all duration-300 text-white justify-center font-extrabold text-lg p-4 px-12 rounded-full color cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3.0"
-               stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/> </svg>
+               stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/> </svg>
           Upload PDF
 
         </span>
@@ -58,16 +57,16 @@
       </div>
 
     </div>
-    <transition-group name="list" class="flex flex-wrap justify-center gap-4" tag="div">
-      <div v-for="(file, index) in files" :key="index" class="mb-4 w-5/12 ">
+    <transition-group name="list" class="mt-3 flex flex-wrap justify-center gap-4" tag="div">
+      <div v-for="(file, index) in files" :key="index" class="mb-4 w-5/12 min-w-full ">
         <div class="flex my-2 gap-4 justify-between m-5 p-4 shadow-2xl w-full shadow-gray-300 rounded-xl ">
           <img src="pdf-placeholder.png" class="h-full w-16 object-contain place-self-center"/>
           <div class="flex flex-col w-full ">
             <h1 class="text-start self-start pb-2" style="
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 1;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
                 text-overflow: ellipsis;
 "
 
@@ -95,17 +94,19 @@
       </div>
     </transition-group>
 
-    <div class="flex justify-center gap-6 m-6" v-if="files.length > 0">
-      <button @click="onsubmit()"
-              class="p-4 px-8 text-2xl font-bold bg-green-500 self-center rounded-xl text-white hover:bg-green-600 transition-all duration-300">
-        Submit
-      </button>
+    <div class="flex justify-center m-12" v-if="files.length > 0">
       <input
           v-model="inputFieldValue"
           type="text"
-          placeholder="Enter ID"
+          placeholder="Enter Namespace"
           class="px-2 py-1 border border-gray-400 rounded-l focus:outline-none"
       />
+      <button @click="onsubmit()" :disabled="inputFieldValue === ''"
+              :class="{ 'bg-green-300 text-black/20': inputFieldValue === '',
+               'bg-green-500 text-white': inputFieldValue !== ''}"
+              class="p-2 px-6 text-xl font-bold self-center rounded-r-lg transition-all duration-300">
+        Submit
+      </button>
 
     </div>
   </div>
@@ -114,9 +115,12 @@
 
 <script>
 import {ref} from "vue";
+import router from "@/router";
 
 export default {
   name: "FileUpload",
+  components: {
+  },
   props: {
     value: {
       type: Array,
@@ -188,10 +192,10 @@ export default {
 
 
     const onsubmit = () => {
-      // Handle form submission with inputFieldValue and files.value
+      const fileObject = { [inputFieldValue.value]: files.value };
 
-      console.log("Input Field Value:", inputFieldValue.value);
-      console.log("Uploaded Files:", files.value);
+      console.log("File Object:", fileObject);
+      router.push({ name: "promptPDF", params: { inputFieldValue } });
     };
     const deleteFile = (index) => {
       files.value.splice(index, 1);

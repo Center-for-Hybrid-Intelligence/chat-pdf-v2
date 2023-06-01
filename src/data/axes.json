@@ -1,0 +1,19 @@
+[
+  {
+    "name": "Solution complexity (Point solution, Application solution, Systemic solution)",
+    "value": 50,
+    "isActive": true,
+    "displayModal": false
+  },
+  {"name": "Machine learning (single shot, continuous)", "value": 50, "isActive": true, "displayModal": false},
+  {"name": "Feedback timescale (Milliseconds, Seconds, Minutes, Hours, Days)", "value": 50, "isActive": true,     "displayModal": false},
+  {"name": "Feedback data acquisition (automatic, manual)", "value": 50, "isActive": true,    "displayModal": false},
+  {"name": "Task decomposition (prediction, judgement)", "value": 50, "isActive": true,    "displayModal": false},
+  {"name": "Failure consequences (light, severe)", "value": 50, "isActive": true,    "displayModal": false},
+  {"name": "Automation degree (none, full)", "value": 50, "isActive": true,    "displayModal": false},
+  {"name": "Human control (none, full)", "value": 50, "isActive": true,    "displayModal": false},
+  {"name": "Task allocation (parallel, sequential)", "value": 50, "isActive": true,    "displayModal": false},
+  {"name": "Communication (constrained, free)", "value": 50, "isActive": true,    "displayModal": false},
+  {"name": "Human learning (Deskilling, None, Individual, Organizational)", "value": 50, "isActive": true,    "displayModal": false},
+  {"name": "End-user involvement (Resistive, Passive, Engaged)", "value": 50, "isActive": true,    "displayModal": false}
+]
