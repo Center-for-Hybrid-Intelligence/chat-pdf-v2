@@ -115,7 +115,8 @@
 
 <script>
 import {ref} from "vue";
-import router from "@/router";
+import axios from "axios";
+// import router from "@/router";
 
 export default {
   name: "FileUpload",
@@ -161,6 +162,7 @@ export default {
               preview: e.target.result,
               name: file.name,
               author: "",
+              documentId: Date.now(),
             });
           };
           reader.readAsDataURL(file);
@@ -182,9 +184,12 @@ export default {
               preview: e.target.result,
               name: file.name,
               author: "",
+              documentId: Date.now(),
             });
           };
           reader.readAsDataURL(file);
+          console.log(file.name, "file")
+          console.log(files, "file")
         }
       }
       emit("update:modelValue", files.value);
@@ -194,8 +199,23 @@ export default {
     const onsubmit = () => {
       const fileObject = { [inputFieldValue.value]: files.value };
 
+      axios.post(
+        "http://localhost:5000/api/load-pdf/",
+        fileObject,
+        {
+          headers: {
+            "withCredentials": "false",
+          },
+        }
+      ).then((res) => {
+        console.log(res);
+      }).catch((err) => {
+        console.log(err);
+      }
+      )
+
       console.log("File Object:", fileObject);
-      router.push({ name: "promptPDF", params: { inputFieldValue } });
+      // router.push({name: "promptPDF", params: { inputFieldValue }});
     };
     const deleteFile = (index) => {
       files.value.splice(index, 1);
