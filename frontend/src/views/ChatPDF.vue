@@ -217,6 +217,7 @@ export default {
       console.log(inputFieldValue.value, "inputFieldValue");
 
       const uploadPromises = formDataList.map(formData => {
+        console.log(baseUrl.value + "/load-pdf/")
         return axios.post(baseUrl.value + "/load-pdf/", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
