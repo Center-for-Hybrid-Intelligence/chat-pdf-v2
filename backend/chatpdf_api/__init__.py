@@ -1,9 +1,9 @@
 from flask_cors import CORS
 from flask import Flask, jsonify, request, Response, stream_with_context
 from .database import db
-from .readpdf import read_from_url
-from .readpdf import read_from_file
+from .readpdf import read_from_encode
 from .qa_tool import QaTool
+import json
 
 import os
 from dotenv import load_dotenv
@@ -30,17 +30,19 @@ with app.app_context():
 qa_tool = QaTool()
 @app.route('/api/load-pdf/', methods=['POST', 'OPTIONS'])
 def load_pdf():
-    try:
-        data = request.get_json()
-        namespace = data.keys()[0]
-        formdata = data[namespace]
-        if qa_tool.namespace is None:
-            qa_tool.set_namespace(namespace)
+    author = request.form.get('author')
+    file_id = request.form.get('documentId')
+    namespace = request.form.get('namespace')
+    title = request.form.get('name')
+    file = request.files['file']
+    if not (author and file_id and namespace and file):
+        return "Missing file or fileInfo", 400
 
-        df = read_from_url(formdata['url'], formdata['author'], formdata['documentId'], namespace)
-        qa_tool.loading_data_to_pinecone(df)
-    except Exception as e:
-        print(e)
+    if qa_tool.namespace is None:
+        qa_tool.set_namespace(namespace)
+
+    df = read_from_encode(file, author, file_id, namespace, title)
+    qa_tool.loading_data_to_pinecone(df)
     return "très bien"
 
 @app.route('/api/ask-query/', methods=['POST', 'OPTIONS'])

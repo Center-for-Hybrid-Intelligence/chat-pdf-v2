@@ -1,6 +1,5 @@
-
-
 from PyPDF2 import PdfReader
+from PyPDF2 import PdfFileReader
 import openai
 import os
 from dotenv import load_dotenv
@@ -21,8 +20,6 @@ import pandas as pd
 import requests
 
 from .database import add_document
-
-from base64 import b64decode
 
 def get_pdf_text(document_path, start_page=1, final_page=999):
     reader = PdfReader(document_path)
@@ -76,12 +73,20 @@ def read_from_url(url, author,identifier, namespace):
     
     return df
 
-def read_from_encode(encoded_doc, author,identifier, namespace):
-    pages = b64decode(encoded_doc).decode('utf-8')
-    if pages [0:4] != b'%PDF':
-        raise ValueError('Missing the PDF file signature, may not be a PDF file')
+def read_from_encode(file, author, identifier, namespace, title):
+    pdf_reader = PdfReader(file)
+
+    # Get the number of pages in the PDF
+    num_pages = len(pdf_reader.pages)
+    pages = ""
+    # Read the contents of each page
+    for page_num in range(num_pages):
+        page = pdf_reader.pages[page_num]
+        text = page.extract_text()
+        pages += text
+
     add_document(document_id = identifier, document_file=pages, namespace_name=namespace)
-    df = create_dataframe(identifier, author, pages)
+    df = create_dataframe(title, identifier, author, pages)
     return df
 
 

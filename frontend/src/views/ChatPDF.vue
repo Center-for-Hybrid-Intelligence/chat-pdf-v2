@@ -156,67 +156,72 @@ export default {
       for (let i = 0; i < droppedFiles.length; i++) {
         const file = droppedFiles[i];
         if (file.type === "application/pdf") {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            files.value.push({
-              preview: e.target.result,
-              name: file.name,
-              author: "",
-              documentId: Date.now(),
-            });
-          };
-          reader.readAsDataURL(file);
-          console.log(file.name, "file")
-          console.log(files, "file")
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("fileInfo", JSON.stringify({
+            name: file.name,
+            documentId: Date.now(),
+          }));
+          files.value.push({formData: formData, author: ""})
+          console.log(file.name, "file");
+          console.log(files, "files");
         }
+
+        emit("update:modelValue", files);
       }
-      emit("update:modelValue", files.value);
-    };
+    }
 
     const onFileChange = (e) => {
       const selectedFiles = e.target.files;
       for (let i = 0; i < selectedFiles.length; i++) {
         const file = selectedFiles[i];
         if (file.type === "application/pdf") {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            files.value.push({
-              preview: e.target.result,
-              name: file.name,
-              author: "",
-              documentId: Date.now(),
-            });
-          };
-          reader.readAsDataURL(file);
-          console.log(file.name, "file")
-          console.log(files, "file")
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("name", file.name);
+          formData.append("documentId", Date.now());
+          files.value.push({formData: formData, author: ""})
+          console.log(file.name, "file");
+          console.log(files, "files");
         }
+
+        emit("update:modelValue", files);
       }
-      emit("update:modelValue", files.value);
-    };
+    }
 
 
-    const onsubmit = () => {
-      const fileObject = { [inputFieldValue.value]: files.value };
+    const onsubmit = async () => {
+      const formDataList = [];
 
-      axios.post(
-        "http://localhost:5000/api/load-pdf/",
-        fileObject,
-        {
+      for (let i = 0; i < files.value.length; i++) {
+        const formData = files.value[i].formData;
+        const author = files.value[i].author;
+
+        formData.append("author", JSON.stringify(author));
+        formData.append("namespace", JSON.stringify(inputFieldValue.value));
+
+
+        formDataList.push(formData);
+      }
+      // const fileObject = { [inputFieldValue.value]: files.value };
+
+      const uploadPromises = formDataList.map(formData => {
+        return axios.post("http://localhost:5000/api/load-pdf/", formData, {
           headers: {
-            "withCredentials": "false",
+            "Content-Type": "multipart/form-data",
           },
-        }
-      ).then((res) => {
-        console.log(res);
-      }).catch((err) => {
-        console.log(err);
-      }
-      )
+        });
+      });
 
-      console.log("File Object:", fileObject);
-      // router.push({name: "promptPDF", params: { inputFieldValue }});
+      try {
+        const responses = await Promise.all(uploadPromises);
+        console.log(responses);
+      } catch (error) {
+        console.error(error);
+      }
     };
+      // router.push({name: "promptPDF", params: { inputFieldValue }});
+
     const deleteFile = (index) => {
       files.value.splice(index, 1);
       emit("update:modelValue", files.value);
