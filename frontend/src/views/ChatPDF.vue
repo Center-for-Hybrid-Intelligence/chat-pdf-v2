@@ -114,7 +114,7 @@
 </template>
 
 <script>
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import axios from "axios";
 import router from "@/router";
 
@@ -169,6 +169,18 @@ export default {
       }
     }
 
+    const settings = {
+      hostName: 'hybridintelligence.eu',
+      apiPath: '/api',
+      basePath: '/chat-pdf',
+
+      debugLevels: false,
+      PRODUCTION_ORIGIN_PATTERN: '^.*$',
+    }
+    const baseUrl = computed(() => {
+      return `https://${settings.hostName}${settings.basePath}${settings.apiPath}`
+    })
+
     const onFileChange = (e) => {
       const selectedFiles = e.target.files;
       for (let i = 0; i < selectedFiles.length; i++) {
@@ -205,7 +217,7 @@ export default {
       console.log(inputFieldValue.value, "inputFieldValue");
 
       const uploadPromises = formDataList.map(formData => {
-        return axios.post("http://localhost:5000/api/load-pdf/", formData, {
+        return axios.post(baseUrl.value + "/load-pdf/", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },

@@ -62,23 +62,17 @@ class QaTool:
         pinecone.init(api_key=PINE_API_KEY,environment=YOUR_ENV)
 
         self.index_name='chatpdf-langchain-retrieval-agent'
+        self.text_field = 'text'
 
-        text_field = 'text'
+        self.index = pinecone.Index(self.index_name)
+        self.vectorstore = None
 
-        self.index = pinecone.Index(self.index_name)  
-        self.vectorstore = Pinecone(
-            self.index, self.embed.embed_query, text_field
-        )   
 
         self.llm = ChatOpenAI(
             openai_api_key=OPENAI_API_KEY,
             model_name='gpt-4',
             temperature=0.0
         )
-
-
-
-
 
     def tiktoken_len(self,text):
         tokens = self.tokenizer.encode(
@@ -90,11 +84,12 @@ class QaTool:
 
     def set_namespace(self, namespace):
         self.namespace = namespace
+        self.vectorstore = Pinecone(
+            self.index, self.embed.embed_query, self.text_field, self.namespace
+        )
 
     def loading_data_to_pinecone(self, data):
-
         #=============Warning to change if several indexes
-
         if self.index_name not in pinecone.list_indexes():
             #we create a new index
             pinecone.create_index(
@@ -107,7 +102,7 @@ class QaTool:
 
 
         #INDEXING
-        batch_limit = 100 #pinecone doesn't allow more than 100 vectors simultaneous upserting
+        batch_limit = 50 #pinecone doesn't allow more than 100 vectors simultaneous upserting
 
         texts =[]
         metadatas =[]
@@ -150,9 +145,6 @@ class QaTool:
     def erase_doc(self, document_id):
         remove_document(document_id=document_id)
         self.index.delete(ids=[document_id], namespace=self.namespace)
-
-
-        
 
 
     def __call__(self, query, top_closest) -> Any:

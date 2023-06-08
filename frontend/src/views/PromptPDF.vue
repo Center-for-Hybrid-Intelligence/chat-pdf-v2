@@ -35,21 +35,21 @@ export default {
     const loading_answer = ref(false)
     const answer = ref('')
 
-    // const settings = {
-    //   hostName: 'hybridintelligence.eu',
-    //   apiPath: '/api/api',
-    //   basePath: '/gpt-public',
-    //
-    //   debugLevels: false,
-    //   PRODUCTION_ORIGIN_PATTERN: '^.*$',
-    // }
-    // const baseUrl = computed(() => {
-    //   return `https://${settings.hostName}${settings.basePath}${settings.apiPath}`
-    // })
+    const settings = {
+      hostName: 'hybridintelligence.eu',
+      apiPath: '/api',
+      basePath: '/chat-pdf',
 
+      debugLevels: false,
+      PRODUCTION_ORIGIN_PATTERN: '^.*$',
+    }
     const baseUrl = computed(() => {
-      return `http://localhost:5000/api`
+      return `https://${settings.hostName}${settings.basePath}${settings.apiPath}`
     })
+
+    // const baseUrl = computed(() => {
+    //   return `http://localhost:5000/api`
+    // })
 
     const onChange = (value) => {
       query.value = value
