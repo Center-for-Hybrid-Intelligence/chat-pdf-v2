@@ -171,7 +171,7 @@ export default {
 
     const settings = {
       hostName: 'hybridintelligence.eu',
-      apiPath: '/api',
+      apiPath: '/api/api',
       basePath: '/chat-pdf',
 
       debugLevels: false,
