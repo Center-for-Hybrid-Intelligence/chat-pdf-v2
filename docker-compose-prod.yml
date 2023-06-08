@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  
+  backend:
+    container_name: backend-chatpdf
+    restart: always
+    volumes:
+      - '.backend:/backend'
+    build:
+      context: './backend'
+      dockerfile: Dockerfile
+    ports:
+      - '3052:3013'
+
+  client:
+    container_name: frontend-chatpdf
+    restart: always
+    volumes:
+      - '.frontend:/frontend'
+    build:
+      context: './frontend'
+      dockerfile: Dockerfile
+    ports:
+      - '3051:800'
