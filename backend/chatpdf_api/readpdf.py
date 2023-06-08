@@ -84,8 +84,10 @@ def read_from_encode(file, author, identifier, namespace, title):
         page = pdf_reader.pages[page_num]
         text = page.extract_text()
         pages += text
-
-    add_document(document_id = identifier, document_file=pages, namespace_name=namespace)
+    try:
+        add_document(document_id = identifier, document_file=pages, namespace_name=namespace)
+    except Exception as e:
+        raise e
     df = create_dataframe(title, identifier, author, pages)
     return df
 

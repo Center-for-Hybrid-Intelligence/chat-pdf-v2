@@ -7,7 +7,7 @@ const routes = [
     component: () => import('../views/ChatPDF.vue')
   },
   {
-    path: '/promptPDF',
+    path: '/promptPDF/:namespace',
     name: 'promptPDF',
     component: () => import('../views/PromptPDF.vue')
   }

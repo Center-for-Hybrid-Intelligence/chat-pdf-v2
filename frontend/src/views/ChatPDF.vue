@@ -116,7 +116,7 @@
 <script>
 import {ref} from "vue";
 import axios from "axios";
-// import router from "@/router";
+import router from "@/router";
 
 export default {
   name: "FileUpload",
@@ -158,10 +158,8 @@ export default {
         if (file.type === "application/pdf") {
           const formData = new FormData();
           formData.append("file", file);
-          formData.append("fileInfo", JSON.stringify({
-            name: file.name,
-            documentId: Date.now(),
-          }));
+          formData.append("name", file.name);
+          formData.append("documentId", parseInt(Date.now().toString(36) + Math.random().toString(36).substr(2, 5), 36));
           files.value.push({formData: formData, author: ""})
           console.log(file.name, "file");
           console.log(files, "files");
@@ -179,7 +177,7 @@ export default {
           const formData = new FormData();
           formData.append("file", file);
           formData.append("name", file.name);
-          formData.append("documentId", Date.now());
+          formData.append("documentId", parseInt(Date.now().toString(36) + Math.random().toString(36).substr(2, 5), 36));
           files.value.push({formData: formData, author: ""})
           console.log(file.name, "file");
           console.log(files, "files");
@@ -204,6 +202,7 @@ export default {
         formDataList.push(formData);
       }
       // const fileObject = { [inputFieldValue.value]: files.value };
+      console.log(inputFieldValue.value, "inputFieldValue");
 
       const uploadPromises = formDataList.map(formData => {
         return axios.post("http://localhost:5000/api/load-pdf/", formData, {
@@ -219,8 +218,8 @@ export default {
       } catch (error) {
         console.error(error);
       }
+      router.push({name: "promptPDF", params: { namespace: inputFieldValue.value }});
     };
-      // router.push({name: "promptPDF", params: { inputFieldValue }});
 
     const deleteFile = (index) => {
       files.value.splice(index, 1);

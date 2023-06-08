@@ -1,3 +1,4 @@
+import numpy as np
 from flask_cors import CORS
 from flask import Flask, jsonify, request, Response, stream_with_context
 from .database import db
@@ -36,39 +37,38 @@ def load_pdf():
     title = request.form.get('name')
     file = request.files['file']
     if not (author and file_id and namespace and file):
-        return "Missing file or fileInfo", 400
+        return "Missing file or fileInfo", 401
 
     if qa_tool.namespace is None:
         qa_tool.set_namespace(namespace)
+    try:
+        df = read_from_encode(file, author, file_id, namespace, title)
+    except Exception as e:
+        raise e
+        return "Bad request", 402
 
-    df = read_from_encode(file, author, file_id, namespace, title)
     qa_tool.loading_data_to_pinecone(df)
-    return "très bien"
+    return f"Successfully loaded {file_id} to pinecone", 200
 
-@app.route('/api/ask-query/', methods=['POST', 'OPTIONS'])
-def send_query():
-    try:
-        data = request.get_json()
-        result = qa_tool(query=data['query'],top_closest=data['topClosest'])
-        return jsonify(result)
-    except Exception as e:
-        return jsonify(e)
+@app.route('/api/ask-query/', methods=['POST'])
+def ask_query():
+    data = request.get_json()
+    print(data)
+    top_closest = 5
+    result = qa_tool(query=data['query'],top_closest=top_closest)
+    print(result.keys())
+    content = []
+    for doc in result['source_documents']:
+        content.append((doc.page_content, doc.metadata['title']))
+    response = {"result": result['result'], "source_documents": content}
+    return response, 200
+
     
-@app.route('/api/erase-all/', methods=['POST', 'OPTIONS'])
+@app.route('/api/erase-all/', methods=['GET'])
 def erase_all():
-    try:
-        data = request.get_json()
-        qa_tool.delete_all(data['namespace'])
-    except Exception as e:
-        return jsonify(e)
-
-@app.route('/api/erase-all/', methods=['POST', 'OPTIONS'])
-def erase_doc():
-    try:
-        data = request.get_json()
-        qa_tool.erase_doc(data['documentId'], data['namespace'])
-    except Exception as e:
-        return jsonify(e)
+    qa_tool.delete_all()
+    qa_tool.namespace = None
+    return "Successfully deleted all data", 200
 
         
 

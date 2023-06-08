@@ -6,14 +6,14 @@
       <label  class="block text-7xl font-bold text-gray-700">
           Write your question
       </label>
-    <TextInput v-model="prompt" class=""></TextInput>
+    <TextInput @input="onChange" class=""></TextInput>
     <div class="flex flex-row gap-4">
       <Button class="button primary" @click="sendRequest">
         <template #right>Submit</template>
       </Button>
-      <p> {{ answer.answer}}</p>
     </div>
 
+    {{ answer.result }}
   </div>
 </div>
 </template>
@@ -22,18 +22,18 @@
 import TextInput from "@/components/TextInput.vue";
 import Button from "@/components/forms/Button.vue";
 import {ref} from "vue";
-import parameters from "@/data/axes.json";
 import {computed} from "vue";
+import axios from "axios";
+import { onBeforeUnmount } from 'vue';
 
 export default {
   name: "PromptPDf",
   components: {TextInput, Button},
   setup() {
-    const prompt = ref('')
-    const has_prompt = ref(false)
+    const query = ref('')
     const has_answer = ref(false)
     const loading_answer = ref(false)
-    const axes = ref(parameters)
+    const answer = ref('')
 
     // const settings = {
     //   hostName: 'hybridintelligence.eu',
@@ -51,63 +51,74 @@ export default {
       return `http://localhost:5000/api`
     })
 
-    const answer = ref({
-      answer: '',
-    })
+    const onChange = (value) => {
+      query.value = value
+    }
 
     const sendRequest = async () => {
-      prompt.value = "What is the meaning of life?"
-
       const request_data = {
-        prompt: prompt.value,
+        query: query.value,
       };
       loading_answer.value = true;
       has_answer.value = true;
+      axios.post(baseUrl.value + '/ask-query/', request_data, {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            })
+          .then((response) => {
+            answer.value = response.data;
+            loading_answer.value = false;
+            console.log(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+    }
+
+    const handleBeforeUnload = () => {
+      eraseEntries();
+    };
+
+    const handlePopstate = () => {
+      eraseEntries();
+    };
+
+
+    // Hook to execute the handleBeforeUnload function when the component is being unmounted
+    onBeforeUnmount(() => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    });
+
+    // Attach the event listener to the window's onbeforeunload event
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // Hook to execute the handlePopstate function when the component is being unmounted
+    onBeforeUnmount(() => {
+      window.removeEventListener('popstate', handlePopstate);
+    });
+
+    // Attach the event listener to the window's onpopstate event
+    window.addEventListener('popstate', handlePopstate);
+
+
+    const eraseEntries = async () => {
       try {
-        const res = await fetch(baseUrl.value + '/send-request/', {
-          method: 'POST',
-          body: JSON.stringify(request_data),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-
-        loading_answer.value = false;
-        has_answer.value = true;
-
-        // Create a readable stream from the response data
-        const readableStream = res.body;
-
-        // Create a TextDecoder to decode the streamed data
-        const decoder = new TextDecoder();
-
-        // Read the streamed data in chunks as it arrives
-        const reader = readableStream.getReader();
-        let result = '';
-
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) {
-            break;
-          }
-          const chunk = decoder.decode(value, { stream: true });
-          result += chunk;
-          // Update UI with the streamed data in real time
-          answer.value.answer = result;
-        }
+        await axios.get(baseUrl.value + '/erase-all/');
+        console.log('HTTP request sent!');
       } catch (error) {
-        console.error(error);
+        console.error('Failed to send HTTP request:', error);
       }
     };
+
     return {
       answer,
-      axes,
-      has_prompt,
       has_answer,
-      prompt,
-      sendRequest,};
-  },
+      query,
+      sendRequest,
+      onChange
+    }
+  }
 }
 </script>
 

@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text, func
+from sqlalchemy.exc import IntegrityError
 
 db = SQLAlchemy()
 
@@ -16,16 +17,21 @@ class Document(db.Model):
     
     def __repr__(self):
         return f'<Prompt {self.document_id}, created at {self.created_at}>'
-    
+
 def add_document(document_id, document_file, namespace_name):
+    document_id = document_id[6:]
     namespaces = Namespace.query.filter_by(namespace_name = namespace_name).first()
+    print(namespaces)
     if namespaces is None:
         db.session.add(namespace := Namespace(namespace_name = namespace_name))
         db.session.commit()
     else:
         namespace = namespaces
-    db.session.add(Document(document_id=document_id, document_file=document_file, namespace_id=namespace.namespace_id))
-    db.session.commit()
+    try:
+        db.session.add(Document(document_id=int(document_id), document_file=document_file, namespace_id=namespace.namespace_id))
+        db.session.commit()
+    except IntegrityError:
+        return "Document already exists"
 
 def remove_document(document_id):
     Document.query.filter_by(document_id = document_id).delete()
