@@ -71,6 +71,7 @@ def erase_all():
 
 @app.route('api/hello/', methods=['GET'])
 def hello():
+    print("Je suis la")
     return "Hello world", 200
         
 
