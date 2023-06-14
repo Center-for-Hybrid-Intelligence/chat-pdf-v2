@@ -12,7 +12,7 @@ RUN pip install -r requirements.txt
 RUN pip install uwsgi
 
 ENV DATABASE_URL='sqlite:///documents.db'
-ENV OPENAI_API_KEY=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
+ENV OPENAI_API_KEY=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
 ENV OPENAI_ORGANIZATION=org-3WL1stoahVKNtlth6bdytR9b
 ENV PINECONE_API_KEY=73c332ac-3cdb-4cd4-bc07-d8ec7e5fa0b3
 ENV YOUR_ENV=us-west4-gcp-free
