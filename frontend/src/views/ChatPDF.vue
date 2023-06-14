@@ -101,13 +101,17 @@
           placeholder="Enter Namespace"
           class="px-2 py-1 border border-gray-400 rounded-l focus:outline-none"
       />
-      <button @click="onsubmit()" :disabled="inputFieldValue === ''"
+      <button @click="onsubmit()" :disabled="inputFieldValue === '' || loading"
               :class="{ 'bg-green-300 text-black/20': inputFieldValue === '',
                'bg-green-500 text-white': inputFieldValue !== ''}"
               class="p-2 px-6 text-xl font-bold self-center rounded-r-lg transition-all duration-300">
         Submit
       </button>
-
+      <div v-if="loading">
+        Loading...
+      </div>
+      <div v-if="uploadFailed">
+        {{ errorMessage }}
     </div>
   </div>
 
@@ -130,9 +134,12 @@ export default {
   },
   emits: ["update:modelValue"],
   setup(props, {emit}) {
+    const loading = ref(false);
     const files = ref(props.value);
     const isDragging = ref(false);
     const inputFieldValue = ref('');
+    const uploadFailed = ref(false);
+    const errorMessage = ref('');
 
     const handleDragEnter = (e) => {
       e.preventDefault();
@@ -201,6 +208,7 @@ export default {
 
 
     const onsubmit = async () => {
+      loading.value = true;
       const formDataList = [];
 
       for (let i = 0; i < files.value.length; i++) {
@@ -228,12 +236,15 @@ export default {
       try {
         const responses = await Promise.all(uploadPromises);
         console.log(responses);
+        loading.value = false;
+        router.push({name: "promptPDF", params: { namespace: inputFieldValue.value }});
       } catch (error) {
         console.error(error);
+        loading.value = false;
+        uploadFailed.value = true;
+        errorMessage.value = error.message;
       }
-      router.push({name: "promptPDF", params: { namespace: inputFieldValue.value }});
     };
-
     const deleteFile = (index) => {
       files.value.splice(index, 1);
       emit("update:modelValue", files.value);
@@ -248,7 +259,10 @@ export default {
       handleDragLeave,
       handleDrop,
       onsubmit,
-      inputFieldValue
+      inputFieldValue,
+      loading,
+      uploadFailed,
+      errorMessage
     }
   }
 }
