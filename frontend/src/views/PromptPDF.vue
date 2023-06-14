@@ -37,7 +37,7 @@ export default {
 
     const settings = {
       hostName: 'hybridintelligence.eu',
-      apiPath: '/api',
+      apiPath: '/api/api',
       basePath: '/chat-pdf',
 
       debugLevels: false,
@@ -61,7 +61,7 @@ export default {
       };
       loading_answer.value = true;
       has_answer.value = true;
-      axios.post(baseUrl.value + '/api/ask-query/', request_data, {
+      axios.post(baseUrl.value + '/ask-query/', request_data, {
               headers: {
                 "Content-Type": "application/json",
               },
@@ -104,7 +104,7 @@ export default {
 
     const eraseEntries = async () => {
       try {
-        await axios.get(baseUrl.value + '/api/erase-all/');
+        await axios.get(baseUrl.value + '/erase-all/');
         console.log('HTTP request sent!');
       } catch (error) {
         console.error('Failed to send HTTP request:', error);
