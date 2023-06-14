@@ -69,7 +69,7 @@ def erase_all():
     qa_tool.namespace = None
     return "Successfully deleted all data", 200
 
-@app.route('api/hello/', methods=['GET'])
+@app.route('/api/hello/', methods=['GET'])
 def hello():
     print("Je suis la")
     return "Hello world", 200
