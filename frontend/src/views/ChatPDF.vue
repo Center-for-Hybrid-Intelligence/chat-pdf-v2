@@ -209,6 +209,7 @@ export default {
 
 
     const onsubmit = async () => {
+      uploadFailed.value = false;
       loading.value = true;
       const formDataList = [];
 
