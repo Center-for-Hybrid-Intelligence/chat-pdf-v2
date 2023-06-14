@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  
+
   backend:
     container_name: backend-chatpdf
     restart: always
@@ -12,6 +12,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - '3052:3013'
+    environment:
+      - HTTP_PROXY=http://localhost:3051/
+      - HTTPS_PROXY=http://localhost:3051/
 
   client:
     container_name: frontend-chatpdf
@@ -23,3 +26,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - '3051:800'
+    environment:
+      - HTTP_PROXY=http://localhost:3051/
+      - HTTPS_PROXY=http://localhost:3051/
