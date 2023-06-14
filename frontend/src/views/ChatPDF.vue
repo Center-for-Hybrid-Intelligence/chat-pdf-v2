@@ -112,6 +112,7 @@
       </div>
       <div v-if="uploadFailed">
         {{ errorMessage }}
+      </div>
     </div>
   </div>
 
