@@ -102,12 +102,12 @@ class QaTool:
 
 
         #INDEXING
-        batch_limit = 50 #pinecone doesn't allow more than 100 vectors simultaneous upserting
+        batch_limit = 100 #pinecone doesn't allow more than 100 vectors simultaneous upserting
 
         texts =[]
         metadatas =[]
 
-        for i, record in data.iterrows():        
+        for i, record in tqdm(data.iterrows(), total=len(data)):        
             #first get metadata fields for this record
             metadata = {
                 'id': record['Id'],
@@ -116,23 +116,30 @@ class QaTool:
             }
 
             # now we create chunks from the record text
-            record_texts = self.text_splitter.split_text(record['Summary'])
+            record_texts = text_splitter.split_text(record['Summary'])
 
             # create individual metadata dicts for each chunk
             record_metadatas = [{
                 "chunk": j, "text": text, **metadata
             } for j, text in enumerate(record_texts)]
             # append these to current batches
-            texts.extend(record_texts)
-            metadatas.extend(record_metadatas)
-            # if we have reached the batch_limit we can add texts
-            if len(texts) >= batch_limit:
-                ids = [str(uuid4()) for _ in range(len(texts))]
-                #ids = []
-                embeds = self.embed.embed_documents(texts)
-                index.upsert(vectors=zip(ids,embeds,metadatas), namespace=self.namespace)
-                texts = []
-                metadatas = []
+            for record_text, record_metadata in zip(record_texts, record_metadatas):
+                texts.append(record_text)
+                metadatas.append(record_metadata)
+                # if we have reached the batch_limit we can add texts
+                if len(texts) >= batch_limit:
+                    ids = [str(uuid4()) for _ in range(len(texts))]
+                    #ids = []
+                    embeds = embed.embed_documents(texts)
+                    index.upsert(vectors=zip(ids,embeds,metadatas))
+                    texts = []
+                    metadatas = []
+                    print('batch limit reached')
+
+    if len(texts) > 0:
+        ids = [str(uuid4()) for _ in range(len(texts))]
+        embeds = embed.embed_documents(texts)
+        index.upsert(vectors=zip(ids,embeds,metadatas))
 
         if len(texts) > 0:
             ids = [str(uuid4()) for _ in range(len(texts))]
