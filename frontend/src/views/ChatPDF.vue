@@ -57,9 +57,10 @@
       </div>
 
     </div>
-    <transition-group name="list" class="mt-3 flex flex-wrap justify-center gap-4" tag="div">
-      <div v-for="(file, index) in files" :key="index" class="mb-4 w-5/12 min-w-full ">
-        <div class="flex my-2 gap-4 justify-between m-5 p-4 shadow-2xl w-full shadow-gray-300 rounded-xl ">
+    <transition-group name="list" class="mt-3 grid grid-cols-2 justify-center gap-4 w-4/5" tag="div">
+      <div v-for="(file, index) in files" :key="index" class="mb-4 ">
+
+        <div class="flex gap-4 justify-between p-4 shadow-2xl w-full shadow-gray-300 rounded-xl ">
           <img src="pdf-placeholder.png" class="h-full w-16 object-contain place-self-center"/>
           <div class="flex flex-col w-full ">
             <h1 class="text-start self-start pb-2" style="
@@ -67,11 +68,10 @@
                 -webkit-line-clamp: 1;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
-                text-overflow: ellipsis;
-"
-
+                text-overflow: ellipsis;"
             >
-              {{ file.name }}
+              {{ file.name}}
+
             </h1>
             <div class="flex align-middle h-full gap-2 ">
               <!--              <h1 class="text-mg font-bold place-self-center  ">
@@ -86,7 +86,7 @@
             </div>
           </div>
           <button
-              class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded max-h-12 self-center place-self-center"
+              class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded max-h-12 self-end place-self-center"
               @click="deleteFile(index)">
             Delete
           </button>
@@ -168,7 +168,7 @@ export default {
           formData.append("file", file);
           formData.append("name", file.name);
           formData.append("documentId", parseInt(Date.now().toString(36) + Math.random().toString(36).substr(2, 5), 36));
-          files.value.push({formData: formData, author: ""})
+          files.value.push({formData: formData, author: "", name: file.name})
           console.log(file.name, "file");
           console.log(files, "files");
         }
@@ -198,7 +198,7 @@ export default {
           formData.append("file", file);
           formData.append("name", file.name);
           formData.append("documentId", parseInt(Date.now().toString(36) + Math.random().toString(36).substr(2, 5), 36));
-          files.value.push({formData: formData, author: ""})
+          files.value.push({formData: formData, author: "", name: file.name})
           console.log(file.name, "file");
           console.log(files, "files");
         }
@@ -264,7 +264,7 @@ export default {
       inputFieldValue,
       loading,
       uploadFailed,
-      errorMessage
+      errorMessage,
     }
   }
 }
