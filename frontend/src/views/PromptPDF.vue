@@ -1,34 +1,37 @@
 <template>
   <div class="flex flex-col items-center justify-center w-screen mt-32"
   >
-    <div class="flex flex-col gap-8 items-center ">
+    <div class="flex flex-col gap-8 items-center w-max">
 
-      <label  class="block text-7xl font-bold text-gray-700">
-          Write your question
+      <label class="block text-7xl font-bold text-gray-700">
+        Write your question
       </label>
-    <TextInput @input="onChange" class=""></TextInput>
-    <div class="flex flex-row gap-4">
-      <Button class="button primary" @click="sendRequest">
-        <template #right>Submit</template>
-      </Button>
+      <TextArea @input="onChange" class="h-64"></TextArea>
+      <div class="flex flex-row gap-4">
+        <Button class="button primary" @click="sendRequest">
+          <template #right>Submit</template>
+        </Button>
+      </div>
+      <div class="flex flex-col gap-4 items-center border-2 border-green-600 max-w-screen-h4 h8:max-w-2xl break-words rounded-s p-6" v-if="answer.result">
+        <label class="block text-xl text-start font-medium text-gray-700">
+          {{ answer.result }}
+        </label>
+      </div>
     </div>
-
-    {{ answer.result }}
   </div>
-</div>
 </template>
 
 <script>
-import TextInput from "@/components/TextInput.vue";
+import TextArea from "@/components/forms/TextArea.vue";
 import Button from "@/components/forms/Button.vue";
 import {ref} from "vue";
 import {computed} from "vue";
 import axios from "axios";
-import { onBeforeUnmount } from 'vue';
+import {onBeforeUnmount} from 'vue';
 
 export default {
   name: "PromptPDf",
-  components: {TextInput, Button},
+  components: {Button, TextArea},
   setup() {
     const query = ref('')
     const has_answer = ref(false)
@@ -62,10 +65,10 @@ export default {
       loading_answer.value = true;
       has_answer.value = true;
       axios.post(baseUrl.value + '/ask-query/', request_data, {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            })
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
           .then((response) => {
             answer.value = response.data;
             loading_answer.value = false;
