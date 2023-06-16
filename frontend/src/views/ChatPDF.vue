@@ -119,8 +119,7 @@
 </template>
 
 <script>
-import {computed, ref} from "vue";
-import axios from "axios";
+import {ref} from "vue";
 import router from "@/router";
 import { authService } from '@/api'
 
@@ -177,18 +176,6 @@ export default {
         emit("update:modelValue", files);
       }
     }
-
-    // const settings = {
-    //   hostName: 'hybridintelligence.eu',
-    //   apiPath: '/api/api',
-    //   basePath: '/chat-pdf',
-    //
-    //   debugLevels: false,
-    //   PRODUCTION_ORIGIN_PATTERN: '^.*$',
-    // }
-    // const baseUrl = computed(() => {
-    //   return `https://${settings.hostName}${settings.basePath}${settings.apiPath}`
-    // })
 
     const onFileChange = (e) => {
       const selectedFiles = e.target.files;

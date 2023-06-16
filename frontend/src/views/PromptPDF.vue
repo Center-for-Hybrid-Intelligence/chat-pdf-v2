@@ -29,8 +29,6 @@
 import TextArea from "@/components/forms/TextArea.vue";
 import Button from "@/components/forms/Button.vue";
 import {ref, reactive} from "vue";
-import {computed} from "vue";
-import axios from "axios";
 import { onBeforeUnmount } from 'vue';
 import { authService } from "@/api";
 
@@ -103,7 +101,7 @@ export default {
 
     const eraseEntries = async () => {
       try {
-        await axios.get(baseUrl.value + '/erase-all/');
+        await authService.get('/erase-all/');
         console.log('HTTP request sent!');
       } catch (error) {
         console.error('Failed to send HTTP request:', error);
