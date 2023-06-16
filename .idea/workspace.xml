@@ -7,7 +7,7 @@
     <list default="true" id="bd1d1aad-e1a0-4f0b-9b14-f0c0b058aa4b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/forms/Button.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/forms/Button.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/views/PromptPDF.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/PromptPDF.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -31,7 +31,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/piete/Documents/CMD/StageBestanden/VueStage/chat-pdf",
+    "last_opened_file_path": "C:/Users/piete/Documents/CMD/StageBestanden/VueStage/crea-blender",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",

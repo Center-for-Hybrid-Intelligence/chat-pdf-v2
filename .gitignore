@@ -2,6 +2,8 @@
 */venv/*
 backend/instance/requests.db
 
+**/*.pyc
+
 */.env
 
 */.DS_Store
@@ -27,3 +29,7 @@ backend/instance/requests.db
 */*.njsproj
 */*.sln
 */*.sw?
+.idea/inspectionProfiles/Project_Default.xml
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/workspace.xml
