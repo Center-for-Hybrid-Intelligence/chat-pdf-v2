@@ -57,11 +57,10 @@
       </div>
 
     </div>
-    <div v-if="files.length > 0"  class="mt-3 flex justify-center flex-wrap gap-4 w-4/5">
-    <transition-group name="list"  tag="div">
-      <div v-for="(file, index) in files" :key="index" class="mb-4  ">
+    <transition-group name="list" class="w-full" tag="div">
+      <div v-for="(file, index) in files" :key="index" class="my-3 w-full flex flex-wrap gap-4 w-4/5">
 
-        <div class="flex gap-4 justify-between p-4 shadow-2xl w-full shadow-gray-300 rounded-xl ">
+        <div class="flex gap-4 justify-between p-4 shadow-2xl w-1/3 shadow-gray-300 rounded-xl ">
           <img src="pdf-placeholder.png" class="h-full w-16 object-contain place-self-center"/>
           <div class="flex flex-col w-full ">
             <h1 class="text-start self-start pb-2" style="
@@ -94,7 +93,6 @@
         </div>
       </div>
     </transition-group>
-    </div>
     <div class="flex justify-center m-12" v-if="files.length > 0">
       <input
           v-model="inputFieldValue"
