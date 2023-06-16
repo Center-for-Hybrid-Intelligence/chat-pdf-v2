@@ -125,8 +125,7 @@ class QaTool:
                 # if we have reached the batch_limit we can add texts
                 if len(texts) >= batch_limit:
                     ids = [str(uuid4()) for _ in range(len(texts))]
-                    #ids = []
-                    embeds = embed.embed_documents(texts)
+                    embeds = self.embed.embed_documents(texts)
                     index.upsert(vectors=zip(ids,embeds,metadatas))
                     texts = []
                     metadatas = []

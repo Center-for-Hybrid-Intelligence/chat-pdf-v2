@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "https://hybridintelligence.eu"}})
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
 
 # check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -31,7 +31,8 @@ qa_tool = QaTool()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "sqlalchemy"
 
-Session(app)
+# Session(app)
+app.secret_key = "pietervandeawiff"
 
 @app.after_request
 def add_header(response):
@@ -43,6 +44,7 @@ def add_header(response):
 
 @app.route('/api/load-pdf/', methods=['POST', 'OPTIONS'])
 def load_pdf():
+    print(request)
     author = request.form.get('author')
     file_id = request.form.get('documentId')
     namespace = request.form.get('namespace')
