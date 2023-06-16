@@ -68,8 +68,8 @@ def load_pdf():
 
 @app.route('/api/ask-query/', methods=['POST'])
 def ask_query():
-    if qa_tool.namespace != session['namespace']:
-        qa_tool.set_namespace(session['namespace'])
+    # if qa_tool.namespace != session['namespace']:
+    #     qa_tool.set_namespace(session['namespace'])
     data = request.get_json()
     print(data)
     top_closest = 5
