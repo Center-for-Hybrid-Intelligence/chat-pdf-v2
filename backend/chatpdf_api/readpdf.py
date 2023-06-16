@@ -40,11 +40,7 @@ def summarize(pages):
 
 def create_dataframe(title, identifier, author, summary):
     data = {'Id': [identifier], 'Title': [title],'Author': [author] ,'Summary': [summary]}
-    # print(data)
     df = pd.DataFrame(data)
-    # print(df)
-    # print(df.head())
-    # print(df.columns)
     return df
 
 
