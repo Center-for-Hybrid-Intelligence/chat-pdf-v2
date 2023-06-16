@@ -57,8 +57,9 @@
       </div>
 
     </div>
-    <transition-group name="list" class="mt-3 grid grid-cols-2 justify-center gap-4 w-4/5" tag="div">
-      <div v-for="(file, index) in files" :key="index" class="mb-4 ">
+    <div v-if="files.length > 0"  class="mt-3 flex justify-center flex-wrap gap-4 w-4/5">
+    <transition-group name="list"  tag="div">
+      <div v-for="(file, index) in files" :key="index" class="mb-4  ">
 
         <div class="flex gap-4 justify-between p-4 shadow-2xl w-full shadow-gray-300 rounded-xl ">
           <img src="pdf-placeholder.png" class="h-full w-16 object-contain place-self-center"/>
@@ -93,7 +94,7 @@
         </div>
       </div>
     </transition-group>
-
+    </div>
     <div class="flex justify-center m-12" v-if="files.length > 0">
       <input
           v-model="inputFieldValue"
@@ -101,15 +102,12 @@
           placeholder="Enter Namespace"
           class="px-2 py-1 border border-gray-400 rounded-l focus:outline-none"
       />
-      <button @click="onsubmit()" :disabled="inputFieldValue === '' || loading"
+      <Button @click="onsubmit" :isDisabled="inputFieldValue === '' || loading"
               :class="{ 'bg-green-300 text-black/20': inputFieldValue === '',
                'bg-green-500 text-white': inputFieldValue !== ''}"
               class="p-2 px-6 text-xl font-bold self-center rounded-r-lg transition-all duration-300">
-        Submit
-      </button>
-      <div v-if="loading">
-        Loading...
-      </div>
+          <template #right><div v-if="loading">Loading</div> <div v-else>Submit</div></template>
+      </Button>
       <div v-if="uploadFailed">
         {{ errorMessage }}
       </div>
@@ -122,10 +120,11 @@
 import {ref} from "vue";
 import router from "@/router";
 import { authService } from '@/api'
+import Button from "@/components/forms/Button";
 
 export default {
   name: "FileUpload",
-  components: {
+  components: {Button
   },
   props: {
     value: {
@@ -196,7 +195,7 @@ export default {
     }
 
 
-    const onsubmit = async () => {
+    const onSubmit = async () => {
       uploadFailed.value = false;
       loading.value = true;
       const formDataList = [];
@@ -244,7 +243,7 @@ export default {
       handleDragOver,
       handleDragLeave,
       handleDrop,
-      onsubmit,
+      onsubmit: onSubmit,
       inputFieldValue,
       loading,
       uploadFailed,
