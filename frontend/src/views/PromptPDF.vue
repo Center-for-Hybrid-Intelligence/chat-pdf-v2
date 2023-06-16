@@ -14,10 +14,13 @@
       </div>
       <div v-for="(question, index) in questionList.questions" :key="index">
         <div class="flex flex-col gap-4 items-center border-2 border-green-600 max-w-screen-h4 h8:max-w-2xl break-words rounded-s p-6" v-if="answer.result" >
-          <label class="block text-xl text-start font-medium text-gray-700">
+          <div class="block text-xl text-start font-medium text-gray-700">
             <h1 class="heading2"> {{ question }} </h1>
              {{questionList.answers[index]}}
-          </label>
+            <div class="text-blue-950">
+              <h1 class="heading2"> Source documents </h1>
+              {{ answer.source_documents }}</div>
+          </div>
         </div>
       </div>
 
@@ -43,7 +46,8 @@ export default {
 
     const questionList = reactive({
       questions: [],
-      answers: []
+      answers: [],
+      sourceDocuments: [],
     });
 
     const onChange = (value) => {
@@ -65,7 +69,8 @@ export default {
           .then((response) => {
             answer.value = response.data;
             loading_answer.value = false;
-            questionList.answers.push(answer.value);
+            questionList.answers.push(answer.value.result);
+            questionList.sourceDocuments.push(answer.value.source_documents);
             console.log(response.data);
           })
           .catch((error) => {
