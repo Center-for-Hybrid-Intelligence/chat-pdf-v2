@@ -112,7 +112,7 @@ class QaTool:
             }
 
             # now we create chunks from the record text
-            record_texts = text_splitter.split_text(record['Summary'])
+            record_texts = self.text_splitter.split_text(record['Summary'])
 
             # create individual metadata dicts for each chunk
             record_metadatas = [{
