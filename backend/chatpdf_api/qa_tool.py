@@ -134,12 +134,6 @@ class QaTool:
                     index.upsert(vectors=zip(ids,embeds,metadatas))
                     texts = []
                     metadatas = []
-                    print('batch limit reached')
-
-    if len(texts) > 0:
-        ids = [str(uuid4()) for _ in range(len(texts))]
-        embeds = embed.embed_documents(texts)
-        index.upsert(vectors=zip(ids,embeds,metadatas))
 
         if len(texts) > 0:
             ids = [str(uuid4()) for _ in range(len(texts))]
