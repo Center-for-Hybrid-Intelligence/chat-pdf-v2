@@ -209,6 +209,7 @@ export default {
 
 
     const onsubmit = async () => {
+      router.push({name: "promptPDF", params: { namespace: inputFieldValue.value }});
 
       uploadFailed.value = false;
       loading.value = true;
