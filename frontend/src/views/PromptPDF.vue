@@ -6,7 +6,7 @@
       <label class="block text-7xl font-bold text-gray-700">
         Write your question
       </label>
-      <TextArea @input="onChange" class="h-64"></TextArea>
+      <TextArea ref="question" @input="onChange" class="h-64"></TextArea>
       <div class="flex flex-row gap-4">
         <Button :isDisabled="loading" class="button primary" @click="sendRequest">
           <template #right><div v-if="loading">Loading results</div> <div v-else>Submit</div></template>
@@ -83,6 +83,7 @@ export default {
             questionList.sourceDocuments.push(answer.value.source_documents);
             console.log(response.data);
             loading.value = false;
+            ref.question.value = '';
           })
           .catch((error) => {
             console.log(error);
