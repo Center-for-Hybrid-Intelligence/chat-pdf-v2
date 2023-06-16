@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center justify-center w-screen mt-32"
   >
-    <div class="flex flex-col gap-8 items-center">
+    <div class="flex flex-col gap-8 items-center w-max">
 
       <label class="block text-7xl font-bold text-gray-700">
         Write your question
@@ -9,34 +9,31 @@
       <TextArea @input="onChange" class="h-64"></TextArea>
       <div class="flex flex-row gap-4">
         <Button :isDisabled="loading" class="button primary" @click="sendRequest">
-          <template #right>Submit</template>
+          <template #right><div v-if="loading">Loading results</div> <div v-else>Submit</div></template>
         </Button>
-        {{loading}}
-      </div>
-      <div v-for="(question, index) in questionList.questions.reverse()" :key="index">
-        <div class="flex flex-col gap-4 items-center border-2 border-green-600 max-w-screen-h4 h8:max-w-2xl break-words rounded-s p-6" v-if="answer.result" >
-          <div class="block text-xs text-start font-medium text-gray-700">
-            <h1 class="heading2"> {{ question }} </h1>
-             {{questionList.answers[index]}}
-            <div class="text-blue-950">
-              <h1 class="heading2"> Source documents </h1>
-              <div
-              style="white-space: pre-wrap"
-              >
-                {{ answer.source_documents }}
-              </div></div>
-          </div>
-        </div>
       </div>
 
+    <div class="mt-8 w-full" v-for="(question, index) in reversedQuestionList" :key="index">
+      <div class="flex flex-col gap-4 border-2 border-green-600 w-full	 h8:max-w-2xl break-words rounded-s p-6" v-if="answer.result">
+        <div class="block text-xs text-start font-medium text-gray-700">
+          <h1 class="heading2"> {{ reversedQuestionList[index] }} </h1>
+          {{ questionList.answers[questionList.questions.length - 1 - index] }}
+            <h1 class="heading2"> Source documents </h1>
+            <div style="white-space: pre-wrap">
+              {{ answer.source_documents }}
+            </div>
+        </div>
+      </div>
     </div>
+    </div>
+
   </div>
 </template>
 
 <script>
 import TextArea from "@/components/forms/TextArea.vue";
 import Button from "@/components/forms/Button.vue";
-import {ref, reactive} from "vue";
+import {ref, reactive, computed} from "vue";
 import { onBeforeUnmount } from 'vue';
 import { authService } from "@/api";
 
@@ -55,11 +52,16 @@ export default {
       sourceDocuments: [],
     });
 
+
     const loading = ref(false);
 
     const onChange = (value) => {
       query.value = value
     }
+
+    const reversedQuestionList = computed(() => { // Define computed property
+      return questionList.questions.slice().reverse();
+    });
 
     const sendRequest = async () => {
       loading.value = true;
@@ -130,7 +132,8 @@ export default {
       sendRequest,
       onChange,
       questionList,
-      loading
+      loading,
+      reversedQuestionList
     }
   }
 }
