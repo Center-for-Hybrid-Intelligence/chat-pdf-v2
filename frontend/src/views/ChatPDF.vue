@@ -211,6 +211,7 @@ export default {
 
         formDataList.push(formData);
       }
+      console.log(authService.baseURL);
       const uploadPromises = formDataList.map(formData => {
         return authService.post("/load-pdf/", formData, {
           headers: {

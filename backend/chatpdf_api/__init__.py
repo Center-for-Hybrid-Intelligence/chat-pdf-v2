@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "https://hybridintelligence.eu"}})
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
 
 # check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -36,7 +36,7 @@ app.secret_key = "pietervandeawiff"
 
 @app.after_request
 def add_header(response):
-    response.headers['Access-Control-Allow-Origin'] = 'https://hybridintelligence.eu'
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:8080'
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST'
