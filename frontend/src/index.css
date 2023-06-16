@@ -10,7 +10,14 @@
     k15:text-5xl
     my-10;
 }
-
+.heading2 {
+    @apply font-semibold
+    capitalize
+    text-lg
+    h8:text-2xl
+    k15:text-3xl
+    my-10;
+}
 .hover{
     scale: 1;
     transition: all;
