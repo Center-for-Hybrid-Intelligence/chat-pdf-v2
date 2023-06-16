@@ -35,10 +35,6 @@ from langchain.chains import RetrievalQAWithSourcesChain
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.text_splitter import CharacterTextSplitter
 
-'''
-ensemble de test
-'''
-
 import tiktoken
 
 from .database import remove_document

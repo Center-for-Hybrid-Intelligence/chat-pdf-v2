@@ -31,7 +31,8 @@ import Button from "@/components/forms/Button.vue";
 import {ref, reactive} from "vue";
 import {computed} from "vue";
 import axios from "axios";
-import {onBeforeUnmount} from 'vue';
+import { onBeforeUnmount } from 'vue';
+import { authService } from "@/api";
 
 export default {
   name: "PromptPDf",
@@ -47,22 +48,6 @@ export default {
       answers: []
     });
 
-    const settings = {
-      hostName: 'hybridintelligence.eu',
-      apiPath: '/api/api',
-      basePath: '/chat-pdf',
-
-      debugLevels: false,
-      PRODUCTION_ORIGIN_PATTERN: '^.*$',
-    }
-    const baseUrl = computed(() => {
-      return `https://${settings.hostName}${settings.basePath}${settings.apiPath}`
-    })
-
-    // const baseUrl = computed(() => {
-    //   return `http://localhost:5000/api`
-    // })
-
     const onChange = (value) => {
       query.value = value
     }
@@ -74,11 +59,11 @@ export default {
       };
       loading_answer.value = true;
       has_answer.value = true;
-      axios.post(baseUrl.value + '/ask-query/', request_data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+      authService.post('/ask-query/', request_data, {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            })
           .then((response) => {
             answer.value = response.data;
             loading_answer.value = false;

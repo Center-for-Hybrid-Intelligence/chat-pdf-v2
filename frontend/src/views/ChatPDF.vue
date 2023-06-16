@@ -122,6 +122,7 @@
 import {computed, ref} from "vue";
 import axios from "axios";
 import router from "@/router";
+import { authService } from '@/api'
 
 export default {
   name: "FileUpload",
@@ -177,17 +178,17 @@ export default {
       }
     }
 
-    const settings = {
-      hostName: 'hybridintelligence.eu',
-      apiPath: '/api/api',
-      basePath: '/chat-pdf',
-
-      debugLevels: false,
-      PRODUCTION_ORIGIN_PATTERN: '^.*$',
-    }
-    const baseUrl = computed(() => {
-      return `https://${settings.hostName}${settings.basePath}${settings.apiPath}`
-    })
+    // const settings = {
+    //   hostName: 'hybridintelligence.eu',
+    //   apiPath: '/api/api',
+    //   basePath: '/chat-pdf',
+    //
+    //   debugLevels: false,
+    //   PRODUCTION_ORIGIN_PATTERN: '^.*$',
+    // }
+    // const baseUrl = computed(() => {
+    //   return `https://${settings.hostName}${settings.basePath}${settings.apiPath}`
+    // })
 
     const onFileChange = (e) => {
       const selectedFiles = e.target.files;
@@ -225,12 +226,8 @@ export default {
 
         formDataList.push(formData);
       }
-      // const fileObject = { [inputFieldValue.value]: files.value };
-      console.log(inputFieldValue.value, "inputFieldValue");
-
       const uploadPromises = formDataList.map(formData => {
-        console.log(baseUrl.value + "/load-pdf/")
-        return axios.post(baseUrl.value + "/load-pdf/", formData, {
+        return authService.post("/load-pdf/", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
