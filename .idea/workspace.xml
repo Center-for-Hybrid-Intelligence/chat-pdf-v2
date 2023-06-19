@@ -9,6 +9,7 @@
       <change beforePath="$PROJECT_DIR$/frontend/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/views/ChatPDF.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/ChatPDF.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/views/PromptPDF.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/PromptPDF.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/tailwind.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +56,7 @@
       <option name="presentableId" value="Default" />
       <updated>1686905186014</updated>
       <workItem from="1686905187141" duration="4066000" />
-      <workItem from="1687161892629" duration="13592000" />
+      <workItem from="1687161892629" duration="14746000" />
     </task>
     <servers />
   </component>
