@@ -84,6 +84,23 @@ class QaTool:
             self.index, self.embed.embed_query, self.text_field, self.namespace
         )
 
+    def set_chunks(self, chunk_size, chunk_overlap):
+        self.text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            length_function=self.tiktoken_len,
+            separators=["\n\n", "\n", " ", ""]  
+        )
+
+    def set_llm(self, llm='gpt-4', temperature=0.0):
+        self.llm = ChatOpenAI(
+            openai_api_key=OPENAI_API_KEY,
+            model_name=llm,
+            temperature=temperature
+        )
+
+    
+
     def loading_data_to_pinecone(self, data):
         #=============Warning to change if several indexes
         if self.index_name not in pinecone.list_indexes():
