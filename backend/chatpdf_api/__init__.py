@@ -86,7 +86,8 @@ def ask_query():
         result = qa_tool(query=data['query'],top_closest=top_closest)
     except openai.error.InvalidRequestError as e:
         print((f"Invalid request error: {e}"))
-        return "Invalid request, might have reached maximum tokens", 401
+        error_message = str(e)
+        return error_message, 401 #Invalid request, might have reached maximum tokens
     
     print(result.keys())
     content = []
