@@ -10,6 +10,8 @@ import json
 import os
 from dotenv import load_dotenv
 
+import openai
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -78,8 +80,14 @@ def ask_query():
     llm_temperature = request.form.get('llm_temperature', 0.0)
     qa_tool.set_llm(llm_model, llm_temperature)
     print(data)
-    top_closest = 5
-    result = qa_tool(query=data['query'],top_closest=top_closest)
+    top_closest = request.form.get('sources_number', 5)
+    
+    try:
+        result = qa_tool(query=data['query'],top_closest=top_closest)
+    except openai.error.InvalidRequestError as e:
+        print((f"Invalid request error: {e}"))
+        return "Invalid request, might have reached maximum tokens", 401
+    
     print(result.keys())
     content = []
     for doc in result['source_documents']:
