@@ -6,6 +6,7 @@
     :style="buttonStyle"
     v-bind="$attrs"
     @click.prevent.stop="onClick"
+    :disabled='isDisabled'
   >
     <div class="w-full flex items-center justify-center">
       <slot name="left"></slot>
@@ -56,6 +57,7 @@ export default {
       default: false,
     },
     isDisabled: {
+      type: Boolean,
       // action is not ready
       default: false,
     },

@@ -16,7 +16,30 @@
     text-lg
     h8:text-2xl
     k15:text-3xl
-    my-10;
+    mb-3;
+}
+.heading3 {
+    @apply
+    font-semibold
+    capitalize
+    text-left
+    text-xl
+}
+.heading4 {
+    @apply
+    font-semibold
+    capitalize
+    text-left
+    text-center
+    text-xl
+    mb-4
+}
+.normalText {
+    @apply
+    font-normal
+    capitalize
+    text-left
+    text-center
 }
 .hover{
     scale: 1;
@@ -26,7 +49,16 @@
 .hover:hover{
     scale: 1.05;
 }
-
+.dropdown{
+    width: 10rem;
+    color: black;
+    border-radius: .25rem;
+    padding: .75rem;
+    transition: background-color;
+    transition-duration: 200ms;
+    cursor: pointer;
+    border: 2px solid rgba(50, 205, 50, 1);
+}
 .button{
     width: 10rem;
     color: white;
