@@ -2,10 +2,10 @@
   <!--select or drop single or multiple files form using tailwindcss and compositionAPI-->
   <div class="flex flex-col items-center justify-center w-screen mt-32"
   >
-    <div class="flex flex-col gap-8 items-center ">
+    <div class="flex flex-col gap-8 items-center w-1/4">
 
       <label class="block text-7xl font-bold text-gray-700" for="files">
-        Upload PDF File
+        ChatPDF
       </label>
 
       <div
@@ -31,7 +31,7 @@
                 class="flex m-4 gap-2 bg-blue-600 hover:bg-blue-800 transition-all duration-300 text-white justify-center font-extrabold text-lg p-4 px-12 rounded-full color cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3.0"
                stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/> </svg>
-          Upload PDF
+          Upload PDF's
 
         </span>
             <input type="file"
@@ -47,10 +47,10 @@
 
 
             <div v-if="isDragging">
-              Drop the PDF file here
+              Drop the PDF files here
             </div>
             <div v-else>
-              Or drop a PDF file
+              Or drop your PDF files here
             </div>
           </div>
         </div>
