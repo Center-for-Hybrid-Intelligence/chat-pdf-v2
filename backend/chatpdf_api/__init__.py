@@ -50,6 +50,9 @@ def load_pdf():
     namespace = request.form.get('namespace')
     title = request.form.get('name')
     file = request.files['file']
+    chunk_size = request.form.get('chunk_size', 400)
+    chunk_overlap = request.form.get('chunk_overlap', 20)
+    qa_tool.set_chunks(chunk_size, chunk_overlap)
     if not (author and file_id and namespace and file):
         return "Missing file or fileInfo", 401
 
@@ -71,6 +74,9 @@ def ask_query():
     # if qa_tool.namespace != session['namespace']:
     #     qa_tool.set_namespace(session['namespace'])
     data = request.get_json()
+    llm_model = request.form.get('llm_model', 'gpt-4')
+    llm_temperature = request.form.get('llm_temperature', 0.0)
+    qa_tool.set_llm(llm_model, llm_temperature)
     print(data)
     top_closest = 5
     result = qa_tool(query=data['query'],top_closest=top_closest)
