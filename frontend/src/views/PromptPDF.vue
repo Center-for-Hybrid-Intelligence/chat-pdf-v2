@@ -13,11 +13,11 @@
         <div>
         <h1 class="heading2 flex">
           Temperature (
-          <div class="w-10 heading3">{{ settings.llm_temperature || 2.5 }}</div>
+          <div class="w-10 heading2">{{ settings.llm_temperature || 2.5 }}</div>
           / 5)
         </h1>
         <h1 class="normalText">Higher values will make your image closer to your prompt</h1>
-        <input min="0" max="5" step="0.1" type="range" :value="settings.llm_temperature" @change="tempChange" class="slider k1:w-128 w-80 mt-4 self-center"
+        <input min="0" max="5" step="0.1" type="range" :value="settings.llm_temperature" @input="tempChange" class="slider k1:w-128 w-80 mt-4 self-center"
                id="weightSlider">
         </div>
 
@@ -43,7 +43,7 @@
           {{ questionList.answers[questionList.questions.length - 1 - index] }}
             <h1 class="heading2"> Source documents </h1>
             <div style="white-space: pre-wrap">
-              {{ answer.source_documents }}
+              {{ questionList.sourceDocuments[questionList.questions.length - 1 - index] }}
             </div>
         </div>
       </div>
@@ -181,16 +181,7 @@ export default {
 </script>
 
 <style scoped>
-.slider {
-  -webkit-appearance: none;
-  height: 1.5rem;
-  background-color: #ddd;
-  outline: none;
-  opacity: 0.7;
-  -webkit-transition: 0.2s;
-  transition: 0.2s;
-  border-radius: 9999px;
-}
+
 
 .slider:hover {
   opacity: 1;

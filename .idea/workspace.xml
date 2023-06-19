@@ -5,11 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bd1d1aad-e1a0-4f0b-9b14-f0c0b058aa4b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/forms/Dropdown.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/forms/DropdownSingle.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/forms/Button.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/forms/Button.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/views/ChatPDF.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/ChatPDF.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/views/PromptPDF.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/PromptPDF.vue" afterDir="false" />
@@ -59,7 +55,7 @@
       <option name="presentableId" value="Default" />
       <updated>1686905186014</updated>
       <workItem from="1686905187141" duration="4066000" />
-      <workItem from="1687161892629" duration="10167000" />
+      <workItem from="1687161892629" duration="13592000" />
     </task>
     <servers />
   </component>

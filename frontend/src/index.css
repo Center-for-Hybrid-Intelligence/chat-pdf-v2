@@ -16,7 +16,7 @@
     text-lg
     h8:text-2xl
     k15:text-3xl
-    mb-3;
+    mb-2;
 }
 .heading3 {
     @apply
@@ -31,15 +31,16 @@
     capitalize
     text-left
     text-center
-    text-xl
-    mb-4
 }
 .normalText {
     @apply
     font-normal
-    capitalize
     text-left
-    text-center
+    text-xs
+}
+.slider {
+    @apply
+    h-6 bg-gray-300 appearance-none rounded-full w-full transition-opacity duration-200 opacity-70 hover:opacity-100 focus:outline-none
 }
 .hover{
     scale: 1;
