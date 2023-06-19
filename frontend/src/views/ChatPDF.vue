@@ -122,9 +122,9 @@
             class="px-2 py-1 border border-gray-400 rounded-l focus:outline-none"
         />
         <Button @click="onsubmit" :isDisabled="inputFieldValue === '' || loading"
-                :class="{ 'bg-green-300 text-black/20': inputFieldValue === '',
-               'bg-green-500 text-white': inputFieldValue !== ''}"
-                class="p-2 px-6 text-xl font-bold self-center rounded-r-lg transition-all duration-300">
+                :class="{ 'text-black/20': inputFieldValue === '',
+               ' text-white': inputFieldValue !== ''}"
+                class="p-2 px-6 text-xl font-bold self-center rounded-r-lg rounded-l-none transition-all duration-300">
           <template #right><div v-if="loading">Loading</div> <div v-else>Submit</div></template>
         </Button>
         <div v-if="uploadFailed">

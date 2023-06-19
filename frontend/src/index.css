@@ -65,14 +65,14 @@
     color: white;
     border-radius: .25rem;
     padding: .75rem;
-    background-color: rgba(50, 205, 50, 1);
+    background-color:  #A3CD99;
     transition: background-color;
     transition-duration: 200ms;
     cursor: pointer;
     border: none;
 }
 .button:hover{
-    background-color: rgba(50, 205, 50, 0.8);
+    background-color: #579E81;
 }
 .buttonSecondary{
     width: 10rem;
