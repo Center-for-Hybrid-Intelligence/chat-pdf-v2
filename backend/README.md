@@ -2,6 +2,7 @@
 ## Stuff
 Can be found in the langchain github at langchain/chains/question_answering/stuff_prompt.py
 
+```
 prompt_template = """Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
 
 {context}
@@ -11,16 +12,21 @@ Helpful Answer:"""
 PROMPT = PromptTemplate(
     template=prompt_template, input_variables=["context", "question"]
 )
+```
 
 ## Map Reduce
 Can be found in the langchain github at langchain/chains/question_answering/map_reduce_prompt.py
 ### Question prompt
+```
 question_prompt_template = """Use the following portion of a long document to see if any of the text is relevant to answer the question. 
 Return any relevant text verbatim.
 {context}
 Question: {question}
 Relevant text, if any:"""
+```
 ### Combined prompt
+
+```
 combine_prompt_template = """Given the following extracted parts of a long document and a question, create a final answer. 
 If you don't know the answer, just say that you don't know. Don't try to make up an answer.
 
@@ -51,3 +57,5 @@ QUESTION: {question}
 {summaries}
 =========
 FINAL ANSWER:"""
+```
+## Refine
