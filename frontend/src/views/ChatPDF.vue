@@ -9,7 +9,7 @@
       </label>
 
       <div
-          class="flex gap-4 flex-col justify-center border-4 border-transparent p-8 bg-white rounded-xl shadow-gray-300 shadow-2xl w-4/5"
+          class="flex gap-2 flex-col justify-center border-4 border-transparent p-8 bg-white rounded-xl shadow-gray-300 shadow-2xl w-4/5"
           @dragenter="handleDragEnter"
           @dragover="handleDragOver"
           @dragleave="handleDragLeave"
@@ -54,8 +54,8 @@
             </div>
           </div>
         </div>
-      </div>
 
+      </div>
     </div>
     <transition-group name="list" class="w-full" tag="div">
       <div v-for="(file, index) in files" :key="index" class="my-3 w-full flex justify-evenly flex-wrap gap-4 w-4/5">
@@ -93,23 +93,46 @@
         </div>
       </div>
     </transition-group>
-    <div class="flex justify-center m-12" v-if="files.length > 0">
-      <input
-          v-model="inputFieldValue"
-          type="text"
-          placeholder="Enter Namespace"
-          class="px-2 py-1 border border-gray-400 rounded-l focus:outline-none"
-      />
-      <Button @click="onsubmit" :isDisabled="inputFieldValue === '' || loading"
-              :class="{ 'bg-green-300 text-black/20': inputFieldValue === '',
+
+    <div class="border-4 flex-col gap-2 border-transparent p-8 bg-white rounded-xl shadow-gray-300 shadow-2xl"  v-if="files.length > 0">
+      <h1 class="heading2">
+        Customize your request
+      </h1>
+      <h1 class="heading4 flex">
+        Chunk size  (
+        <div class="w-10 heading4">{{ settings.chunk_size || 2.5 }}</div>
+        / 800)
+      </h1>
+      <h1 class="normalText">Average length in tokens of the pieces of text that will be extracted and retrieve from your document. small sentences : less than 30,  big paragraphs : 400</h1>
+      <input min="10" max="800" step="1" type="range" :value="settings.chunk_size" @input="chunkSizeChange" class="slider k1:w-128 w-80 mt-4"
+             id="weightSlider">
+      <h1 class="heading4 flex">
+        Chunk overlap  (
+        <div class="w-10 heading4">{{ settings.chunk_overlap || 2.5 }}</div>
+        / 80)
+      </h1>
+      <h1 class="normalText">overlap in tokens between the piece of text extracted from your document</h1>
+      <input min="0" max="80" step="1" type="range" :value="settings.chunk_overlap" @input="chunkOverlapChange" class="slider  k1:w-128 w-80 mt-4"
+             id="weightSlider">
+      <div class="flex justify-center mt-4 mx-12" v-if="files.length > 0">
+        <input
+            v-model="inputFieldValue"
+            type="text"
+            placeholder="Enter Namespace"
+            class="px-2 py-1 border border-gray-400 rounded-l focus:outline-none"
+        />
+        <Button @click="onsubmit" :isDisabled="inputFieldValue === '' || loading"
+                :class="{ 'bg-green-300 text-black/20': inputFieldValue === '',
                'bg-green-500 text-white': inputFieldValue !== ''}"
-              class="p-2 px-6 text-xl font-bold self-center rounded-r-lg transition-all duration-300">
+                class="p-2 px-6 text-xl font-bold self-center rounded-r-lg transition-all duration-300">
           <template #right><div v-if="loading">Loading</div> <div v-else>Submit</div></template>
-      </Button>
-      <div v-if="uploadFailed">
-        {{ errorMessage }}
+        </Button>
+        <div v-if="uploadFailed">
+          {{ errorMessage }}
+        </div>
       </div>
     </div>
+
   </div>
 
 </template>
@@ -119,10 +142,10 @@ import {ref} from "vue";
 import router from "@/router";
 import { authService } from '@/api'
 import Button from "@/components/forms/Button";
-
 export default {
   name: "FileUpload",
-  components: {Button
+  components: {
+    Button
   },
   props: {
     value: {
@@ -138,6 +161,19 @@ export default {
     const inputFieldValue = ref('');
     const uploadFailed = ref(false);
     const errorMessage = ref('');
+
+    const settings = ref({
+      chunk_size: 200,
+      chunk_overlap: 50
+    });
+
+    const chunkOverlapChange = (e) => {
+      settings.value.chunk_overlap = e.target.value
+    }
+
+    const chunkSizeChange = (e) => {
+      settings.value.chunk_size = e.target.value
+    }
 
     const handleDragEnter = (e) => {
       e.preventDefault();
@@ -247,6 +283,9 @@ export default {
       loading,
       uploadFailed,
       errorMessage,
+      settings,
+      chunkSizeChange,
+      chunkOverlapChange
     }
   }
 }
