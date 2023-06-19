@@ -2,7 +2,7 @@
   <!--select or drop single or multiple files form using tailwindcss and compositionAPI-->
   <div class="flex flex-col items-center justify-center w-screen mt-32"
   >
-    <div class="flex flex-col gap-8 items-center w-1/4">
+    <div class="flex flex-col gap-8 items-center w-2/3 k15:w-1/4">
 
       <label class="block text-7xl font-bold text-gray-700" for="files">
         ChatPDF
@@ -58,7 +58,7 @@
 
     </div>
     <transition-group name="list" class="w-full" tag="div">
-      <div v-for="(file, index) in files" :key="index" class="my-3 w-full flex flex-wrap gap-4 w-4/5">
+      <div v-for="(file, index) in files" :key="index" class="my-3 w-full flex justify-evenly flex-wrap gap-4 w-4/5">
 
         <div class="flex gap-4 justify-between p-4 shadow-2xl w-1/3 shadow-gray-300 rounded-xl ">
           <img src="pdf-placeholder.png" class="h-full w-16 object-contain place-self-center"/>
