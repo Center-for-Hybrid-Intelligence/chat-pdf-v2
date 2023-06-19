@@ -16,7 +16,31 @@
     text-lg
     h8:text-2xl
     k15:text-3xl
-    my-10;
+    mb-2;
+}
+.heading3 {
+    @apply
+    font-semibold
+    capitalize
+    text-left
+    text-xl
+}
+.heading4 {
+    @apply
+    font-semibold
+    capitalize
+    text-left
+    text-center
+}
+.normalText {
+    @apply
+    font-normal
+    text-left
+    text-xs
+}
+.slider {
+    @apply
+    h-6 bg-gray-300 appearance-none rounded-full w-full transition-opacity duration-200 opacity-70 hover:opacity-100 focus:outline-none
 }
 .hover{
     scale: 1;
@@ -26,20 +50,29 @@
 .hover:hover{
     scale: 1.05;
 }
-
+.dropdown{
+    width: 10rem;
+    color: black;
+    border-radius: .25rem;
+    padding: .75rem;
+    transition: background-color;
+    transition-duration: 200ms;
+    cursor: pointer;
+    border: 2px solid rgba(50, 205, 50, 1);
+}
 .button{
     width: 10rem;
     color: white;
     border-radius: .25rem;
     padding: .75rem;
-    background-color: rgba(50, 205, 50, 1);
+    background-color:  #A3CD99;
     transition: background-color;
     transition-duration: 200ms;
     cursor: pointer;
     border: none;
 }
 .button:hover{
-    background-color: rgba(50, 205, 50, 0.8);
+    background-color: #579E81;
 }
 .buttonSecondary{
     width: 10rem;
