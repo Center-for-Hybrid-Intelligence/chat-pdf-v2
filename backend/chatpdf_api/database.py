@@ -10,6 +10,8 @@ class Namespace(db.Model):
 
 class Document(db.Model):
     document_id = db.Column(db.Integer, primary_key=True)
+    document_title = db.Column(db.Text, nullable=True)
+    document_author = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime(timezone=True),
                             server_default=func.now())
     document_file = db.Column(db.Text, nullable=True)
@@ -18,7 +20,7 @@ class Document(db.Model):
     def __repr__(self):
         return f'<Prompt {self.document_id}, created at {self.created_at}>'
 
-def add_document(document_id, document_file, namespace_name):
+def add_document(document_id, document_title, document_author, document_file, namespace_name):
     document_id = document_id[6:]
     namespaces = Namespace.query.filter_by(namespace_name = namespace_name).first()
     print(namespaces)
@@ -28,7 +30,11 @@ def add_document(document_id, document_file, namespace_name):
     else:
         namespace = namespaces
     try:
-        db.session.add(Document(document_id=int(document_id), document_file=document_file, namespace_id=namespace.namespace_id))
+        db.session.add(Document(document_id=int(document_id), 
+                                document_title=document_title, 
+                                document_author=document_author, 
+                                document_file=document_file, 
+                                namespace_id=namespace.namespace_id))
         db.session.commit()
     except IntegrityError:
         return "Document already exists"

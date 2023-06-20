@@ -39,6 +39,8 @@ import tiktoken
 
 from .database import remove_document
 
+from .database import add_document
+
 
 class QaTool:
     def __init__(self,chunk_size=400, chunk_overlap = 20, chain_type = "stuff") -> None:
