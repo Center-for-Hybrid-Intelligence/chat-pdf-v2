@@ -240,7 +240,7 @@ export default {
 
         formData.append("author", JSON.stringify(author));
         formData.append("namespace", JSON.stringify(inputFieldValue.value));
-
+        formData.append("settings", JSON.stringify(settings.value));
 
         formDataList.push(formData);
       }
