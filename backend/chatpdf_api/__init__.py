@@ -67,7 +67,7 @@ def load_pdf():
     except Exception as e:
         raise e
         return "Bad request", 402
-
+    
     qa_tool.loading_data_to_pinecone(df)
     return f"Successfully loaded {file_id} to pinecone", 200
 

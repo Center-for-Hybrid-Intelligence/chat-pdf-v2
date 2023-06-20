@@ -81,7 +81,7 @@ def read_from_encode(file, author, identifier, namespace, title):
         text = page.extract_text()
         pages += text
     try:
-        add_document(document_id = identifier, document_file=pages, namespace_name=namespace)
+        add_document(document_id = identifier, document_title=title , document_author=author, document_file=pages, namespace_name=namespace)
     except Exception as e:
         raise e
     df = create_dataframe(title, identifier, author, pages)
