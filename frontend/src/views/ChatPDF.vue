@@ -2,7 +2,7 @@
   <!--select or drop single or multiple files form using tailwindcss and compositionAPI-->
   <div class="flex flex-col items-center justify-center w-screen mt-32"
   >
-    <div class="flex flex-col gap-8 items-center w-2/3 k15:w-1/4">
+    <div class="flex flex-col gap-8 items-center w-full k1:w-1/2">
 
       <label class="block text-7xl font-bold text-gray-700" for="files">
         ChatPDF
@@ -30,7 +30,8 @@
             <span
                 class="flex m-4 gap-2 bg-blue-600 hover:bg-blue-800 transition-all duration-300 text-white justify-center font-extrabold text-lg p-4 px-12 rounded-full color cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3.0"
-               stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/> </svg>
+               stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/> </svg>
           Upload PDF's
 
         </span>
@@ -57,12 +58,11 @@
 
       </div>
     </div>
-    <transition-group name="list" class="w-full" tag="div">
-      <div v-for="(file, index) in files" :key="index" class="my-3 w-full flex justify-evenly flex-wrap gap-4 w-4/5">
-
-        <div class="flex gap-4 justify-between p-4 shadow-2xl w-1/3 shadow-gray-300 rounded-xl ">
-          <img src="pdf-placeholder.png" class="h-full w-16 object-contain place-self-center"/>
-          <div class="flex flex-col w-full ">
+    <transition-group name="list" class="w-full flex flex-wrap justify-center gap-4 my-8" tag="div">
+      <div v-for="(file, index) in files" :key="index" class=" w-11/12 k1:w-5/12  ">
+        <div class="flex gap-4 justify-between p-4 shadow-2xl shadow-gray-300 rounded-xl ">
+          <img src="pdf-placeholder.png" class="h-full w-16 object-contain "/>
+          <div class="flex flex-col w-full  ">
             <h1 class="text-start self-start pb-2" style="
                 display: -webkit-box;
                 -webkit-line-clamp: 1;
@@ -70,7 +70,7 @@
                 overflow: hidden;
                 text-overflow: ellipsis;"
             >
-              {{ file.name}}
+              {{ file.name }}
 
             </h1>
             <div class="flex align-middle h-full gap-2 ">
@@ -94,25 +94,29 @@
       </div>
     </transition-group>
 
-    <div class="border-4 flex-col gap-2 border-transparent p-8 bg-white rounded-xl shadow-gray-300 shadow-2xl"  v-if="files.length > 0">
+    <div class="border-4 flex-col gap-2 border-transparent p-8 bg-white rounded-xl shadow-gray-300 shadow-2xl"
+         v-if="files.length > 0">
       <h1 class="heading2">
         Customize your request
       </h1>
       <h1 class="heading4 flex">
-        Chunk size  (
+        Chunk size (
         <div class="w-10 heading4">{{ settings.chunk_size || 2.5 }}</div>
         / 800)
       </h1>
-      <h1 class="normalText">Average length in tokens of the pieces of text that will be extracted and retrieve from your document. small sentences : less than 30,  big paragraphs : 400</h1>
-      <input min="10" max="800" step="1" type="range" :value="settings.chunk_size" @input="chunkSizeChange" class="slider k1:w-128 w-80 mt-4"
+      <h1 class="normalText">Average length in tokens of the pieces of text that will be extracted and retrieve from
+        your document. small sentences : less than 30, big paragraphs : 400</h1>
+      <input min="10" max="800" step="1" type="range" :value="settings.chunk_size" @input="chunkSizeChange"
+             class="slider k1:w-128 w-80 mt-4"
              id="weightSlider">
       <h1 class="heading4 flex">
-        Chunk overlap  (
+        Chunk overlap (
         <div class="w-10 heading4">{{ settings.chunk_overlap || 2.5 }}</div>
         / 80)
       </h1>
       <h1 class="normalText">overlap in tokens between the piece of text extracted from your document</h1>
-      <input min="0" max="80" step="1" type="range" :value="settings.chunk_overlap" @input="chunkOverlapChange" class="slider  k1:w-128 w-80 mt-4"
+      <input min="0" max="80" step="1" type="range" :value="settings.chunk_overlap" @input="chunkOverlapChange"
+             class="slider  k1:w-128 w-80 mt-4"
              id="weightSlider">
       <div class="flex justify-center mt-4 mx-12" v-if="files.length > 0">
         <input
@@ -125,7 +129,10 @@
                 :class="{ 'text-black/20': inputFieldValue === '',
                ' text-white': inputFieldValue !== ''}"
                 class="p-2 px-6 text-xl font-bold self-center rounded-r-lg rounded-l-none transition-all duration-300">
-          <template #right><div v-if="loading">Loading</div> <div v-else>Submit</div></template>
+          <template #right>
+            <div v-if="loading">Loading</div>
+            <div v-else>Submit</div>
+          </template>
         </Button>
         <div v-if="uploadFailed">
           {{ errorMessage }}
@@ -140,8 +147,9 @@
 <script>
 import {ref} from "vue";
 import router from "@/router";
-import { authService } from '@/api'
+import {authService} from '@/api'
 import Button from "@/components/forms/Button";
+
 export default {
   name: "FileUpload",
   components: {
@@ -161,6 +169,17 @@ export default {
     const inputFieldValue = ref('');
     const uploadFailed = ref(false);
     const errorMessage = ref('');
+
+  /*  const testSetup = () => {
+      for (let i = 0; i < 3; i++) {
+        const formData = new FormData();
+        formData.append("documentId", parseInt(Date.now().toString(36) + Math.random().toString(36).substr(2, 5), 36));
+        formData.append("file", "testFile");
+        formData.append("name", "testName");
+        files.value.push({formData: formData, author: ""})
+      }
+    }
+    testSetup()*/
 
     const settings = ref({
       chunk_size: 200,
@@ -240,7 +259,7 @@ export default {
 
         formData.append("author", JSON.stringify(author));
         formData.append("namespace", JSON.stringify(inputFieldValue.value));
-
+        formData.append("settings", JSON.stringify(settings.value));
 
         formDataList.push(formData);
       }
@@ -257,7 +276,7 @@ export default {
         const responses = await Promise.all(uploadPromises);
         console.log(responses);
         loading.value = false;
-        router.push({name: "promptPDF", params: { namespace: inputFieldValue.value }});
+        router.push({name: "promptPDF", params: {namespace: inputFieldValue.value}});
       } catch (error) {
         console.error(error);
         loading.value = false;
