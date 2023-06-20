@@ -100,11 +100,11 @@ export default {
     });
 
     const sendRequest = async () => {
-      // answer.value = '';
       loading.value = true;
       questionList.questions.push(query.value);
       const request_data = {
         query: query.value,
+        settings: settings.value,
       };
       loading_answer.value = true;
       has_answer.value = true;
