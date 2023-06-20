@@ -27,7 +27,7 @@
     <!-- Dropdown menu -->
     <div
       v-show="show"
-      class="z-10 w-56 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700"
+      class="z-10 w-full bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700"
       style="
         position: absolute;
         inset: 0px auto auto 0px;
@@ -35,7 +35,7 @@
         transform: translate3d(0px, 44px, 0px);
       "
     >
-      <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
+      <ul class=" text-sm text-gray-700 dark:text-gray-200">
         <li v-for="item in items" :key="item" @click.stop="onClick">
           <div
             :id="item"
