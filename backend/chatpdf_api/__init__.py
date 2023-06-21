@@ -1,8 +1,7 @@
 import numpy as np
 from flask_cors import CORS
-from flask import Flask, jsonify, request, Response, stream_with_context, session
-from flask_session import Session
-from .database import db
+from flask import g, Flask, request, session
+from .database import db, add_session, retrieve_session, delete_session, update_session
 from .readpdf import read_from_encode
 from .qa_tool import QaTool
 import json
@@ -28,61 +27,76 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-qa_tool = QaTool()
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "sqlalchemy"
 
-# Session(app)
 app.secret_key = "pietervandeawiff"
 
 @app.after_request
 def add_header(response):
     response.headers['Access-Control-Allow-Origin'] = 'http://localhost:8080'
     response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Auth-Token'
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST'
     return response
 
-@app.route('/api/load-pdf/', methods=['POST', 'OPTIONS'])
+@app.before_request
+def initialize_qa_tool():
+    if request.method == 'OPTIONS':
+        return ''
+    session_id = request.cookies.get('sessionID')
+    qa_tool = retrieve_session(session_id)
+    if qa_tool is None:
+        print("Creating new session")
+        qa_tool = QaTool()
+        add_session(session_id, qa_tool)
+    session['session_id'] = session_id
+    print(session)
+    g.qa_tool = qa_tool
+@app.route('/api/load-pdf/', methods=['POST'])
 def load_pdf():
-    print(request)
+    qa_tool = g.qa_tool
+
     author = request.form.get('author')
     file_id = request.form.get('documentId')
     namespace = request.form.get('namespace')
     title = request.form.get('name')
     file = request.files['file']
-    chunk_size = request.form.get('chunk_size', 400)
-    chunk_overlap = request.form.get('chunk_overlap', 20)
+    settings = json.loads(request.form.get('settings'))
+    chunk_size = settings["chunk_size"]
+    chunk_overlap = settings['chunk_overlap']
     qa_tool.set_chunks(chunk_size, chunk_overlap)
     if not (author and file_id and namespace and file):
         return "Missing file or fileInfo", 401
 
     if qa_tool.namespace is None:
         qa_tool.set_namespace(namespace)
-        session['namespace'] = namespace
-        print(session)
+
     try:
-        df = read_from_encode(file, author, file_id, namespace, title)
+        df = read_from_encode(file, author, file_id, namespace, title, session['session_id'])
     except Exception as e:
         raise e
         return "Bad request", 402
-    
+    print(qa_tool)
     qa_tool.loading_data_to_pinecone(df)
+    update_session(session['session_id'], qa_tool)
+    g.qa_tool = qa_tool
     return f"Successfully loaded {file_id} to pinecone", 200
 
 @app.route('/api/ask-query/', methods=['POST'])
 def ask_query():
-    # if qa_tool.namespace != session['namespace']:
-    #     qa_tool.set_namespace(session['namespace'])
+    qa_tool = g.qa_tool
+    print(qa_tool)
+
     data = request.get_json()
-    llm_model = request.form.get('llm_model', 'gpt-4')
-    llm_temperature = request.form.get('llm_temperature', 0.0)
+    settings = data['settings']
+    llm_model = settings['llm_model']
+    llm_temperature = settings['llm_temperature']
     qa_tool.set_llm(llm_model, llm_temperature)
-    print(data)
     top_closest = request.form.get('sources_number', 5)
-    
     try:
+        print("Querying...")
         result = qa_tool(query=data['query'],top_closest=top_closest)
     except openai.error.InvalidRequestError as e:
         print((f"Invalid request error: {e}"))
@@ -94,18 +108,32 @@ def ask_query():
     for doc in result['source_documents']:
         content.append((doc.page_content, doc.metadata['title']))
     response = {"result": result['result'], "source_documents": content}
+
+    update_session(session['session_id'], qa_tool)
+    g.qa_tool = qa_tool
     return response, 200
 
     
 @app.route('/api/erase-all/', methods=['GET'])
 def erase_all():
+    qa_tool = g.qa_tool
+    print(qa_tool)
     qa_tool.delete_all()
     qa_tool.namespace = None
-    session['namespace'] = None
-    print(session)
+    delete_session(session['session_id'])
+
+    del session['session_id']
+    # Delete qa_tool from g
+    del g.qa_tool
+
     return "Successfully deleted all data", 200
 
 @app.route('/api/hello/', methods=['GET'])
 def hello():
     return "Hello world", 200
 
+
+@app.route('/api/get-files/', methods=['GET'])
+def get_files():
+    raise NotImplementedError
+    return files, 200
