@@ -13,10 +13,11 @@
 .heading2 {
     @apply font-semibold
     capitalize
-    text-lg
+    text-xs
     h8:text-2xl
     k15:text-3xl
-    mb-2;
+    mb-2
+    text-start;
 }
 .heading3 {
     @apply
@@ -30,7 +31,6 @@
     font-semibold
     capitalize
     text-left
-    text-center
 }
 .normalText {
     @apply

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col justify-center mx-12 h6:mx-32 h8:mx-36 k1:mx-48 k15:mx-96 my-32"
+  <div class="flex flex-col justify-center mx-12  h6:mx-24 k1:mx-48 k15:mx-96 my-32"
   >
     <div class="flex flex-col gap-8 items-center w-full">
 
@@ -15,7 +15,7 @@
         <div class="items-start">
         <h1 class="heading2 flex">
           Temperature (
-          <div class="w-10 heading2">{{ settings.llm_temperature || 2.5 }}</div>
+          <div class="w-10">{{ settings.llm_temperature }}</div>
           / 5)
         </h1>
         <h1 class="normalText">The closer it gets to 0 zero the more rational it behaves, the higher the more creative it gets. </h1>
@@ -38,6 +38,7 @@
         <Button :isDisabled="loading" class="button primary" @click="sendRequest">
           <template #right><div v-if="loading">Loading results</div> <div v-else>Submit</div></template>
         </Button>
+        <h1 class="normalText"> {{error}} </h1>
       </div>
 
     <div class="mt-8 w-full" v-for="(question, index) in reversedQuestionList" :key="index">
@@ -47,14 +48,20 @@
           {{ questionList.answers[questionList.questions.length - 1 - index] }}
             <h1 class="heading2"> Source documents </h1>
             <div style="white-space: pre-wrap">
-              {{ questionList.sourceDocuments[questionList.questions.length - 1 - index] }}
+              <div v-for="(source, index) in questionList.sourceDocuments[questionList.questions.length - 1 - index]" :key="index">
+                <h1 class="heading4">Source </h1>
+                <div class="mb-4" v-for="(specificSource, index) in source" :key="index">
+                  <div v-if="!(index % 2 === 0)"><h1 class="heading4">Found in</h1></div>
+                  <span  :class="{'text-blue-600': !(index % 2 === 0)}">{{ specificSource }}</span>
+                </div>
+              </div>
             </div>
         </div>
       </div>
     </div>
     </div>
+  </div>    <div v-if="loading" class="loading">Loading&#8230;</div>
 
-  </div>
 </template>
 
 <script>
@@ -77,7 +84,7 @@ export default {
     const has_answer = ref(false)
     const loading_answer = ref(false)
     const answer = ref('')
-
+    const error = ref('')
     const questionList = reactive({
       questions: [],
       answers: [],
@@ -138,11 +145,12 @@ export default {
             questionList.answers.push(answer.value.result);
             questionList.sourceDocuments.push(answer.value.source_documents);
             console.log(response.data);
+            console.log(answer.value.source_documents)
             loading.value = false;
             ref.question.value = '';
           })
           .catch((error) => {
-            console.log(error);
+            error.value = error.message;
             loading.value = false;
           });
     }
@@ -194,6 +202,7 @@ export default {
       tempChange,
       settings,
       modelChange,
+      error
     }
   }
 }
@@ -222,5 +231,123 @@ export default {
   background-color: #4B5563;
   border-radius: 9999px;
   cursor: pointer;
+}
+.loading {
+  position: fixed;
+  z-index: 999;
+  height: 2em;
+  width: 2em;
+  overflow: visible;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+/* Transparent Overlay */
+.loading:before {
+  content: '';
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.3);
+}
+
+/* :not(:required) hides these rules from IE9 and below */
+.loading:not(:required) {
+  /* hide "loading..." text */
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+
+.loading:not(:required):after {
+  content: '';
+  display: block;
+  font-size: 10px;
+  width: 1em;
+  height: 1em;
+  margin-top: -0.5em;
+  -webkit-animation: spinner 1500ms infinite linear;
+  -moz-animation: spinner 1500ms infinite linear;
+  -ms-animation: spinner 1500ms infinite linear;
+  -o-animation: spinner 1500ms infinite linear;
+  animation: spinner 1500ms infinite linear;
+  border-radius: 0.5em;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+  box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) -1.5em 0 0 0, rgba(0, 0, 0, 0.75) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+}
+
+/* Animation */
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-moz-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
 }
 </style>

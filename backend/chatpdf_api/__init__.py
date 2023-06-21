@@ -14,7 +14,7 @@ import openai
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "https://hybridintelligence.eu"}})
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
 
 # check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -35,7 +35,7 @@ app.secret_key = "pietervandeawiff"
 
 @app.after_request
 def add_header(response):
-    response.headers['Access-Control-Allow-Origin'] = 'https://hybridintelligence.eu'
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:8080'
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Auth-Token'
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST'
@@ -64,8 +64,8 @@ def load_pdf():
     title = request.form.get('name')
     file = request.files['file']
     settings = json.loads(request.form.get('settings'))
-    chunk_size = settings["chunk_size"]
-    chunk_overlap = settings['chunk_overlap']
+    chunk_size = int(settings["chunk_size"])
+    chunk_overlap = int(settings['chunk_overlap'])
     qa_tool.set_chunks(chunk_size, chunk_overlap)
     if not (author and file_id and namespace and file):
         return "Missing file or fileInfo", 401
@@ -92,7 +92,7 @@ def ask_query():
     data = request.get_json()
     settings = data['settings']
     llm_model = settings['llm_model']
-    llm_temperature = settings['llm_temperature']
+    llm_temperature = float(settings['llm_temperature'])
     qa_tool.set_llm(llm_model, llm_temperature)
     top_closest = request.form.get('sources_number', 5)
     try:
@@ -106,9 +106,9 @@ def ask_query():
     print(result.keys())
     content = []
     for doc in result['source_documents']:
-        content.append((doc.page_content, doc.metadata['title']))
+        content.append((doc.page_content.replace('\n', "").replace('\t', ""), doc.metadata['title']))
     response = {"result": result['result'], "source_documents": content}
-
+    print(content)
     update_session(session['session_id'], qa_tool)
     g.qa_tool = qa_tool
     return response, 200
