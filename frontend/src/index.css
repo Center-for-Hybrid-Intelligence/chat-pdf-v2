@@ -40,7 +40,7 @@
 }
 .slider {
     @apply
-    h-6 bg-gray-300 appearance-none rounded-full w-full transition-opacity duration-200 opacity-70 hover:opacity-100 focus:outline-none
+    h-6 bg-gray-300 appearance-none rounded-full transition-opacity duration-200 opacity-70 hover:opacity-100 focus:outline-none
 }
 .hover{
     scale: 1;
@@ -51,10 +51,11 @@
     scale: 1.05;
 }
 .dropdown{
+
     width: 10rem;
     color: black;
     border-radius: .25rem;
-    padding: .75rem;
+    padding: .50rem;
     transition: background-color;
     transition-duration: 200ms;
     cursor: pointer;
