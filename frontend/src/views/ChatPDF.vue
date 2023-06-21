@@ -149,6 +149,7 @@ import {ref} from "vue";
 import router from "@/router";
 import {authService} from '@/api'
 import Button from "@/components/forms/Button";
+import {initializeSession} from "@/cookieHandler";
 
 export default {
   name: "FileUpload",
@@ -163,6 +164,8 @@ export default {
   },
   emits: ["update:modelValue"],
   setup(props, {emit}) {
+    initializeSession()
+    console.log(document.cookie)
     const loading = ref(false);
     const files = ref(props.value);
     const isDragging = ref(false);
@@ -263,7 +266,7 @@ export default {
 
         formDataList.push(formData);
       }
-      console.log(authService.baseURL);
+      console.log(document.cookie)
       const uploadPromises = formDataList.map(formData => {
         return authService.post("/load-pdf/", formData, {
           headers: {
@@ -304,7 +307,7 @@ export default {
       errorMessage,
       settings,
       chunkSizeChange,
-      chunkOverlapChange
+      chunkOverlapChange,
     }
   }
 }

@@ -69,7 +69,7 @@ def read_from_url(url, author,identifier, namespace):
     
     return df
 
-def read_from_encode(file, author, identifier, namespace, title):
+def read_from_encode(file, author, identifier, namespace, title, session_id):
     pdf_reader = PdfReader(file)
 
     # Get the number of pages in the PDF
@@ -81,7 +81,7 @@ def read_from_encode(file, author, identifier, namespace, title):
         text = page.extract_text()
         pages += text
     try:
-        add_document(document_id = identifier, document_title=title , document_author=author, document_file=pages, namespace_name=namespace)
+        add_document(document_id = identifier, document_title=title , document_author=author, document_file=pages, namespace_name=namespace, session_id=session_id)
     except Exception as e:
         raise e
     df = create_dataframe(title, identifier, author, pages)

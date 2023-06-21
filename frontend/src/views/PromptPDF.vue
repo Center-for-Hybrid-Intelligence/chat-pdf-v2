@@ -16,7 +16,7 @@
           <div class="w-10 heading2">{{ settings.llm_temperature || 2.5 }}</div>
           / 5)
         </h1>
-        <h1 class="normalText">Higher values will make your image closer to your prompt</h1>
+        <h1 class="normalText">Higher values will make the model more creative but less reliable</h1>
         <input min="0" max="5" step="0.1" type="range" :value="settings.llm_temperature" @input="tempChange" class="slider k1:w-128 w-80 mt-4 self-center"
                id="weightSlider">
         </div>
@@ -60,11 +60,14 @@ import {ref, reactive, computed} from "vue";
 import { onBeforeUnmount } from 'vue';
 import { authService } from "@/api";
 import DropdownSingle from "@/components/forms/DropdownSingle.vue";
+import {initializeSession} from "@/cookieHandler";
 
 export default {
   name: "PromptPDf",
   components: {DropdownSingle, Button, TextArea},
   setup() {
+    initializeSession();
+    console.log(document.cookie, 'cookie')
     const query = ref('')
     const has_answer = ref(false)
     const loading_answer = ref(false)
@@ -77,8 +80,8 @@ export default {
     });
 
     const settings = ref( {
-        llm_temperature: null,
-        llm_model: "gpt-3.5-turbo",
+        llm_temperature: 0,
+        llm_model: "gpt-4",
     } )
 
     const tempChange = (e) => {
@@ -108,6 +111,7 @@ export default {
       };
       loading_answer.value = true;
       has_answer.value = true;
+      console.log(document.cookie, 'cookie in send request')
       authService.post('/ask-query/', request_data, {
               headers: {
                 "Content-Type": "application/json",
