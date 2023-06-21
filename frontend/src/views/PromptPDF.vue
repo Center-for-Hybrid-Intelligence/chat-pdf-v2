@@ -1,32 +1,36 @@
 <template>
-  <div class="flex flex-col items-center justify-center mt-32"
+  <div class="flex flex-col justify-center mx-12 h6:mx-32 h8:mx-36 k1:mx-48 k15:mx-96 my-32"
   >
-    <div class="flex flex-col gap-8 items-center w-max">
+    <div class="flex flex-col gap-8 items-center w-full">
 
       <label class="block text-7xl font-bold text-gray-700">
         Write your question
       </label>
-      <TextArea ref="question" @input="onChange" class="h-64"></TextArea>
+
+      <TextArea ref="question" :isDisabled="loading" @input="onChange" class="h-64 w-full k1:w-2/3"></TextArea>
+      <div class="flex-col gap-6">
 
 
-      <div class="w-max flex gap-24 justify-between">
-        <div>
+        <div class="w-full flex justify-center gap-8">
+        <div class="items-start">
         <h1 class="heading2 flex">
           Temperature (
           <div class="w-10 heading2">{{ settings.llm_temperature || 2.5 }}</div>
           / 5)
         </h1>
-        <h1 class="normalText">Higher values will make the model more creative but less reliable</h1>
-        <input min="0" max="5" step="0.1" type="range" :value="settings.llm_temperature" @input="tempChange" class="slider k1:w-128 w-80 mt-4 self-center"
+        <h1 class="normalText">The closer it gets to 0 zero the more rational it behaves, the higher the more creative it gets. </h1>
+        <input min="0" max="5" step="0.1" type="range" :value="settings.llm_temperature" @input="tempChange" class="slider w-full mt-4"
                id="weightSlider">
         </div>
 
-        <div class="">
+        <div class="items-start">
           <h1 class="heading2">
-            Model
+            Model used
           </h1>
-          <DropdownSingle :items="['gpt-3.5-turbo', 'gpt-4']" :selected="settings.llm_model" @select="modelChange"></DropdownSingle>
+          <h1 class="normalText">Different models interpret text differently. </h1>
+          <DropdownSingle class="mt-4" :items="['gpt-3.5-turbo', 'gpt-4']" :selected="settings.llm_model" @select="modelChange"></DropdownSingle>
         </div>
+      </div>
       </div>
 
 
@@ -61,6 +65,7 @@ import { onBeforeUnmount } from 'vue';
 import { authService } from "@/api";
 import DropdownSingle from "@/components/forms/DropdownSingle.vue";
 import {initializeSession} from "@/cookieHandler";
+
 
 export default {
   name: "PromptPDf",
@@ -98,11 +103,21 @@ export default {
       query.value = value
     }
 
+    document.body.addEventListener('keydown', (event) => {
+      if(event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+        sendRequest();
+      }
+    });
+
     const reversedQuestionList = computed(() => { // Define computed property
       return questionList.questions.slice().reverse();
     });
 
     const sendRequest = async () => {
+      if (query.value === '') {
+        
+        return;
+      }
       loading.value = true;
       questionList.questions.push(query.value);
       const request_data = {
@@ -178,7 +193,7 @@ export default {
       reversedQuestionList,
       tempChange,
       settings,
-      modelChange
+      modelChange,
     }
   }
 }
