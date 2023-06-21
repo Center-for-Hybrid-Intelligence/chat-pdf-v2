@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text, func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.types import TypeDecorator, LargeBinary
-
+import dill
 db = SQLAlchemy()
 
 
