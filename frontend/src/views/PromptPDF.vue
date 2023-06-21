@@ -41,7 +41,7 @@
         <h1 class="normalText"> {{error}} </h1>
       </div>
 
-    <div class="mt-8 w-full" v-for="(question, index) in reversedQuestionList" :key="index">
+    <div class="mt-8 w-full mx-auto" v-for="(question, index) in reversedQuestionList" :key="index">
       <div class="flex flex-col gap-4 border-2 border-green-600 w-full	 h8:max-w-2xl break-words rounded-s p-6" v-if="questionList.answers[questionList.questions.length - 1 - index]">
         <div class="block text-xs text-start font-medium text-gray-700">
           <h1 class="heading2"> {{ reversedQuestionList[index] }} </h1>
