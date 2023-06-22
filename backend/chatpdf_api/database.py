@@ -41,3 +41,10 @@ def add_document(document_id, document_title, document_author, document_file, na
 
 def remove_document(document_id):
     Document.query.filter_by(document_id = document_id).delete()
+
+def get_documents():
+    documents = Document.query.all()
+    result = []
+    for document in documents:
+        result.append((document.document_title, document.document_author))
+    return result
