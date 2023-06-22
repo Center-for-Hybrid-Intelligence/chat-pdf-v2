@@ -8,10 +8,9 @@
       </label>
 
       <TextArea ref="question" :isDisabled="loading" @input="onChange" class="h-64 w-full k1:w-2/3"></TextArea>
-
       <div v-for="(file, index) in files" :key="index" class=" w-11/12 k1:w-5/12  ">
         <div class="flex gap-4 justify-between p-4 shadow-2xl shadow-gray-300 rounded-xl ">
-          <img src="pdf-placeholder.png" class="h-full w-16 object-contain "/>
+          <img src="/pdf-placeholder.png" class="h-full w-8 object-contain "/>
           <div class="flex flex-col w-full  ">
             <h1 class="text-start self-start pb-2" style="
                 display: -webkit-box;
@@ -20,19 +19,14 @@
                 overflow: hidden;
                 text-overflow: ellipsis;"
             >
-              {{ file.name }}
+
+              {{ file.title }}
 
             </h1>
-            <div class="flex align-middle h-full gap-2 ">
-              <!--              <h1 class="text-mg font-bold place-self-center  ">
-                                Author:
-                            </h1>-->
-              <input
-                  v-model="file.author"
-                  type="text"
-                  class="mt-1 w-full px-2 py-1 border-gray-300 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  placeholder="Author's Name"
-              />
+            <div v-if="file.author" class="flex align-middle h-full gap-2 ">
+
+              {{ file.author }}
+
             </div>
           </div>
         </div>
@@ -122,6 +116,7 @@ export default {
       sourceDocuments: [],
     });
 
+    let files = ref([])
     onMounted(() => {
       console.log('mounted')
       authService.get('/get-files/', {
@@ -130,13 +125,13 @@ export default {
               },
             })
           .then((response) => {
+            files.value = response.data
             console.log(response)
           })
           .catch((error) => {
             console.log(error);
           });
     })
-    const files = ref([])
 
     const settings = ref( {
         llm_temperature: 0,

@@ -2,14 +2,14 @@
   <!--select or drop single or multiple files form using tailwindcss and compositionAPI-->
   <div class="flex flex-col items-center justify-center w-screen mt-32"
   >
-    <div class="flex flex-col gap-8 items-center w-full k1:w-1/2">
+    <div class="flex flex-col gap-8 items-center transition-all w-full k1:w-1/2">
 
-      <label class="block text-4xl h8:text-5xl k15:text-7xl font-bold text-gray-700" for="files">
+      <label class="block text-4xl h8:text-5xl k15:text-7xl font-bold transition-all text-gray-700" for="files">
         ChatPDF
       </label>
 
       <div
-          class="flex gap-2 flex-col justify-center border-4 border-transparent p-8 bg-white rounded-xl shadow-gray-300 shadow-2xl w-4/5"
+          class="flex gap-2 flex-col justify-center border-4 border-transparent p-8 bg-white rounded-xl shadow-gray-300 shadow-2xl  w-4/5"
           @dragenter="handleDragEnter"
           @dragover="handleDragOver"
           @dragleave="handleDragLeave"
@@ -28,9 +28,9 @@
                     d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
             </svg>
             <span
-                class="flex m-4 gap-2 bg-blue-600 hover:bg-blue-800 transition-all duration-300 text-white justify-center font-extrabold text-lg p-4 px-12 rounded-full color cursor-pointer">
+                class="flex m-4 gap-2 bg-blue-600 hover:bg-blue-800 transition-all duration-300 text-white justify-center font-extrabold k1:text-lg text-xs p-4 k1:px-12 px-6 rounded-full color cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3.0"
-               stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round"
+               stroke="currentColor" class="k1:w-6 k1:h-6 w-3 h-3"> <path stroke-linecap="round" stroke-linejoin="round"
                                                             d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/> </svg>
           Upload PDF's
 
@@ -123,7 +123,7 @@
           Your namespace
         </h1>
         <h1 class="normalText">Please enter your namespace if you want to continue your work. If you want to start new process you can generate and click to copy it so you can come back to your progress later!</h1>
-        <div class="flex flex-col gap-2 h8:gap-0 h8:flex-row h8:justify-center">
+        <div class="flex flex-col mt-3 h8:mt-0 gap-2 h8:gap-0 h8:flex-row h8:justify-center">
           <Button class="button bg-gray-800 rounded rounded-2xl rounded-r-none p-2 px-6 text-xl font-bold h8:self-center transition-all duration-300"  @click="generateAndCopyToClipboard">
             <template #right>
               {{generated ? 'Copied' : 'Generate & Copy'}}
@@ -132,7 +132,7 @@
 
         <input
             :value="nameSpaceRender"
-            @change="event => nameSpaceRender = event.target.value"
+            @input="event => nameSpaceRender = event.target.value"
             type="text"
             placeholder="Enter Namespace"
             class="px-2 py-1 h8:flex-grow h8:flex-1 w-max border border-gray-400 w-max focus:outline-none"
