@@ -140,3 +140,28 @@ output_parser = RegexParser(
     output_keys=["answer", "score"],
 )
 ```
+# Logic behing features
+## same question asked on each pdf
+We are going to pass the filter along with the top_closest documents we want in the __init__.py more info about how to pass :
+here we have the vectorstore object
+https://github.com/hwchase17/langchain/blob/d50de2728f95df0ffc59c538bd67e116a8e75a53/langchain/vectorstores/base.py#L116
+which call a similarity search that itself all index.query()
+https://github.com/hwchase17/langchain/blob/master/langchain/vectorstores/pinecone.py#L139
+and index.query() documentation is here :
+https://docs.pinecone.io/docs/metadata-filtering
+
+The metadata filters can be combined with AND and OR:
+
+$eq - Equal to (number, string, boolean)
+$ne - Not equal to (number, string, boolean)
+$gt - Greater than (number)
+$gte - Greater than or equal to (number)
+$lt - Less than (number)
+$lte - Less than or equal to (number)
+$in - In array (string or number)
+$nin - Not in array (string or number)
+
+# Things to implement
+## Self querying : choosing filter based on prompt
+https://python.langchain.com/docs/modules/data_connection/retrievers/how_to/self_query/
+the chain will read the prompt and choose a filter on the metadata to apply on the retriever in order to be more efficient for retrieving relevant informations
