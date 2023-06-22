@@ -291,7 +291,7 @@ export default {
 
         formData.append("author", author);
         formData.append("namespace", nameSpaceRender.value);
-        formData.append("settings", settings.value);
+        formData.append("settings", JSON.stringify(settings.value));
 
         formDataList.push(formData);
       }
