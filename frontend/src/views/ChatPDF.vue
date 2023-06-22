@@ -94,7 +94,7 @@
       </div>
     </transition-group>
 
-    <div class="border-4 flex-col gap-2 border-transparent p-8 bg-white rounded-xl shadow-gray-300 shadow-2xl"
+    <div class="border-4  w-2/3 flex-col gap-2 border-transparent p-8 bg-white rounded-xl shadow-gray-300 shadow-2xl"
          v-if="files.length > 0">
       <h1 class="heading2">
         Customize your request
@@ -122,35 +122,34 @@
         <h1 class="heading4 flex">
           Your namespace
         </h1>
-        <h1 class="normalText">This is your namespace, click to copy it so you can come back to your progress later!</h1>
-        <div class="flex justify-center">
+        <h1 class="normalText">Please enter your namespace if you want to continue your work. If you want to start new process you can generate and click to copy it so you can come back to your progress later!</h1>
+        <div class="flex flex-0 justify-center">
+          <Button class="button bg-gray-800 rounded rounded-2xl rounded-r-none p-2 px-6 text-xl font-bold self-center transition-all duration-300"  @click="generateAndCopyToClipboard">
+            <template #right>
+              Generate & Copy
+            </template>
+          </Button>
 
-          <div class="w-full flex rounded-lg rounded-r-none border border-r-0 border-gray-400 bg-white hover:bg-gray-100 transition-all duration-300">
-            <Button @click="generateAndCopyToClipboard">Generate for me</Button>
-          </div>
-        <div class="w-full flex rounded-lg rounded-r-none border border-r-0 border-gray-400 bg-white hover:bg-gray-100 transition-all duration-300"
-             @click="copyToClipboard" >
         <input
             :value="nameSpaceRender"
-            :disabled="true"
             type="text"
             placeholder="Enter Namespace"
-            class="px-2 py-1 border border-gray-400 rounded-l w-full focus:outline-none"
+            class="px-2 py-1 flex-grow flex-1 border border-gray-400 w-max focus:outline-none"
         />
-        </div>
         <Button @click="onsubmit" :isDisabled="nameSpaceRender === '' || loading"
                 :class="{ 'text-black/20': nameSpaceRender === '',
                ' text-white': nameSpaceRender !== ''}"
-                class="p-2 px-6 text-xl font-bold self-center rounded-r-lg rounded-l-none transition-all duration-300">
+                class="button flex-0 p-2 px-6 text-xl font-bold self-center rounded-r-lg rounded-l-none transition-all duration-300">
           <template #right>
             <div v-if="loading">Loading</div>
             <div v-else>Submit</div>
           </template>
         </Button>
+
+
+        </div>
         <div v-if="uploadFailed">
           {{ errorMessage }}
-        </div>
-
         </div>
       </div>
     </div>
@@ -199,9 +198,7 @@ export default {
     }
     testSetup()*/
 
-    const nameSpace = uuidv4()
-
-    const nameSpaceRender = ref(nameSpace)
+    const nameSpaceRender = ref('')
 
     const settings = ref({
       chunk_size: 200,
@@ -210,6 +207,7 @@ export default {
 
     const updateSettingsValue = (propertyName, value) => {
       settings.value[propertyName] = value;
+      console.log(settings.value)
     };
     const handleDragEnter = (e) => {
       e.preventDefault();
@@ -227,14 +225,14 @@ export default {
 
     const generateAndCopyToClipboard = () => {
       nameSpaceRender.value = uuidv4()
-      copyToClipboard()
+      copyToClipboard(nameSpaceRender.value)
     }
-    const copyToClipboard = async () => {
+    const copyToClipboard = async (value) => {
       try {
-        await navigator.clipboard.writeText(nameSpace);
+        await navigator.clipboard.writeText(value);
         setTimeout(()=> {
-          nameSpaceRender.value = nameSpace
-        },300)
+          nameSpaceRender.value = value
+        },700)
         nameSpaceRender.value = "Copied to clipboard."
       } catch (err) {
         nameSpaceRender.value = "Failed to copy text: " + err
@@ -290,7 +288,7 @@ export default {
         const author = files.value[i].author;
 
         formData.append("author", JSON.stringify(author));
-        formData.append("namespace", JSON.stringify(nameSpace));
+        formData.append("namespace", JSON.stringify(nameSpaceRender.value));
         formData.append("settings", JSON.stringify(settings.value));
 
         formDataList.push(formData);
@@ -308,7 +306,7 @@ export default {
         const responses = await Promise.all(uploadPromises);
         console.log(responses);
         loading.value = false;
-        router.push({name: "promptPDF", params: {namespace: nameSpace}});
+        router.push({name: "promptPDF", params: {namespace: nameSpaceRender.value}});
       } catch (error) {
         console.error(error);
         loading.value = false;

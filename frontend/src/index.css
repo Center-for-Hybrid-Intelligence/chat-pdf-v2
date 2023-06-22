@@ -41,6 +41,7 @@
     font-normal
     text-left
     text-xs
+    break-words
 }
 
 .slider {
@@ -50,7 +51,7 @@
 
 .button {
     @apply
-    w-40 text-white rounded-sm py-3 bg-green hover:bg-darkGreen transition duration-200 cursor-pointer outline-none;
+    text-white rounded-sm py-3 bg-green hover:bg-darkGreen transition duration-200 cursor-pointer outline-none;
 }
 
 .dropdown {

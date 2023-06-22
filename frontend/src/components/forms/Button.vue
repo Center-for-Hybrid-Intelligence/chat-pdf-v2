@@ -1,7 +1,7 @@
 <template>
   <button
     ref="button"
-    class="button flex items-center transition duration-150 ease-in-out"
+    class="flex items-center transition duration-150 ease-in-out"
     :class="buttonClasses"
     :style="buttonStyle"
     v-bind="$attrs"
