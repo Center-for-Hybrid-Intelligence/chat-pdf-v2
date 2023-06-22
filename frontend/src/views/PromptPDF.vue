@@ -8,11 +8,41 @@
       </label>
 
       <TextArea ref="question" :isDisabled="loading" @input="onChange" class="h-64 w-full k1:w-2/3"></TextArea>
+
+      <div v-for="(file, index) in files" :key="index" class=" w-11/12 k1:w-5/12  ">
+        <div class="flex gap-4 justify-between p-4 shadow-2xl shadow-gray-300 rounded-xl ">
+          <img src="pdf-placeholder.png" class="h-full w-16 object-contain "/>
+          <div class="flex flex-col w-full  ">
+            <h1 class="text-start self-start pb-2" style="
+                display: -webkit-box;
+                -webkit-line-clamp: 1;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                text-overflow: ellipsis;"
+            >
+              {{ file.name }}
+
+            </h1>
+            <div class="flex align-middle h-full gap-2 ">
+              <!--              <h1 class="text-mg font-bold place-self-center  ">
+                                Author:
+                            </h1>-->
+              <input
+                  v-model="file.author"
+                  type="text"
+                  class="mt-1 w-full px-2 py-1 border-gray-300 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  placeholder="Author's Name"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="flex-col gap-6">
 
 
         <div class="w-full flex justify-center gap-8">
-        <div class="items-start">
+        <div class="">
         <h1 class="heading2 flex">
           Temperature (
           <div class="w-10">{{ settings.llm_temperature }}</div>
@@ -23,12 +53,13 @@
                id="weightSlider">
         </div>
 
-        <div class="items-start">
+        <div class="flex-col w-max items-stretch">
           <h1 class="heading2">
             Model used
           </h1>
           <h1 class="normalText">Different models interpret text differently. </h1>
-          <DropdownSingle class="mt-4" :items="['gpt-3.5-turbo', 'gpt-4']" :selected="settings.llm_model" @select="modelChange"></DropdownSingle>
+
+          <DropdownSingle class="mt-4 flex" :items="['gpt-3.5-turbo', 'gpt-4']" :selected="settings.llm_model" @select="modelChange"></DropdownSingle>
         </div>
       </div>
       </div>
@@ -99,12 +130,13 @@ export default {
               },
             })
           .then((response) => {
-            console.log(response.data)
+            console.log(response)
           })
           .catch((error) => {
             console.log(error);
           });
     })
+    const files = ref([])
 
     const settings = ref( {
         llm_temperature: 0,
@@ -155,6 +187,7 @@ export default {
               },
             })
           .then((response) => {
+            console.log(response)
             answer.value = response.data;
             loading_answer.value = false;
             questionList.answers.push(answer.value.result);
@@ -164,7 +197,7 @@ export default {
             ref.question.value = '';
           })
           .catch((error) => {
-            error.value = error.message;
+            error.value = error.response;
             loading.value = false;
           });
     }
@@ -216,7 +249,8 @@ export default {
       tempChange,
       settings,
       modelChange,
-      error
+      error,
+      files
     }
   }
 }

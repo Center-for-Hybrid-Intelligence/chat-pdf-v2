@@ -1,6 +1,4 @@
 from PyPDF2 import PdfReader
-from PyPDF2 import PdfFileReader
-import openai
 import os
 from dotenv import load_dotenv
 
@@ -9,10 +7,6 @@ load_dotenv()
 from langchain.chains import AnalyzeDocumentChain
 from langchain.chains.summarize import load_summarize_chain
 from langchain.llms import OpenAI
-from langchain.document_loaders import UnstructuredPDFLoader
-
-# This function is reading PDF from the start page to final page
-# given as input (if less pages exist, then it reads till this last page)
 
 
 import pandas as pd
@@ -80,10 +74,11 @@ def read_from_encode(file, author, identifier, namespace, title, session_id):
         page = pdf_reader.pages[page_num]
         text = page.extract_text()
         pages += text
-    try:
-        add_document(document_id = identifier, document_title=title , document_author=author, document_file=pages, namespace_name=namespace, session_id=session_id)
-    except Exception as e:
-        raise e
+        try:
+            add_document(document_id=identifier, document_title=title , document_author=author, document_file=pages, namespace_name=namespace, session_id=session_id)
+        except Exception as e:
+            print(e)
+            raise e
     df = create_dataframe(title, identifier, author, pages)
     return df
 
