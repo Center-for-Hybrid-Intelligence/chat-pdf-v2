@@ -67,11 +67,14 @@ def load_pdf():
     namespace_name = request.form.get('namespace')
     title = request.form.get('name')
     file = request.files['file']
-    settings = json.loads(request.form.get('settings'))
+    settings = request.form.get('settings')
+    print(settings)
+    settings = json.loads(settings)
     chunk_size = int(settings["chunk_size"])
     chunk_overlap = int(settings['chunk_overlap'])
     print(f'namespace: {namespace_name}')
     print(f"documentId: {request.form.get('documentId')}")
+    print(f"author: {request.form.get('author')}")
 
     # If the session id is used with a new namespace, throw an error asking to refresh the page
     if qa_tool.namespace is not None and qa_tool.namespace != namespace_name:
@@ -85,8 +88,8 @@ def load_pdf():
         qa_tool = retrieve_session(session_id)
         update_session(session['session_id'], qa_tool)
 
-    if not (author and file_id and namespace_name and file):
-        return "Missing file or fileInfo", 405
+    if not (file_id and namespace_name and file):
+        return "Missing file or fileInfo", 439
 
     # Update the qa_tool
     qa_tool.set_chunks(chunk_size, chunk_overlap)
