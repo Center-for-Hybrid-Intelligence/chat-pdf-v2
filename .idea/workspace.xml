@@ -6,12 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="bd1d1aad-e1a0-4f0b-9b14-f0c0b058aa4b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/chatpdf_api/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/chatpdf_api/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/forms/DropdownSingle.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/forms/DropdownSingle.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/forms/Button.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/forms/Button.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/views/ChatPDF.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/ChatPDF.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/PromptPDF.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/PromptPDF.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/tailwind.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,7 +61,7 @@
       <workItem from="1687161892629" duration="15478000" />
       <workItem from="1687248519047" duration="590000" />
       <workItem from="1687335550783" duration="17983000" />
-      <workItem from="1687421128961" duration="7196000" />
+      <workItem from="1687421128961" duration="9526000" />
     </task>
     <servers />
   </component>
