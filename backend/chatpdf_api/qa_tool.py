@@ -125,7 +125,7 @@ class QaTool:
 
     def delete_all(self):
         index = pinecone.GRPCIndex(self.index_name)  # we are connected to the pinecone index
-        index.delete(delete_all='true', namespace=self.namespace)
+        index.delete(delete_all=True, namespace=self.namespace)
 
     def erase_doc(self, document_id):
         remove_document(document_id=document_id)

@@ -31,7 +31,7 @@ class Namespace(db.Model):
 
 class Document(db.Model):
     document_id = db.Column(db.String, primary_key=True)
-    document_title = db.Column(db.Text, nullable=True, unique=True)
+    document_title = db.Column(db.Text, nullable=True)
     document_author = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
@@ -59,13 +59,14 @@ def add_document(document_id, document_title, document_author, document_file, na
         db.session.commit()
     # Add the document to the database
     try:
-        db.session.add(Document(document_id=int(document_id),
+        db.session.add(Document(document_id=document_id,
                                 document_title=document_title,
                                 document_author=document_author,
                                 document_file=document_file,
                                 namespace_id=namespace.namespace_name))
         db.session.commit()
-    except IntegrityError:
+    except IntegrityError as e:
+        print(e)
         raise IntegrityError("Document with the same title already exists in the database")
 
 
@@ -111,3 +112,7 @@ def retrieve_namespace(namespace_name):
 def retrieve_documents(namespace_name):
     documents = Document.query.filter_by(namespace_id=namespace_name).all()
     return documents
+
+def delete_document(document_id):
+    Document.query.filter_by(document_id=document_id).delete()
+    db.session.commit()

@@ -77,7 +77,7 @@ def read_from_encode(file, author, identifier, namespace, title, session_id):
         try:
             add_document(document_id=identifier, document_title=title , document_author=author, document_file=pages, namespace_name=namespace, session_id=session_id)
         except Exception:
-            raise ValueError("Document already exists")
+            print("Document already exists")
     df = create_dataframe(title, identifier, author, pages)
     return df
 
