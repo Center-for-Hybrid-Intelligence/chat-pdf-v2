@@ -74,9 +74,10 @@ def read_from_encode(file, author, identifier, namespace, title, session_id):
         page = pdf_reader.pages[page_num]
         text = page.extract_text()
         pages += text
-    add_document(document_id=identifier, document_title=title , document_author=author, document_file=pages, namespace_name=namespace, session_id=session_id)
+    new_id = add_document(document_id=identifier, document_title=title , document_author=author, document_file=pages, namespace_name=namespace, session_id=session_id)
+    identifier = new_id if new_id is not None else identifier
     df = create_dataframe(title, identifier, author, pages)
-    return df
+    return df, identifier
 
 
 
