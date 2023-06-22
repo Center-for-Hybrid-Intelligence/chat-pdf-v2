@@ -22,17 +22,21 @@ class DillObjectType(TypeDecorator):
 
 class Namespace(db.Model):
     session_id = db.Column(db.String, db.ForeignKey('session.session_id'), nullable=False, primary_key=True)
-    namespace_name = db.Column(db.Text, nullable=False, unique=True)
+    namespace_name = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True),
+                           server_default=func.now())
+    def __repr__(self):
+        return f'<Namespace {self.namespace_name}>'
 
 
 class Document(db.Model):
-    document_id = db.Column(db.Integer, primary_key=True)
-    document_title = db.Column(db.Text, nullable=True)
+    document_id = db.Column(db.String, primary_key=True)
+    document_title = db.Column(db.Text, nullable=True, unique=True)
     document_author = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
     document_file = db.Column(db.Text, nullable=True)
-    namespace_id = db.Column(db.String, db.ForeignKey('namespace.session_id'), nullable=False)
+    namespace_id = db.Column(db.String, db.ForeignKey('namespace.namespace_name'), nullable=False)
 
     def __repr__(self):
         return f'<Prompt {self.document_id}, created at {self.created_at}>'
@@ -47,23 +51,22 @@ class Session(db.Model):
 
 
 def add_document(document_id, document_title, document_author, document_file, namespace_name, session_id):
-    document_id = document_id[6:]
-    namespaces = Namespace.query.filter_by(session_id=session_id).first()
-    print(namespaces)
-    if namespaces is None:
+    namespace = Namespace.query.filter_by(namespace_name=namespace_name, session_id=session_id).first()
+    print(namespace)
+    # If the namespace does not exist, create it
+    if namespace is None:
         db.session.add(namespace := Namespace(namespace_name=namespace_name, session_id=session_id))
         db.session.commit()
-    else:
-        namespace = namespaces
+    # Add the document to the database
     try:
         db.session.add(Document(document_id=int(document_id),
                                 document_title=document_title,
                                 document_author=document_author,
                                 document_file=document_file,
-                                namespace_id=namespace.session_id))
+                                namespace_id=namespace.namespace_name))
         db.session.commit()
     except IntegrityError:
-        return "Document already exists"
+        raise IntegrityError("Document with the same title already exists in the database")
 
 
 def remove_document(document_id):
@@ -91,3 +94,13 @@ def update_session(session_id, qa_tool):
     session = Session.query.filter_by(session_id=session_id).first()
     session.qa_tool = qa_tool
     db.session.commit()
+
+def exists_namespace(namespace_name):
+    return Namespace.query.filter_by(namespace_name=namespace_name).first() is not None
+
+def retrieve_namespace(namespace_name):
+    # Get the most recent namespace with the given name
+    return Namespace.query.filter_by(namespace_name=namespace_name).order_by(Namespace.created_at.desc()).first().session_id
+def retrieve_documents(namespace_name):
+    documents = Document.query.filter_by(namespace_id=namespace_name).all()
+    return documents

@@ -132,7 +132,7 @@
              @click="copyToClipboard" >
         <input
             :value="nameSpaceRender"
-            :disabled="true"
+            :disabled="false"
             type="text"
             placeholder="Enter Namespace"
             class="px-2 py-1 border border-gray-400 rounded-l w-full focus:outline-none"
@@ -251,7 +251,7 @@ export default {
           const formData = new FormData();
           formData.append("file", file);
           formData.append("name", file.name);
-          formData.append("documentId", parseInt(Date.now().toString(36) + Math.random().toString(36).substr(2, 5), 36));
+          formData.append("documentId", uuidv4());
           files.value.push({formData: formData, author: "", name: file.name})
           console.log(file.name, "file");
           console.log(files, "files");
@@ -269,7 +269,7 @@ export default {
           const formData = new FormData();
           formData.append("file", file);
           formData.append("name", file.name);
-          formData.append("documentId", parseInt(Date.now().toString(36) + Math.random().toString(36).substr(2, 5), 36));
+          formData.append("documentId", uuidv4());
           files.value.push({formData: formData, author: "", name: file.name})
           console.log(file.name, "file");
           console.log(files, "files");
@@ -295,25 +295,23 @@ export default {
 
         formDataList.push(formData);
       }
-      console.log(document.cookie)
-      const uploadPromises = formDataList.map(formData => {
-        return authService.post("/load-pdf/", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-      });
+      console.log(document.cookie);
 
       try {
-        const responses = await Promise.all(uploadPromises);
-        console.log(responses);
+        for (const formData of formDataList) {
+          await authService.post("/load-pdf/", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+        }
         loading.value = false;
-        router.push({name: "promptPDF", params: {namespace: nameSpace}});
+        router.push({ name: "promptPDF", params: { namespace: nameSpace } });
       } catch (error) {
         console.error(error);
         loading.value = false;
         uploadFailed.value = true;
-        errorMessage.value = error.message;
+        errorMessage.value = error.response.data;
       }
     };
     const deleteFile = (index) => {
