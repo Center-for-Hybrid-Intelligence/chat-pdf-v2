@@ -69,6 +69,13 @@ def add_document(document_id, document_title, document_author, document_file, na
 def remove_document(document_id):
     Document.query.filter_by(document_id=document_id).delete()
 
+def get_documents():
+    documents = Document.query.all()
+    result = []
+    for document in documents:
+        result.append((document.document_title, document.document_author))
+    return result
+
 
 def add_session(session_id, qa_tool):
     session = Session(session_id=session_id, qa_tool=qa_tool)
@@ -86,13 +93,6 @@ def retrieve_session(session_id):
 def delete_session(session_id):
     Session.query.filter_by(session_id=session_id).delete()
     db.session.commit()
-
-def get_documents():
-    documents = Document.query.all()
-    result = []
-    for document in documents:
-        result.append((document.document_title, document.document_author))
-    return result
 
 def update_session(session_id, qa_tool):
     session = Session.query.filter_by(session_id=session_id).first()
