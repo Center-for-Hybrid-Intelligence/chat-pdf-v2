@@ -10,6 +10,7 @@
     k15:text-5xl
     my-10;
 }
+
 .heading2 {
     @apply font-semibold
     capitalize
@@ -19,6 +20,7 @@
     mb-2
     text-start;
 }
+
 .heading3 {
     @apply
     font-semibold
@@ -26,56 +28,52 @@
     text-left
     text-xl
 }
+
 .heading4 {
     @apply
     font-semibold
     capitalize
     text-left
 }
+
 .normalText {
     @apply
     font-normal
     text-left
     text-xs
 }
+
 .slider {
     @apply
-    h-6 bg-gray-300 appearance-none rounded-full transition-opacity duration-200 opacity-70 hover:opacity-100 focus:outline-none
+    h-6 bg-gray-300 appearance-none rounded-full transition-opacity duration-200 opacity-70 hover:opacity-100 focus:outline-none ;
 }
-.hover{
+
+.button {
+    @apply
+    w-40 text-white rounded-sm py-3 bg-green hover:bg-darkGreen transition duration-200 cursor-pointer outline-none;
+}
+
+.dropdown {
+    @apply
+    w-40 text-white rounded-sm py-2 px-2 transition duration-200 cursor-pointer border-2 bg-green hover:bg-darkGreen;
+}
+
+.buttonSecondary {
+    @apply
+    w-40 text-green rounded-sm py-3 bg-white border-2 border-darkGreen transition duration-200 cursor-pointer outline-none hover:bg-green hover:text-white;
+}
+
+.hover {
     scale: 1;
     transition: all;
     transition-duration: 300ms;
 }
-.hover:hover{
+
+.hover:hover {
     scale: 1.05;
 }
-.dropdown{
 
-    width: 10rem;
-    color: black;
-    border-radius: .25rem;
-    padding: .50rem;
-    transition: background-color;
-    transition-duration: 200ms;
-    cursor: pointer;
-    border: 2px solid rgba(50, 205, 50, 1);
-}
-.button{
-    width: 10rem;
-    color: white;
-    border-radius: .25rem;
-    padding: .75rem;
-    background-color:  #A3CD99;
-    transition: background-color;
-    transition-duration: 200ms;
-    cursor: pointer;
-    border: none;
-}
-.button:hover{
-    background-color: #579E81;
-}
-.buttonSecondary{
+.buttonSecondary {
     width: 10rem;
     color: rgba(50, 205, 50, 1);
     border-radius: .25rem;
@@ -86,8 +84,9 @@
     transition-duration: 200ms;
     cursor: pointer;
 }
-.buttonSecondary:hover{
+
+.buttonSecondary:hover {
     background-color: rgba(50, 205, 50, 0.8);
-    color:white;
+    color: white;
 }
 
