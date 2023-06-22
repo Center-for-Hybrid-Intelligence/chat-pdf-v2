@@ -145,8 +145,10 @@ def ask_query():
         update_session(session['session_id'], qa_tool)
         g.qa_tool = qa_tool
         responses.append(response)
-    final_responce = zip(docs, responses) #docs : the title and author of the document, responses : the result of the query and the source documents
-    return final_responce, 200
+    final_response = zip(docs, responses) #docs : the title and author of the document, responses : the result of the query and the source documents
+    #TODO use the final_reponse to display the results
+    #for now we will display only the first result without docs title and author
+    return responses[0], 200
 
     
 @app.route('/api/erase-all/', methods=['GET'])
