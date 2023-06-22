@@ -3,7 +3,7 @@
   >
     <div class="flex flex-col gap-8 items-center w-full">
 
-      <label class="block text-7xl font-bold text-gray-700">
+      <label class="block text-4xl h8:text-5xl k15:text-7xl font-bold text-gray-700">
         Write your question
       </label>
 

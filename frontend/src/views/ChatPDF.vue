@@ -4,7 +4,7 @@
   >
     <div class="flex flex-col gap-8 items-center w-full k1:w-1/2">
 
-      <label class="block text-7xl font-bold text-gray-700" for="files">
+      <label class="block text-4xl h8:text-5xl k15:text-7xl font-bold text-gray-700" for="files">
         ChatPDF
       </label>
 
@@ -107,7 +107,7 @@
       <h1 class="normalText">Average length in tokens of the pieces of text that will be extracted and retrieve from
         your document. small sentences: less than 30, big paragraphs: 400</h1>
       <input min="10" max="800" step="1" type="range" :value="settings.chunk_size" @input="event => updateSettingsValue('chunk_size', event.target.value)"
-             class="slider k1:w-128 w-80 mt-4"
+             class="slider  mt-4"
              id="weightSlider">
       <h1 class="heading4 flex">
         Chunk overlap (
@@ -116,14 +116,14 @@
       </h1>
       <h1 class="normalText">overlap in tokens between the piece of text extracted from your document</h1>
       <input min="0" max="80" step="1" type="range" :value="settings.chunk_overlap" @input="event => updateSettingsValue('chunk_overlap', event.target.value)"
-             class="slider  k1:w-128 w-80 mt-4"
+             class="slider  mt-4"
              id="weightSlider">
       <div class=""  v-if="files.length > 0">
         <h1 class="heading4 flex">
           Your namespace
         </h1>
         <h1 class="normalText">Please enter your namespace if you want to continue your work. If you want to start new process you can generate and click to copy it so you can come back to your progress later!</h1>
-        <div class="flex flex-col gap-2 h8:flex-row h8:justify-center">
+        <div class="flex flex-col gap-2 h8:gap-0 h8:flex-row h8:justify-center">
           <Button class="button bg-gray-800 rounded rounded-2xl rounded-r-none p-2 px-6 text-xl font-bold h8:self-center transition-all duration-300"  @click="generateAndCopyToClipboard">
             <template #right>
               {{generated ? 'Copied' : 'Generate & Copy'}}
