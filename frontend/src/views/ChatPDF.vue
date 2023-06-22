@@ -295,7 +295,7 @@ export default {
 
         formDataList.push(formData);
       }
-      console.log(document.cookie);
+      console.log(formDataList);
 
       try {
         for (const formData of formDataList) {

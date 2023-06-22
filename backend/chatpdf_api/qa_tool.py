@@ -87,7 +87,8 @@ class QaTool:
             length_function=self.tiktoken_len,
             separators=["\n\n", "\n", " ", ""]
         )
-        for i, record in tqdm(data.iterrows(), total=len(data)):
+        print("Loading embeddings to Pinecone")
+        for i, record in (data.iterrows()):
             # first get metadata fields for this record
             metadata = {
                 'id': record['Id'],
