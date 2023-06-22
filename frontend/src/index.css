@@ -41,6 +41,7 @@
     font-normal
     text-left
     text-xs
+    break-words
 }
 
 .slider {
@@ -50,17 +51,17 @@
 
 .button {
     @apply
-    w-40 text-white rounded-sm py-3 bg-green hover:bg-darkGreen transition duration-200 cursor-pointer outline-none;
+    text-white rounded-sm p-4 px-9 py-3 bg-green hover:bg-darkGreen transition duration-200 cursor-pointer outline-none;
 }
 
 .dropdown {
     @apply
-    w-40 text-white rounded-sm py-2 px-2 transition duration-200 cursor-pointer border-2 bg-green hover:bg-darkGreen;
+     text-white rounded-sm p-4 px-9 py-2 px-2 transition duration-200 cursor-pointer border-2 bg-green hover:bg-darkGreen;
 }
 
 .buttonSecondary {
     @apply
-    w-40 text-green rounded-sm py-3 bg-white border-2 border-darkGreen transition duration-200 cursor-pointer outline-none hover:bg-green hover:text-white;
+     text-green rounded-sm py-3 bg-white border-2 border-darkGreen transition duration-200 cursor-pointer outline-none hover:bg-green hover:text-white;
 }
 
 .hover {

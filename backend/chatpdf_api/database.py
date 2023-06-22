@@ -22,17 +22,24 @@ class DillObjectType(TypeDecorator):
 
 class Namespace(db.Model):
     session_id = db.Column(db.String, db.ForeignKey('session.session_id'), nullable=False, primary_key=True)
-    namespace_name = db.Column(db.Text, nullable=False, unique=True)
+    namespace_name = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True),
+                           server_default=func.now())
+    def __repr__(self):
+        return f'<Namespace {self.namespace_name}>'
 
 
 class Document(db.Model):
-    document_id = db.Column(db.Integer, primary_key=True)
+    document_id = db.Column(db.String, primary_key=True)
     document_title = db.Column(db.Text, nullable=True)
     document_author = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
-    document_file = db.Column(db.Text, nullable=True)
-    namespace_id = db.Column(db.String, db.ForeignKey('namespace.session_id'), nullable=False)
+    document_file = db.Column(db.Text, nullable=True, unique=True)
+
+class DocumentNamespace(db.Model):
+    document_id = db.Column(db.String, db.ForeignKey('document.document_id'), nullable=False, primary_key=True)
+    namespace_name = db.Column(db.String, db.ForeignKey('namespace.namespace_name'), nullable=False, primary_key=True)
 
     def __repr__(self):
         return f'<Prompt {self.document_id}, created at {self.created_at}>'
@@ -47,27 +54,37 @@ class Session(db.Model):
 
 
 def add_document(document_id, document_title, document_author, document_file, namespace_name, session_id):
-    document_id = document_id[6:]
-    namespaces = Namespace.query.filter_by(session_id=session_id).first()
-    print(namespaces)
-    if namespaces is None:
+    # Check if the namespace exists
+    namespace = Namespace.query.filter_by(namespace_name=namespace_name, session_id=session_id).first()
+    # If the namespace does not exist, create it
+    if namespace is None:
+        print("Creating a namespace")
         db.session.add(namespace := Namespace(namespace_name=namespace_name, session_id=session_id))
         db.session.commit()
-    else:
-        namespace = namespaces
-    try:
-        db.session.add(Document(document_id=int(document_id),
+
+    # Add the document to the database
+    has_same_id, has_same_file = exists_document(document_id, document_file)
+    if not has_same_id and not has_same_file:
+        db.session.add(Document(document_id=document_id,
                                 document_title=document_title,
                                 document_author=document_author,
-                                document_file=document_file,
-                                namespace_id=namespace.session_id))
+                                document_file=document_file))
         db.session.commit()
-    except IntegrityError:
-        return "Document already exists"
+    else:
+        print("Document already exists in the database")
+        print(f"ID : {has_same_id}, content: {has_same_file}")
+
+    # Add the document to the namespace
+    if not is_document_in_namespace(document_id, namespace_name):
+        db.session.add(DocumentNamespace(document_id=document_id, namespace_name=namespace.namespace_name))
+        db.session.commit()
 
 
 def remove_document(document_id):
     Document.query.filter_by(document_id=document_id).delete()
+    DocumentNamespace.query.filter_by(document_id=document_id).delete()
+    db.session.commit()
+
 
 def get_documents():
     documents = Document.query.all()
@@ -98,3 +115,24 @@ def update_session(session_id, qa_tool):
     session = Session.query.filter_by(session_id=session_id).first()
     session.qa_tool = qa_tool
     db.session.commit()
+
+def exists_namespace(namespace_name):
+    return Namespace.query.filter_by(namespace_name=namespace_name).first() is not None
+
+def retrieve_namespace(namespace_name):
+    # Get the most recent namespace with the given name
+    return Namespace.query.filter_by(namespace_name=namespace_name).order_by(Namespace.created_at.desc()).first().session_id
+def retrieve_documents(namespace_name):
+    documents = Document.query.join(DocumentNamespace).filter_by(namespace_name=namespace_name).all()
+    result = []
+    for document in documents:
+        result.append((document.document_title, document.document_author))
+    return result
+
+def exists_document(document_id, document_file):
+    has_same_id = Document.query.filter_by(document_id=document_id).first() is not None
+    has_same_file = Document.query.filter_by(document_file=document_file).first() is not None
+    return has_same_id, has_same_file
+
+def is_document_in_namespace(document_id, namespace_name):
+    return DocumentNamespace.query.filter_by(document_id=document_id, namespace_name=namespace_name).first() is not None
