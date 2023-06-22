@@ -99,7 +99,7 @@ export default {
               },
             })
           .then((response) => {
-            console.log(response.data)
+            console.log(response)
           })
           .catch((error) => {
             console.log(error);
@@ -155,6 +155,7 @@ export default {
               },
             })
           .then((response) => {
+            console.log(response)
             answer.value = response.data;
             loading_answer.value = false;
             questionList.answers.push(answer.value.result);
@@ -164,7 +165,7 @@ export default {
             ref.question.value = '';
           })
           .catch((error) => {
-            error.value = error.message;
+            error.value = error.response;
             loading.value = false;
           });
     }
