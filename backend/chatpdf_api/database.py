@@ -132,7 +132,7 @@ def retrieve_documents(namespace_name):
     documents = Document.query.join(DocumentNamespace).filter_by(namespace_name=namespace_name).all()
     result = []
     for document in documents:
-        result.append((document.document_title, document.document_author))
+        result.append({"title": document.document_title,"author": document.document_author})
     return result
 
 def exists_document(document_id, document_file):
