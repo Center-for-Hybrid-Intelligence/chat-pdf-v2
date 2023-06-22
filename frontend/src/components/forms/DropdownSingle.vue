@@ -1,7 +1,7 @@
 <template>
   <div class=" relative">
     <button
-      class="dropdown flex justify-center border-white border-opacity-10 border rounded-xl font-medium bg-white bg-opacity-10 hover:bg-opacity-100 hover:text-black"
+      class="dropdown flex justify-center border-white border-opacity-10 border rounded-xl font-medium bg-white bg-opacity-10 hover:bg-opacity-100"
         :class="{'toggleButton--active': !!selectedValue()}"
       type="button"
       :key="dropdown"

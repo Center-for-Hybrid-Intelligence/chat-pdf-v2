@@ -105,8 +105,8 @@
         / 800)
       </h1>
       <h1 class="normalText">Average length in tokens of the pieces of text that will be extracted and retrieve from
-        your document. small sentences : less than 30, big paragraphs : 400</h1>
-      <input min="10" max="800" step="1" type="range" :value="settings.chunk_size" @input="chunkSizeChange"
+        your document. small sentences: less than 30, big paragraphs: 400</h1>
+      <input min="10" max="800" step="1" type="range" :value="settings.chunk_size" @input="event => updateSettingsValue('chunk_size', event.target.value)"
              class="slider k1:w-128 w-80 mt-4"
              id="weightSlider">
       <h1 class="heading4 flex">
@@ -115,19 +115,32 @@
         / 80)
       </h1>
       <h1 class="normalText">overlap in tokens between the piece of text extracted from your document</h1>
-      <input min="0" max="80" step="1" type="range" :value="settings.chunk_overlap" @input="chunkOverlapChange"
+      <input min="0" max="80" step="1" type="range" :value="settings.chunk_overlap" @input="event => updateSettingsValue('chunk_overlap', event.target.value)"
              class="slider  k1:w-128 w-80 mt-4"
              id="weightSlider">
-      <div class="flex justify-center mt-4 mx-12" v-if="files.length > 0">
+      <div class=""  v-if="files.length > 0">
+        <h1 class="heading4 flex">
+          Your namespace
+        </h1>
+        <h1 class="normalText">This is your namespace, click to copy it so you can come back to your progress later!</h1>
+        <div class="flex justify-center">
+
+          <div class="w-full flex rounded-lg rounded-r-none border border-r-0 border-gray-400 bg-white hover:bg-gray-100 transition-all duration-300">
+            <Button @click="generateAndCopyToClipboard">Generate for me</Button>
+          </div>
+        <div class="w-full flex rounded-lg rounded-r-none border border-r-0 border-gray-400 bg-white hover:bg-gray-100 transition-all duration-300"
+             @click="copyToClipboard" >
         <input
-            v-model="inputFieldValue"
+            :value="nameSpaceRender"
+            :disabled="true"
             type="text"
             placeholder="Enter Namespace"
-            class="px-2 py-1 border border-gray-400 rounded-l focus:outline-none"
+            class="px-2 py-1 border border-gray-400 rounded-l w-full focus:outline-none"
         />
-        <Button @click="onsubmit" :isDisabled="inputFieldValue === '' || loading"
-                :class="{ 'text-black/20': inputFieldValue === '',
-               ' text-white': inputFieldValue !== ''}"
+        </div>
+        <Button @click="onsubmit" :isDisabled="nameSpaceRender === '' || loading"
+                :class="{ 'text-black/20': nameSpaceRender === '',
+               ' text-white': nameSpaceRender !== ''}"
                 class="p-2 px-6 text-xl font-bold self-center rounded-r-lg rounded-l-none transition-all duration-300">
           <template #right>
             <div v-if="loading">Loading</div>
@@ -136,6 +149,8 @@
         </Button>
         <div v-if="uploadFailed">
           {{ errorMessage }}
+        </div>
+
         </div>
       </div>
     </div>
@@ -149,6 +164,8 @@ import {ref} from "vue";
 import router from "@/router";
 import {authService} from '@/api'
 import Button from "@/components/forms/Button";
+import {initializeSession} from "@/cookieHandler";
+import { v4 as uuidv4 } from 'uuid';
 
 export default {
   name: "FileUpload",
@@ -163,10 +180,11 @@ export default {
   },
   emits: ["update:modelValue"],
   setup(props, {emit}) {
+    initializeSession()
+    console.log(document.cookie)
     const loading = ref(false);
     const files = ref(props.value);
     const isDragging = ref(false);
-    const inputFieldValue = ref('');
     const uploadFailed = ref(false);
     const errorMessage = ref('');
 
@@ -181,19 +199,18 @@ export default {
     }
     testSetup()*/
 
+    const nameSpace = uuidv4()
+
+    const nameSpaceRender = ref(nameSpace)
+
     const settings = ref({
       chunk_size: 200,
-      chunk_overlap: 50
+      chunk_overlap: 50,
     });
 
-    const chunkOverlapChange = (e) => {
-      settings.value.chunk_overlap = e.target.value
-    }
-
-    const chunkSizeChange = (e) => {
-      settings.value.chunk_size = e.target.value
-    }
-
+    const updateSettingsValue = (propertyName, value) => {
+      settings.value[propertyName] = value;
+    };
     const handleDragEnter = (e) => {
       e.preventDefault();
       isDragging.value = true;
@@ -208,6 +225,21 @@ export default {
       isDragging.value = false;
     };
 
+    const generateAndCopyToClipboard = () => {
+      nameSpaceRender.value = uuidv4()
+      copyToClipboard()
+    }
+    const copyToClipboard = async () => {
+      try {
+        await navigator.clipboard.writeText(nameSpace);
+        setTimeout(()=> {
+          nameSpaceRender.value = nameSpace
+        },300)
+        nameSpaceRender.value = "Copied to clipboard."
+      } catch (err) {
+        nameSpaceRender.value = "Failed to copy text: " + err
+      }
+    };
     const handleDrop = (e) => {
       e.preventDefault();
       isDragging.value = false;
@@ -258,12 +290,12 @@ export default {
         const author = files.value[i].author;
 
         formData.append("author", JSON.stringify(author));
-        formData.append("namespace", JSON.stringify(inputFieldValue.value));
+        formData.append("namespace", JSON.stringify(nameSpace));
         formData.append("settings", JSON.stringify(settings.value));
 
         formDataList.push(formData);
       }
-      console.log(authService.baseURL);
+      console.log(document.cookie)
       const uploadPromises = formDataList.map(formData => {
         return authService.post("/load-pdf/", formData, {
           headers: {
@@ -276,7 +308,7 @@ export default {
         const responses = await Promise.all(uploadPromises);
         console.log(responses);
         loading.value = false;
-        router.push({name: "promptPDF", params: {namespace: inputFieldValue.value}});
+        router.push({name: "promptPDF", params: {namespace: nameSpace}});
       } catch (error) {
         console.error(error);
         loading.value = false;
@@ -298,13 +330,14 @@ export default {
       handleDragLeave,
       handleDrop,
       onsubmit: onSubmit,
-      inputFieldValue,
       loading,
       uploadFailed,
       errorMessage,
       settings,
-      chunkSizeChange,
-      chunkOverlapChange
+      updateSettingsValue,
+      nameSpaceRender,
+      copyToClipboard,
+      generateAndCopyToClipboard
     }
   }
 }
