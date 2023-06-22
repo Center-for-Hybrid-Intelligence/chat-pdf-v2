@@ -133,7 +133,7 @@ class QaTool:
         index = pinecone.GRPCIndex(self.index_name)  # we are connected to the pinecone index
         index.delete(ids=[document_id], namespace=self.namespace)
 
-    def __call__(self, query, top_closest, filter) -> Any:
+    def __call__(self, query, top_closest, filter=None) -> Any:
         print("Loading embeddings")
         embed = OpenAIEmbeddings(
             model=self.embedding_model,
