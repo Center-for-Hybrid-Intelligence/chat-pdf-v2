@@ -1,7 +1,7 @@
 import numpy as np
 from flask_cors import CORS
 from flask import g, Flask, request, session
-from .database import db, add_session, retrieve_session, delete_session, update_session, exists_namespace, retrieve_namespace, retrieve_documents
+from .database import db, add_session, retrieve_session, delete_session, update_session, exists_namespace, retrieve_namespace, retrieve_documents, delete_document
 from .readpdf import read_from_encode
 from .qa_tool import QaTool
 import json
@@ -15,6 +15,7 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app)#, resources={r"/api/*": {"origins": "https://hybridintelligence.eu"}})
+
 
 # check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -31,7 +32,7 @@ with app.app_context():
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "sqlalchemy"
 
-app.secret_key = "pietervandeawiff"
+app.secret_key = "pietervandeawiff1"
 
 @app.after_request
 def add_header(response):
@@ -54,12 +55,14 @@ def initialize_qa_tool():
         add_session(session_id, qa_tool)
     session['session_id'] = session_id
     print(session)
+    print(qa_tool)
     g.qa_tool = qa_tool
 
 @app.route('/api/load-pdf/', methods=['POST'])
 def load_pdf():
     qa_tool = g.qa_tool
-
+    print("Loading pdf")
+    print(f"documentId: {request.form.get('documentId')}")
     # Parse the request
     author = request.form.get('author')
     file_id = request.form.get('documentId')
@@ -69,6 +72,7 @@ def load_pdf():
     settings = json.loads(request.form.get('settings'))
     chunk_size = int(settings["chunk_size"])
     chunk_overlap = int(settings['chunk_overlap'])
+    print(namespace_name)
 
     # If the session id is used with a new namespace, throw an error asking to refresh the page
     if qa_tool.namespace is not None and qa_tool.namespace != namespace_name:
@@ -81,7 +85,7 @@ def load_pdf():
         print("Found existing namespace, retrieving session")
         session_id = retrieve_namespace(namespace_name)
         qa_tool = retrieve_session(session_id)
-        g.qa_tool = qa_tool
+        update_session(session['session_id'], qa_tool)
 
     if not (author and file_id and namespace_name and file):
         return "Missing file or fileInfo", 401
@@ -95,11 +99,15 @@ def load_pdf():
     try:
         file_df = read_from_encode(file, author, file_id, namespace_name, title, session['session_id'])
     except ValueError:
-        return "The document was already in the database", 201
-    qa_tool.loading_data_to_pinecone(file_df)
-
+        print("The document was already in the database")
+    try:
+        qa_tool.loading_data_to_pinecone(file_df)
+    except Exception as e:
+        delete_document(file_id)
+        return "Error loading data to pinecone", 401
     # Update the session
     update_session(session['session_id'], qa_tool)
+    print(qa_tool)
     g.qa_tool = qa_tool
     return f"Successfully loaded {file_id} to pinecone", 200
 
@@ -139,7 +147,6 @@ def erase_all():
     print(qa_tool)
     qa_tool.delete_all()
     qa_tool.namespace = None
-    delete_session(session['session_id'])
 
     del session['session_id']
     # Delete qa_tool from g
@@ -155,6 +162,7 @@ def hello():
 @app.route('/api/get-files/', methods=['GET'])
 def get_files():
     qa_tool = g.qa_tool
+    print(qa_tool)
     files = retrieve_documents(qa_tool.namespace)
     print(files)
     return [file.document_title for file in files], 200

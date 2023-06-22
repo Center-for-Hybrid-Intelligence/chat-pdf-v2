@@ -126,7 +126,7 @@
         <div class="flex flex-0 justify-center">
           <Button class="button bg-gray-800 rounded rounded-2xl rounded-r-none p-2 px-6 text-xl font-bold self-center transition-all duration-300"  @click="generateAndCopyToClipboard">
             <template #right>
-              Generate & Copy
+              {{generated ? 'Copied' : 'Generate & Copy'}}
             </template>
           </Button>
 
@@ -200,6 +200,7 @@ export default {
     testSetup()*/
 
     const nameSpaceRender = ref('')
+  const generated = ref(false)
 
     const settings = ref({
       chunk_size: 200,
@@ -232,9 +233,9 @@ export default {
       try {
         await navigator.clipboard.writeText(value);
         setTimeout(()=> {
-          nameSpaceRender.value = value
+          generated.value = false
         },700)
-        nameSpaceRender.value = "Copied to clipboard."
+        generated.value = true
       } catch (err) {
         nameSpaceRender.value = "Failed to copy text: " + err
       }
@@ -310,7 +311,7 @@ export default {
         console.error(error);
         loading.value = false;
         uploadFailed.value = true;
-        errorMessage.value = error.response.data;
+        errorMessage.value = error.response;
       }
     };
     const deleteFile = (index) => {
@@ -334,7 +335,8 @@ export default {
       updateSettingsValue,
       nameSpaceRender,
       copyToClipboard,
-      generateAndCopyToClipboard
+      generateAndCopyToClipboard,
+      generated
     }
   }
 }
