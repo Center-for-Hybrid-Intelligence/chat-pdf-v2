@@ -1,7 +1,7 @@
 import numpy as np
 from flask_cors import CORS
 from flask import g, Flask, request, session
-from .database import db, add_session, retrieve_session, delete_session, update_session, exists_namespace, retrieve_namespace, retrieve_documents, remove_document
+from .database import db, add_session, retrieve_session, delete_session, update_session, exists_namespace, retrieve_namespace, retrieve_documents, remove_document, remove_document_from_namespace, add_document_to_namespace
 from .readpdf import read_from_encode
 from .qa_tool import QaTool
 import json
@@ -14,7 +14,7 @@ import openai
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)#, resources={r"/api/*": {"origins": "https://hybridintelligence.eu"}})
+CORS(app)
 
 
 # check for environment variable
@@ -36,7 +36,6 @@ app.secret_key = "pietervandeawiff0000"
 
 @app.after_request
 def add_header(response):
-#     response.headers['Access-Control-Allow-Origin'] = 'https://hybridintelligence.eu'
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Auth-Token'
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST'
@@ -87,23 +86,25 @@ def load_pdf():
         update_session(session['session_id'], qa_tool)
 
     if not (author and file_id and namespace_name and file):
-        return "Missing file or fileInfo", 401
+        return "Missing file or fileInfo", 405
 
     # Update the qa_tool
     qa_tool.set_chunks(chunk_size, chunk_overlap)
     if qa_tool.namespace is None:
         qa_tool.set_namespace(namespace_name)
+    update_session(session['session_id'], qa_tool)
 
     # Read the file and load it to pinecone
-    try:
-        file_df = read_from_encode(file, author, file_id, namespace_name, title, session['session_id'])
-    except ValueError:
-        print("The document was already in the database")
-    try:
-        qa_tool.loading_data_to_pinecone(file_df)
-    except Exception as e:
-        remove_document(file_id)
-        return "Error loading data to pinecone", 401
+    file_df = read_from_encode(file, author, file_id, namespace_name, title, session['session_id'])
+
+    # Add the file to the namespace
+    added = add_document_to_namespace(file_id, namespace_name, session['session_id'])
+    if added:
+        try:
+            qa_tool.loading_data_to_pinecone(file_df)
+        except Exception as e:
+            remove_document_from_namespace(file_id, namespace_name)
+            return "Error loading data to pinecone", 401
     # Update the session
     update_session(session['session_id'], qa_tool)
     print(qa_tool)
@@ -160,7 +161,8 @@ def hello():
 
 @app.route('/api/get-files/', methods=['GET'])
 def get_files():
+    print("Getting files")
     qa_tool = g.qa_tool
-    print(qa_tool)
+    print(f'namespace: {qa_tool.namespace}')
     files = retrieve_documents(qa_tool.namespace)
     return files, 200

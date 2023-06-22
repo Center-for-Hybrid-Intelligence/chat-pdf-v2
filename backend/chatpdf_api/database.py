@@ -74,11 +74,16 @@ def add_document(document_id, document_title, document_author, document_file, na
         print("Document already exists in the database")
         print(f"ID : {has_same_id}, content: {has_same_file}")
 
+def add_document_to_namespace(document_id, namespace_name, session_id):
     # Add the document to the namespace
+    namespace = Namespace.query.filter_by(namespace_name=namespace_name, session_id=session_id).first()
     if not is_document_in_namespace(document_id, namespace_name):
+        print("Adding document to the namespace")
         db.session.add(DocumentNamespace(document_id=document_id, namespace_name=namespace.namespace_name))
         db.session.commit()
-
+        return True
+    else:
+        return False
 
 def remove_document(document_id):
     Document.query.filter_by(document_id=document_id).delete()
@@ -136,3 +141,7 @@ def exists_document(document_id, document_file):
 
 def is_document_in_namespace(document_id, namespace_name):
     return DocumentNamespace.query.filter_by(document_id=document_id, namespace_name=namespace_name).first() is not None
+
+def remove_document_from_namespace(document_id, namespace_name):
+    DocumentNamespace.query.filter_by(document_id=document_id, namespace_name=namespace_name).delete()
+    db.session.commit()
