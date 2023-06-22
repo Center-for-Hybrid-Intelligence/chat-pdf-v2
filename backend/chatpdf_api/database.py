@@ -35,8 +35,11 @@ class Document(db.Model):
     document_author = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
-    document_file = db.Column(db.Text, nullable=True)
-    namespace_id = db.Column(db.String, db.ForeignKey('namespace.namespace_name'), nullable=False)
+    document_file = db.Column(db.Text, nullable=True, unique=True)
+
+class DocumentNamespace(db.Model):
+    document_id = db.Column(db.String, db.ForeignKey('document.document_id'), nullable=False, primary_key=True)
+    namespace_name = db.Column(db.String, db.ForeignKey('namespace.namespace_name'), nullable=False, primary_key=True)
 
     def __repr__(self):
         return f'<Prompt {self.document_id}, created at {self.created_at}>'
@@ -51,27 +54,37 @@ class Session(db.Model):
 
 
 def add_document(document_id, document_title, document_author, document_file, namespace_name, session_id):
+    # Check if the namespace exists
     namespace = Namespace.query.filter_by(namespace_name=namespace_name, session_id=session_id).first()
-    print(namespace)
     # If the namespace does not exist, create it
     if namespace is None:
+        print("Creating a namespace")
         db.session.add(namespace := Namespace(namespace_name=namespace_name, session_id=session_id))
         db.session.commit()
+
     # Add the document to the database
-    try:
+    has_same_id, has_same_file = exists_document(document_id, document_file)
+    if not has_same_id and not has_same_file:
         db.session.add(Document(document_id=document_id,
                                 document_title=document_title,
                                 document_author=document_author,
-                                document_file=document_file,
-                                namespace_id=namespace.namespace_name))
+                                document_file=document_file))
         db.session.commit()
-    except IntegrityError as e:
-        print(e)
-        raise IntegrityError("Document with the same title already exists in the database")
+    else:
+        print("Document already exists in the database")
+        print(f"ID : {has_same_id}, content: {has_same_file}")
+
+    # Add the document to the namespace
+    if not is_document_in_namespace(document_id, namespace_name):
+        db.session.add(DocumentNamespace(document_id=document_id, namespace_name=namespace.namespace_name))
+        db.session.commit()
 
 
 def remove_document(document_id):
     Document.query.filter_by(document_id=document_id).delete()
+    DocumentNamespace.query.filter_by(document_id=document_id).delete()
+    db.session.commit()
+
 
 def get_documents():
     documents = Document.query.all()
@@ -110,9 +123,16 @@ def retrieve_namespace(namespace_name):
     # Get the most recent namespace with the given name
     return Namespace.query.filter_by(namespace_name=namespace_name).order_by(Namespace.created_at.desc()).first().session_id
 def retrieve_documents(namespace_name):
-    documents = Document.query.filter_by(namespace_id=namespace_name).all()
-    return documents
+    documents = Document.query.join(DocumentNamespace).filter_by(namespace_name=namespace_name).all()
+    result = []
+    for document in documents:
+        result.append((document.document_title, document.document_author))
+    return result
 
-def delete_document(document_id):
-    Document.query.filter_by(document_id=document_id).delete()
-    db.session.commit()
+def exists_document(document_id, document_file):
+    has_same_id = Document.query.filter_by(document_id=document_id).first() is not None
+    has_same_file = Document.query.filter_by(document_file=document_file).first() is not None
+    return has_same_id, has_same_file
+
+def is_document_in_namespace(document_id, namespace_name):
+    return DocumentNamespace.query.filter_by(document_id=document_id, namespace_name=namespace_name).first() is not None
