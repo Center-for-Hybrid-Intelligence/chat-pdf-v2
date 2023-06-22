@@ -12,7 +12,7 @@
 
 
         <div class="w-full flex justify-center gap-8">
-        <div class="items-start">
+        <div class="">
         <h1 class="heading2 flex">
           Temperature (
           <div class="w-10">{{ settings.llm_temperature }}</div>
@@ -23,12 +23,13 @@
                id="weightSlider">
         </div>
 
-        <div class="items-start">
+        <div class="flex-col w-max items-stretch">
           <h1 class="heading2">
             Model used
           </h1>
           <h1 class="normalText">Different models interpret text differently. </h1>
-          <DropdownSingle class="mt-4" :items="['gpt-3.5-turbo', 'gpt-4']" :selected="settings.llm_model" @select="modelChange"></DropdownSingle>
+
+          <DropdownSingle class="mt-4 flex" :items="['gpt-3.5-turbo', 'gpt-4']" :selected="settings.llm_model" @select="modelChange"></DropdownSingle>
         </div>
       </div>
       </div>

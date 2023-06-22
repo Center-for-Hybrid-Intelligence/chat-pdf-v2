@@ -132,6 +132,7 @@
 
         <input
             :value="nameSpaceRender"
+            @change="event => nameSpaceRender = event.target.value"
             type="text"
             placeholder="Enter Namespace"
             class="px-2 py-1 flex-grow flex-1 border border-gray-400 w-max focus:outline-none"
