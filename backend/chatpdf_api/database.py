@@ -129,11 +129,8 @@ def retrieve_namespace(namespace_name):
     # Get the most recent namespace with the given name
     return Namespace.query.filter_by(namespace_name=namespace_name).order_by(Namespace.created_at.desc()).first().session_id
 def retrieve_documents(namespace_name):
-    documents = Document.query.join(DocumentNamespace).filter_by(namespace_name=namespace_name).all()
-    result = []
-    for document in documents:
-        result.append({"title": document.document_title,"author": document.document_author})
-    return result
+    return Document.query.join(DocumentNamespace).filter_by(namespace_name=namespace_name).all()
+
 
 def exists_document(document_id, document_file):
     has_same_id = Document.query.filter_by(document_id=document_id).first() is not None
