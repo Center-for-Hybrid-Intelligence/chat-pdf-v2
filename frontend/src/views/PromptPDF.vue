@@ -41,7 +41,7 @@
         <h1 class="normalText"> {{error}} </h1>
       </div>
 
-    <div class="mt-8 w-full mx-auto" v-for="(question, index) in reversedQuestionList" :key="index">
+    <div class="w-full flex flex-wrap justify-center gap-4 my-8" v-for="(question, index) in reversedQuestionList" :key="index">
       <div class="flex flex-col gap-4 border-2 border-green-600 w-full	 h8:max-w-2xl break-words rounded-s p-6" v-if="questionList.answers[questionList.questions.length - 1 - index]">
         <div class="block text-xs text-start font-medium text-gray-700">
           <h1 class="heading2"> {{ reversedQuestionList[index] }} </h1>
@@ -49,7 +49,7 @@
             <h1 class="heading2"> Source documents </h1>
             <div style="white-space: pre-wrap">
               <div v-for="(source, index) in questionList.sourceDocuments[questionList.questions.length - 1 - index]" :key="index">
-                <h1 class="heading4">Source </h1>
+                <h1 class="heading3">Source </h1>
                 <div class="mb-4" v-for="(specificSource, index) in source" :key="index">
                   <div v-if="!(index % 2 === 0)"><h1 class="heading4">Found in</h1></div>
                   <span  :class="{'text-blue-600': !(index % 2 === 0)}">{{ specificSource }}</span>
@@ -67,7 +67,7 @@
 <script>
 import TextArea from "@/components/forms/TextArea.vue";
 import Button from "@/components/forms/Button.vue";
-import {ref, reactive, computed} from "vue";
+import {ref, reactive, computed, onMounted} from "vue";
 import { onBeforeUnmount } from 'vue';
 import { authService } from "@/api";
 import DropdownSingle from "@/components/forms/DropdownSingle.vue";
@@ -90,6 +90,21 @@ export default {
       answers: [],
       sourceDocuments: [],
     });
+
+    onMounted(() => {
+      console.log('mounted')
+      authService.get('/get-files/', {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            })
+          .then((response) => {
+            console.log(response.data)
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+    })
 
     const settings = ref( {
         llm_temperature: 0,
@@ -144,9 +159,8 @@ export default {
             loading_answer.value = false;
             questionList.answers.push(answer.value.result);
             questionList.sourceDocuments.push(answer.value.source_documents);
-            console.log(response.data);
-            console.log(answer.value.source_documents)
             loading.value = false;
+            query.value = '';
             ref.question.value = '';
           })
           .catch((error) => {
