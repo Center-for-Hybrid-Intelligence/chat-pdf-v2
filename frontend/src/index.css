@@ -34,6 +34,8 @@
     font-semibold
     capitalize
     text-left
+    h8:text-sm
+    text-xs
 }
 
 .normalText {
@@ -46,7 +48,16 @@
 
 .slider {
     @apply
-    h-6 bg-gray-300 appearance-none rounded-full transition-opacity duration-200 opacity-70 hover:opacity-100 focus:outline-none ;
+    h-6
+    bg-gray-300
+    appearance-none
+    rounded-full
+    transition-opacity
+    duration-200
+    opacity-70
+    hover:opacity-100
+    focus:outline-none
+    w-full;
 }
 
 .button {
