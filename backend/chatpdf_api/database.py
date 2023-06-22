@@ -73,7 +73,8 @@ def add_document(document_id, document_title, document_author, document_file, na
     else:
         print("Document already exists in the database")
         print(f"ID : {has_same_id}, content: {has_same_file}")
-
+    if has_same_file:
+        return Document.query.filter_by(document_file=document_file).first().document_id
 def add_document_to_namespace(document_id, namespace_name, session_id):
     # Add the document to the namespace
     namespace = Namespace.query.filter_by(namespace_name=namespace_name, session_id=session_id).first()

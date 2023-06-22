@@ -98,8 +98,8 @@ def load_pdf():
     update_session(session['session_id'], qa_tool)
 
     # Read the file and load it to pinecone
-    file_df = read_from_encode(file, author, file_id, namespace_name, title, session['session_id'])
-
+    file_df, identifier = read_from_encode(file, author, file_id, namespace_name, title, session['session_id'])
+    file_id = identifier
     # Add the file to the namespace
     added = add_document_to_namespace(file_id, namespace_name, session['session_id'])
     if added:
