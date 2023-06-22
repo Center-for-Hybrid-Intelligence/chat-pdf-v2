@@ -51,17 +51,31 @@
 
 .button {
     @apply
-    text-white rounded-sm p-4 px-9 py-3 bg-green hover:bg-darkGreen transition duration-200 cursor-pointer outline-none;
+    text-white
+    rounded-sm
+    h8:p-4
+    h8:px-9
+    h8:py-3
+    bg-green
+    hover:bg-darkGreen
+    transition
+    duration-200
+    cursor-pointer
+    outline-none
+    hover:text-white
+    text-xs
+        h8:text-sm
+    ;
 }
 
 .dropdown {
     @apply
-     text-white rounded-sm p-4 px-9 py-2 px-2 transition duration-200 cursor-pointer border-2 bg-green hover:bg-darkGreen;
+    text-white rounded-sm p-4 px-9 py-2 px-2 transition duration-200 cursor-pointer border-2 bg-green hover:bg-darkGreen;
 }
 
 .buttonSecondary {
     @apply
-     text-green rounded-sm py-3 bg-white border-2 border-darkGreen transition duration-200 cursor-pointer outline-none hover:bg-green hover:text-white;
+    text-green rounded-sm py-3 bg-white border-2 border-darkGreen transition duration-200 cursor-pointer outline-none hover:bg-green hover:text-white;
 }
 
 .hover {
