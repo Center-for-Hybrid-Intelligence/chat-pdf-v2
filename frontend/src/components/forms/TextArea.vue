@@ -32,6 +32,7 @@
         @keydown.esc="onAbort"
         @keydown.tab="onTab"
         @keydown="onKeydown"
+        :disabled="isDisabled"
     ></textarea>
     <p
         v-if="hint"
@@ -53,6 +54,10 @@ export default {
       type: Number,
       default: 3,
       validate: newValue => isNumber(newValue) && newValue > 0
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false
     },
     isFocused: {
       type: Boolean,
@@ -147,6 +152,7 @@ export default {
       const isDeleteKey = e.key === 'Backspace' || e.keyCode === 8 || e.code === 'Backspace'
       const isEmpty = e.target.value === ''
       if (isDeleteKey && isEmpty) emit('delete')
+
     }
 
     return {
