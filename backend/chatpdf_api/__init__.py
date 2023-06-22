@@ -87,6 +87,8 @@ def load_pdf():
         session_id = retrieve_namespace(namespace_name)
         qa_tool = retrieve_session(session_id)
         update_session(session['session_id'], qa_tool)
+    #     Retrieve the files that are already in the namespace
+        documents = retrieve_documents(namespace_name)
 
     if not (file_id and namespace_name and file):
         return "Missing file or fileInfo", 439
@@ -118,6 +120,21 @@ def load_pdf():
 def ask_query():
     qa_tool = g.qa_tool
     print(qa_tool)
+    # Check that every file in the namespace is loaded to pinecone
+    namespace_name = qa_tool.namespace
+    documents = retrieve_documents(namespace_name)
+    for document in documents:
+        if not document.document_id in qa_tool.loaded_documents:
+    #          Load the document to pinecone
+            file_df, identifier = read_from_encode(document.document_file, document.author, document.document_id, namespace_name, document.title, session['session_id'])
+            try:
+                qa_tool.loading_data_to_pinecone(file_df)
+            except Exception as e:
+                return "Error loading data to pinecone", 401
+    # Update the session
+    update_session(session['session_id'], qa_tool)
+    print(qa_tool)
+    g.qa_tool = qa_tool
 
     data = request.get_json()
     settings = data['settings']
@@ -197,5 +214,9 @@ def get_files():
     print("Getting files")
     qa_tool = g.qa_tool
     print(f'namespace: {qa_tool.namespace}')
-    files = retrieve_documents(qa_tool.namespace)
+    documents = retrieve_documents(qa_tool.namespace)
+    result = []
+    for document in documents:
+        result.append({"title": document.document_title,"author": document.document_author})
+    return result
     return files, 200

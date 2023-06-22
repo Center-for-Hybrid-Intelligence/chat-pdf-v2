@@ -48,6 +48,7 @@ class QaTool:
                 dimension=1536
             )
         self.text_field = 'text'
+        self.loaded_documents = []
 
     def tiktoken_len(self, text):
         tiktoken.encoding_for_model(self.llm_model)
@@ -123,10 +124,11 @@ class QaTool:
             embeds = embed.embed_documents(texts)
 
             index.upsert(vectors=zip(ids, embeds, metadatas), namespace=self.namespace)
-
+        self.loaded_documents.append(data['Id'].tolist()[0])
     def delete_all(self):
         index = pinecone.GRPCIndex(self.index_name)  # we are connected to the pinecone index
         index.delete(delete_all=True, namespace=self.namespace)
+        self.loaded_documents = []
 
     def erase_doc(self, document_id):
         remove_document(document_id=document_id)
