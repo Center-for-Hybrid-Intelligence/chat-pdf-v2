@@ -108,16 +108,19 @@ def ask_query():
             print((f"Invalid request error: {e}"))
             error_message = str(e)
             return error_message, 401 #Invalid request, might have reached maximum tokens
-    result = results[0] #TODO: deal with multiple results that have been created
-    print(result.keys())
-    content = []
-    for doc in result['source_documents']:
-        content.append((doc.page_content.replace('\n', "").replace('\t', ""), doc.metadata['title']))
-    response = {"result": result['result'], "source_documents": content}
-    print(content)
-    update_session(session['session_id'], qa_tool)
-    g.qa_tool = qa_tool
-    return response, 200
+    responses = []
+    for result in results:
+        print(result.keys())
+        content = []
+        for doc in result['source_documents']:
+            content.append((doc.page_content.replace('\n', "").replace('\t', ""), doc.metadata['title']))
+        response = {"result": result['result'], "source_documents": content}
+        print(content)
+        update_session(session['session_id'], qa_tool)
+        g.qa_tool = qa_tool
+        responses.append(response)
+    final_responce = zip(docs, responses) #docs : the title and author of the document, responses : the result of the query and the source documents
+    return final_responce, 200
 
     
 @app.route('/api/erase-all/', methods=['GET'])
