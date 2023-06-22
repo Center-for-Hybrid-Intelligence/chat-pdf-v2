@@ -94,7 +94,7 @@
       </div>
     </transition-group>
 
-    <div class="border-4  w-2/3 flex-col gap-2 border-transparent p-8 bg-white rounded-xl shadow-gray-300 shadow-2xl"
+    <div class="border-4  w-4/5 k1:w-3/5 flex-col gap-2 border-transparent p-8 bg-white rounded-xl shadow-gray-300 shadow-2xl"
          v-if="files.length > 0">
       <h1 class="heading2">
         Customize your request
@@ -123,8 +123,8 @@
           Your namespace
         </h1>
         <h1 class="normalText">Please enter your namespace if you want to continue your work. If you want to start new process you can generate and click to copy it so you can come back to your progress later!</h1>
-        <div class="flex flex-0 justify-center">
-          <Button class="button bg-gray-800 rounded rounded-2xl rounded-r-none p-2 px-6 text-xl font-bold self-center transition-all duration-300"  @click="generateAndCopyToClipboard">
+        <div class="flex flex-col gap-2 h8:flex-row h8:justify-center">
+          <Button class="button bg-gray-800 rounded rounded-2xl rounded-r-none p-2 px-6 text-xl font-bold h8:self-center transition-all duration-300"  @click="generateAndCopyToClipboard">
             <template #right>
               {{generated ? 'Copied' : 'Generate & Copy'}}
             </template>
@@ -135,12 +135,12 @@
             @change="event => nameSpaceRender = event.target.value"
             type="text"
             placeholder="Enter Namespace"
-            class="px-2 py-1 flex-grow flex-1 border border-gray-400 w-max focus:outline-none"
+            class="px-2 py-1 h8:flex-grow h8:flex-1 w-max border border-gray-400 w-max focus:outline-none"
         />
         <Button @click="onsubmit" :isDisabled="nameSpaceRender === '' || loading"
                 :class="{ 'text-black/20': nameSpaceRender === '',
                ' text-white': nameSpaceRender !== ''}"
-                class="button flex-0 p-2 px-6 text-xl font-bold self-center rounded-r-lg rounded-l-none transition-all duration-300">
+                class="button flex-0 p-2 px-6 text-xl font-bold h8:self-center rounded-r-lg rounded-l-none transition-all duration-300">
           <template #right>
             <div v-if="loading">Loading</div>
             <div v-else>Submit</div>
@@ -289,9 +289,9 @@ export default {
         const formData = files.value[i].formData;
         const author = files.value[i].author;
 
-        formData.append("author", JSON.stringify(author));
-        formData.append("namespace", JSON.stringify(nameSpaceRender.value));
-        formData.append("settings", JSON.stringify(settings.value));
+        formData.append("author", author);
+        formData.append("namespace", nameSpaceRender.value);
+        formData.append("settings", settings.value);
 
         formDataList.push(formData);
       }

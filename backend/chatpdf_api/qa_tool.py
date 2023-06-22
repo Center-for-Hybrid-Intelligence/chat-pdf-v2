@@ -133,7 +133,7 @@ class QaTool:
         index = pinecone.GRPCIndex(self.index_name)  # we are connected to the pinecone index
         index.delete(ids=[document_id], namespace=self.namespace)
 
-    def __call__(self, query, top_closest) -> Any:
+    def __call__(self, query, top_closest, filter) -> Any:
         print("Loading embeddings")
         embed = OpenAIEmbeddings(
             model=self.embedding_model,
@@ -153,7 +153,7 @@ class QaTool:
         qa = RetrievalQA.from_chain_type(
             llm=llm,
             chain_type=self.chain_type,
-            retriever=vectorstore.as_retriever(search_kwargs={"k": top_closest}),
+            retriever=vectorstore.as_retriever(search_kwargs={"k": top_closest, "filter": filter }),
             return_source_documents=True,
             verbose=True
         )
