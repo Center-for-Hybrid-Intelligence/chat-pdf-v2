@@ -123,6 +123,7 @@ def ask_query():
     # Check that every file in the namespace is loaded to pinecone
     namespace_name = qa_tool.namespace
     documents = retrieve_documents(namespace_name)
+    print(documents)
     for document in documents:
         if not document.document_id in qa_tool.loaded_documents:
     #          Load the document to pinecone
