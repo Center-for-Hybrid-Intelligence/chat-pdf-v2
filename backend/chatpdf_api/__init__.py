@@ -1,7 +1,7 @@
 import numpy as np
 from flask_cors import CORS
 from flask import g, Flask, request, session
-from .database import db, add_session, retrieve_session, delete_session, update_session, exists_namespace, retrieve_namespace, retrieve_documents, delete_document
+from .database import db, add_session, retrieve_session, delete_session, update_session, exists_namespace, retrieve_namespace, retrieve_documents, remove_document
 from .readpdf import read_from_encode
 from .qa_tool import QaTool
 import json
@@ -32,7 +32,7 @@ with app.app_context():
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "sqlalchemy"
 
-app.secret_key = "pietervandeawiff1"
+app.secret_key = "pietervandeawiff0000"
 
 @app.after_request
 def add_header(response):
@@ -62,7 +62,6 @@ def initialize_qa_tool():
 def load_pdf():
     qa_tool = g.qa_tool
     print("Loading pdf")
-    print(f"documentId: {request.form.get('documentId')}")
     # Parse the request
     author = request.form.get('author')
     file_id = request.form.get('documentId')
@@ -72,13 +71,13 @@ def load_pdf():
     settings = json.loads(request.form.get('settings'))
     chunk_size = int(settings["chunk_size"])
     chunk_overlap = int(settings['chunk_overlap'])
-    print(namespace_name)
+    print(f'namespace: {namespace_name}')
+    print(f"documentId: {request.form.get('documentId')}")
 
     # If the session id is used with a new namespace, throw an error asking to refresh the page
     if qa_tool.namespace is not None and qa_tool.namespace != namespace_name:
         print(qa_tool.namespace, namespace_name)
         return "You already created a namespace in the session, please refresh the page", 401
-
 
     # If the namespace is already used, retrieve the qa_tool from the database
     if qa_tool.namespace is None and exists_namespace(namespace_name):
@@ -103,7 +102,7 @@ def load_pdf():
     try:
         qa_tool.loading_data_to_pinecone(file_df)
     except Exception as e:
-        delete_document(file_id)
+        remove_document(file_id)
         return "Error loading data to pinecone", 401
     # Update the session
     update_session(session['session_id'], qa_tool)
@@ -164,5 +163,4 @@ def get_files():
     qa_tool = g.qa_tool
     print(qa_tool)
     files = retrieve_documents(qa_tool.namespace)
-    print(files)
-    return [file.document_title for file in files], 200
+    return files, 200
