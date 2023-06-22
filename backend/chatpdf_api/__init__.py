@@ -95,14 +95,20 @@ def ask_query():
     llm_temperature = float(settings['llm_temperature'])
     qa_tool.set_llm(llm_model, llm_temperature)
     top_closest = request.form.get('sources_number', 5)
-    try:
-        print("Querying...")
-        result = qa_tool(query=data['query'],top_closest=top_closest)
-    except openai.error.InvalidRequestError as e:
-        print((f"Invalid request error: {e}"))
-        error_message = str(e)
-        return error_message, 401 #Invalid request, might have reached maximum tokens
-    
+    docs = database.get_documents()
+    results = []
+    for doc in docs:
+        try:
+            print("Querying...")
+            results.append(qa_tool(query=data['query'],
+                                   top_closest=top_closest, 
+                                   filter={"Title":{"eq": doc.document_title},
+                                           "Auhtor":{"eq": doc.document_author},}))
+        except openai.error.InvalidRequestError as e:
+            print((f"Invalid request error: {e}"))
+            error_message = str(e)
+            return error_message, 401 #Invalid request, might have reached maximum tokens
+    result = results[0] #TODO: deal with multiple results that have been created
     print(result.keys())
     content = []
     for doc in result['source_documents']:
