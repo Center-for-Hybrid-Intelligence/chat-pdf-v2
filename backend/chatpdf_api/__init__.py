@@ -121,23 +121,34 @@ def ask_query():
     llm_temperature = float(settings['llm_temperature'])
     qa_tool.set_llm(llm_model, llm_temperature)
     top_closest = request.form.get('sources_number', 5)
-    try:
-        print("Querying...")
-        result = qa_tool(query=data['query'],top_closest=top_closest)
-    except openai.error.InvalidRequestError as e:
-        print((f"Invalid request error: {e}"))
-        error_message = str(e)
-        return error_message, 401 #Invalid request, might have reached maximum tokens
-    
-    print(result.keys())
-    content = []
-    for doc in result['source_documents']:
-        content.append((doc.page_content.replace('\n', "").replace('\t', ""), doc.metadata['title']))
-    response = {"result": result['result'], "source_documents": content}
-    print(content)
-    update_session(session['session_id'], qa_tool)
-    g.qa_tool = qa_tool
-    return response, 200
+    docs = database.get_documents()
+    results = []
+    for doc in docs:
+        try:
+            print("Querying...")
+            results.append(qa_tool(query=data['query'],
+                                   top_closest=top_closest, 
+                                   filter={"Title":{"eq": doc.document_title},
+                                           "Auhtor":{"eq": doc.document_author},}))
+        except openai.error.InvalidRequestError as e:
+            print((f"Invalid request error: {e}"))
+            error_message = str(e)
+            return error_message, 401 #Invalid request, might have reached maximum tokens
+    responses = []
+    for result in results:
+        print(result.keys())
+        content = []
+        for doc in result['source_documents']:
+            content.append((doc.page_content.replace('\n', "").replace('\t', ""), doc.metadata['title']))
+        response = {"result": result['result'], "source_documents": content}
+        print(content)
+        update_session(session['session_id'], qa_tool)
+        g.qa_tool = qa_tool
+        responses.append(response)
+    final_response = zip(docs, responses) #docs : the title and author of the document, responses : the result of the query and the source documents
+    #TODO use the final_reponse to display the results
+    #for now we will display only the first result without docs title and author
+    return responses[0], 200
 
     
 @app.route('/api/erase-all/', methods=['GET'])
