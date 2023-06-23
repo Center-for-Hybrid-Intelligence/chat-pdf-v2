@@ -1,32 +1,37 @@
 <template>
   <div class="flex flex-col justify-center mx-12  h6:mx-24 k1:mx-48 k15:mx-96 my-32"
   >
-    <div class="flex flex-col gap-8 items-center w-full">
+    <div class="flex flex-col gap-8 items-center w-full ">
 
       <label class="block text-4xl h8:text-5xl k15:text-7xl font-bold text-gray-700">
         Write your question
       </label>
 
-      <TextArea ref="question" :isDisabled="loading" @input="onChange" class="h-64 w-full k1:w-2/3"></TextArea>
-      <div v-for="(file, index) in files" :key="index" class=" w-11/12 k1:w-5/12  ">
-        <div class="flex gap-4 justify-between p-4 shadow-2xl shadow-gray-300 rounded-xl ">
-          <img src="/pdf-placeholder.png" class="h-full w-8 object-contain "/>
-          <div class="flex flex-col w-full  ">
-            <h1 class="text-start self-start pb-2" style="
+      <TextArea ref="question" :isDisabled="loading" @input="onChange" class="h-64 w-full "></TextArea>
+
+      <div class="w-full flex flex-wrap justify-center gap-4 my-8">
+        <div v-for="(file, index) in files" :key="index"
+             class="w-full k1:w-5/12">
+          <div class="flex gap-4  p-4 shadow-2xl shadow-gray-300 rounded-xl ">
+
+            <img src="/pdf-placeholder.png" class="h-full w-8 object-contain "/>
+            <div class="flex flex-col">
+              <h1 class="text-start self-center" style="
                 display: -webkit-box;
-                -webkit-line-clamp: 1;
+                                -webkit-line-clamp: 1;
+
                 -webkit-box-orient: vertical;
                 overflow: hidden;
                 text-overflow: ellipsis;"
-            >
+              >
+                {{ file.title }}
 
-              {{ file.title }}
+              </h1>
+              <div v-if="file.author" class="flex align-middle h-full gap-2 ">
 
-            </h1>
-            <div v-if="file.author" class="flex align-middle h-full gap-2 ">
+                {{ file.author }}
 
-              {{ file.author }}
-
+              </div>
             </div>
           </div>
         </div>
@@ -36,56 +41,66 @@
 
 
         <div class="w-full flex justify-center gap-8">
-        <div class="">
-        <h1 class="heading2 flex">
-          Temperature (
-          <div class="w-10">{{ settings.llm_temperature }}</div>
-          / 5)
-        </h1>
-        <h1 class="normalText">The closer it gets to 0 zero the more rational it behaves, the higher the more creative it gets. </h1>
-        <input min="0" max="5" step="0.1" type="range" :value="settings.llm_temperature" @input="tempChange" class="slider w-full mt-4"
-               id="weightSlider">
-        </div>
+          <div class="">
+            <h1 class="heading2 flex">
+              Temperature (
+              <div class="w-10">{{ settings.llm_temperature }}</div>
+              / 5)
+            </h1>
+            <h1 class="normalText">The closer it gets to 0 zero the more rational it behaves, the higher the more
+              creative it gets. </h1>
+            <input min="0" max="5" step="0.1" type="range" :value="settings.llm_temperature" @input="tempChange"
+                   class="slider w-full mt-4"
+                   id="weightSlider">
+          </div>
 
-        <div class="flex-col w-max items-stretch">
-          <h1 class="heading2">
-            Model used
-          </h1>
-          <h1 class="normalText">Different models interpret text differently. </h1>
+          <div class="flex-col w-max items-stretch">
+            <h1 class="heading2">
+              Model used
+            </h1>
+            <h1 class="normalText">Different models interpret text differently. </h1>
 
-          <DropdownSingle class="mt-4 flex" :items="['gpt-3.5-turbo', 'gpt-4']" :selected="settings.llm_model" @select="modelChange"></DropdownSingle>
+            <DropdownSingle class="mt-4 flex" :items="['gpt-3.5-turbo', 'gpt-4']" :selected="settings.llm_model"
+                            @select="modelChange"></DropdownSingle>
+          </div>
         </div>
-      </div>
       </div>
 
 
       <div class="flex flex-row gap-4">
         <Button :isDisabled="loading" class="button primary" @click="sendRequest">
-          <template #right><div v-if="loading">Loading results</div> <div v-else>Submit</div></template>
+          <template #right>
+            <div v-if="loading">Loading results</div>
+            <div v-else>Submit</div>
+          </template>
         </Button>
-        <h1 class="normalText"> {{error}} </h1>
+        <h1 class="normalText"> {{ error }} </h1>
       </div>
 
-    <div class="w-full flex flex-wrap justify-center gap-4 my-8" v-for="(question, index) in reversedQuestionList" :key="index">
-      <div class="flex flex-col gap-4 border-2 border-green-600 w-full	 h8:max-w-2xl break-words rounded-s p-6" v-if="questionList.answers[questionList.questions.length - 1 - index]">
-        <div class="block text-xs text-start font-medium text-gray-700">
-          <h1 class="heading2"> {{ reversedQuestionList[index] }} </h1>
-          {{ questionList.answers[questionList.questions.length - 1 - index] }}
+      <div class="w-full flex flex-wrap justify-center gap-4 my-8" v-for="(question, index) in reversedQuestionList"
+           :key="index">
+        <div class="flex flex-col gap-4 border-2 border-green-600 w-full	 h8:max-w-2xl break-words rounded-s p-6"
+             v-if="questionList.answers[questionList.questions.length - 1 - index]">
+          <div class="block text-xs text-start font-medium text-gray-700">
+            <h1 class="heading2"> {{ reversedQuestionList[index] }} </h1>
+            {{ questionList.answers[questionList.questions.length - 1 - index] }}
             <h1 class="heading2"> Source documents </h1>
             <div style="white-space: pre-wrap">
-              <div v-for="(source, index) in questionList.sourceDocuments[questionList.questions.length - 1 - index]" :key="index">
+              <div v-for="(source, index) in questionList.sourceDocuments[questionList.questions.length - 1 - index]"
+                   :key="index">
                 <h1 class="heading3">Source </h1>
                 <div class="mb-4" v-for="(specificSource, index) in source" :key="index">
                   <div v-if="!(index % 2 === 0)"><h1 class="heading4">Found in</h1></div>
-                  <span  :class="{'text-blue-600': !(index % 2 === 0)}">{{ specificSource }}</span>
+                  <span :class="{'text-blue-600': !(index % 2 === 0)}">{{ specificSource }}</span>
                 </div>
               </div>
             </div>
+          </div>
         </div>
       </div>
     </div>
-    </div>
-  </div>    <div v-if="loading" class="loading">Loading&#8230;</div>
+  </div>
+  <div v-if="loading" class="loading">Loading&#8230;</div>
 
 </template>
 
@@ -93,8 +108,8 @@
 import TextArea from "@/components/forms/TextArea.vue";
 import Button from "@/components/forms/Button.vue";
 import {ref, reactive, computed, onMounted} from "vue";
-import { onBeforeUnmount } from 'vue';
-import { authService } from "@/api";
+import {onBeforeUnmount} from 'vue';
+import {authService} from "@/api";
 import DropdownSingle from "@/components/forms/DropdownSingle.vue";
 import {initializeSession} from "@/cookieHandler";
 
@@ -120,10 +135,10 @@ export default {
     onMounted(() => {
       console.log('mounted')
       authService.get('/get-files/', {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            })
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
           .then((response) => {
             files.value = response.data
             console.log(response)
@@ -133,10 +148,10 @@ export default {
           });
     })
 
-    const settings = ref( {
-        llm_temperature: 0,
-        llm_model: "gpt-4",
-    } )
+    const settings = ref({
+      llm_temperature: 0,
+      llm_model: "gpt-4",
+    })
 
     const tempChange = (e) => {
       settings.value.llm_temperature = e.target.value
@@ -153,7 +168,7 @@ export default {
     }
 
     document.body.addEventListener('keydown', (event) => {
-      if(event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+      if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
         sendRequest();
       }
     });
@@ -164,7 +179,7 @@ export default {
 
     const sendRequest = async () => {
       if (query.value === '') {
-        
+
         return;
       }
       loading.value = true;
@@ -177,10 +192,10 @@ export default {
       has_answer.value = true;
       console.log(document.cookie, 'cookie in send request')
       authService.post('/ask-query/', request_data, {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            })
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
           .then((response) => {
             console.log(response)
             answer.value = response.data;
@@ -275,6 +290,7 @@ export default {
   border-radius: 9999px;
   cursor: pointer;
 }
+
 .loading {
   position: fixed;
   z-index: 999;
@@ -297,7 +313,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.3);
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 /* :not(:required) hides these rules from IE9 and below */
@@ -345,6 +361,7 @@ export default {
     transform: rotate(360deg);
   }
 }
+
 @-moz-keyframes spinner {
   0% {
     -webkit-transform: rotate(0deg);
@@ -361,6 +378,7 @@ export default {
     transform: rotate(360deg);
   }
 }
+
 @-o-keyframes spinner {
   0% {
     -webkit-transform: rotate(0deg);
@@ -377,6 +395,7 @@ export default {
     transform: rotate(360deg);
   }
 }
+
 @keyframes spinner {
   0% {
     -webkit-transform: rotate(0deg);

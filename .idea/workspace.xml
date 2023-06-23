@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="bd1d1aad-e1a0-4f0b-9b14-f0c0b058aa4b" name="Changes" comment="integrity error">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/ChatPDF.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/ChatPDF.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/forms/Button.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/forms/Button.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/views/PromptPDF.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/PromptPDF.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -61,6 +61,7 @@
       <workItem from="1687248519047" duration="590000" />
       <workItem from="1687335550783" duration="17983000" />
       <workItem from="1687421128961" duration="17581000" />
+      <workItem from="1687507156300" duration="5802000" />
     </task>
     <servers />
   </component>
