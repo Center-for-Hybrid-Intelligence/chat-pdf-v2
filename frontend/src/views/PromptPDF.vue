@@ -1,5 +1,4 @@
 <template >
-  <div class="w-full border" style="scrollbar-gutter: stable both-edges" >
   <div class="flex flex-col justify-center mx-12  h6:mx-24 k1:mx-48 k15:mx-96 my-32"
   >
     <div class="flex flex-col gap-8 items-center w-full ">
@@ -8,7 +7,7 @@
         Write your question
       </label>
 
-      <TextArea ref="question" :isDisabled="loading" @input="onChange" class="h-64 w-full "></TextArea>
+      <TextArea ref="question" :isDisabled="loading" @input="onChange" class="h-64 w-full k15:w-1/2"></TextArea>
 
       <div class="w-full flex flex-wrap justify-center gap-4 my-8">
         <div v-for="(file, index) in files" :key="index"
@@ -82,12 +81,12 @@
           <div class="flex justify-between">
           <h1 class="heading2"> {{ reversedQuestionList[index] }} </h1>
           <div class="flex gap-4">
-            <button @click="tabClosed[question] = !tabClosed[question]" class="transition-all duration-200" :class="{'transform ease-in-out rotate-180': tabClosed[question]}">
+            <button @click="tabClosed[question] = !tabClosed[question]" class="transition-all flex items-center align-middle duration-200" :class="{'transform ease-in-out rotate-180': tabClosed[question]}">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
             </svg>
             </button>
-            <button @click="deleteQuestion(index)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded max-h-12 self-end place-self-center">Delete</button>
+            <button @click="deleteQuestion(questionList.questions.length - 1 - index)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded max-h-12 items-center align-middle">Delete</button>
           </div>
           </div>
           <div :class="{'hidden': tabClosed[question]}">
@@ -108,8 +107,7 @@
       </div>
     </div>
   </div>
-    </div>
-  </div>    <div v-if="loading" class="loading">Loading&#8230;</div>
+    </div>   <div v-if="loading" class="loading">Loading&#8230;</div>
 </template>
 
 <script>
