@@ -13,16 +13,15 @@
         <div v-for="(file, index) in files" :key="index"
              class="w-full k1:w-5/12">
           <div class="flex gap-4  p-4 shadow-2xl shadow-gray-300 rounded-xl ">
-
             <img src="/pdf-placeholder.png" class="h-full w-8 object-contain "/>
-            <div class="flex flex-col">
-              <h1 class="text-start self-center" style="
+            <div class="flex flex-col justify-center">
+              <h1 class="text-start" style="
                 display: -webkit-box;
-                                -webkit-line-clamp: 1;
-
+                -webkit-line-clamp: 1;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
-                text-overflow: ellipsis;"
+                text-overflow: ellipsis;
+"
               >
                 {{ file.title }}
 

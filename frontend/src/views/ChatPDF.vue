@@ -71,7 +71,6 @@
                 text-overflow: ellipsis;"
             >
               {{ file.name }}
-
             </h1>
             <div class="flex align-middle h-full gap-2 ">
               <!--              <h1 class="text-mg font-bold place-self-center  ">
