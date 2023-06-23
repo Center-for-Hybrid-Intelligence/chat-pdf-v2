@@ -9,7 +9,8 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-
+scrollbar-gutter: stable both-edges;
+  overflow-y: visible;
 }
 
 nav {
