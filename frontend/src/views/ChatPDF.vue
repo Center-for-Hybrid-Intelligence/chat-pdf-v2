@@ -60,7 +60,7 @@
     </div>
     <transition-group name="list" class="w-full flex flex-wrap justify-center gap-4 my-8" tag="div">
       <div v-for="(file, index) in files" :key="index" class=" w-11/12 k1:w-5/12  ">
-        <div class="flex gap-4 justify-between p-4 shadow-2xl shadow-gray-300 rounded-xl ">
+        <div  class="flex gap-4 justify-between p-4 shadow-2xl shadow-gray-300 rounded-xl ">
           <img src="pdf-placeholder.png" class="h-full w-16 object-contain "/>
           <div class="flex flex-col w-full  ">
             <h1 class="text-start self-start pb-2" style="
@@ -154,7 +154,8 @@
       </div>
     </div>
 
-  </div>
+  </div>  <div v-if="loading" class="loading">Loading&#8230;</div>
+
 
 </template>
 

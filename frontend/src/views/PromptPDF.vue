@@ -1,4 +1,5 @@
-<template>
+<template >
+  <div class="w-full border" style="scrollbar-gutter: stable both-edges" >
   <div class="flex flex-col justify-center mx-12  h6:mx-24 k1:mx-48 k15:mx-96 my-32"
   >
     <div class="flex flex-col gap-8 items-center w-full ">
@@ -75,14 +76,22 @@
         </Button>
         <h1 class="normalText"> {{ error }} </h1>
       </div>
-
-      <div class="w-full flex flex-wrap justify-center gap-4 my-8" v-for="(question, index) in reversedQuestionList"
-           :key="index">
-        <div class="flex flex-col gap-4 border-2 border-green-600 w-full	 h8:max-w-2xl break-words rounded-s p-6"
-             v-if="questionList.answers[questionList.questions.length - 1 - index]">
-          <div class="block text-xs text-start font-medium text-gray-700">
-            <h1 class="heading2"> {{ reversedQuestionList[index] }} </h1>
-            {{ questionList.answers[questionList.questions.length - 1 - index] }}
+    <div class="w-full flex flex-wrap justify-center gap-4 my-8" v-for="(question, index) in reversedQuestionList" :key="index">
+      <div class="flex flex-col gap-4 border-2 border-green-600 w-full	 h8:max-w-2xl break-words rounded-s p-6" v-if="questionList.answers[questionList.questions.length - 1 - index]">
+        <div class="block text-xs text-start font-medium text-gray-700">
+          <div class="flex justify-between">
+          <h1 class="heading2"> {{ reversedQuestionList[index] }} </h1>
+          <div class="flex gap-4">
+            <button @click="tabClosed[question] = !tabClosed[question]" class="transition-all duration-200" :class="{'transform ease-in-out rotate-180': tabClosed[question]}">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+            </button>
+            <button @click="deleteQuestion(index)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded max-h-12 self-end place-self-center">Delete</button>
+          </div>
+          </div>
+          <div :class="{'hidden': tabClosed[question]}">
+          {{ questionList.answers[questionList.questions.length - 1 - index] }}
             <h1 class="heading2"> Source documents </h1>
             <div style="white-space: pre-wrap">
               <div v-for="(source, index) in questionList.sourceDocuments[questionList.questions.length - 1 - index]"
@@ -99,8 +108,8 @@
       </div>
     </div>
   </div>
-  <div v-if="loading" class="loading">Loading&#8230;</div>
-
+    </div>
+  </div>    <div v-if="loading" class="loading">Loading&#8230;</div>
 </template>
 
 <script>
@@ -129,6 +138,8 @@ export default {
       answers: [],
       sourceDocuments: [],
     });
+
+    const tabClosed = reactive({})
 
     let files = ref([])
     onMounted(() => {
@@ -164,6 +175,12 @@ export default {
 
     const onChange = (value) => {
       query.value = value
+    }
+
+    const deleteQuestion = (index) => {
+      questionList.questions.splice(index, 1);
+      questionList.answers.splice(index, 1);
+      questionList.sourceDocuments.splice(index, 1);
     }
 
     document.body.addEventListener('keydown', (event) => {
@@ -259,7 +276,9 @@ export default {
       settings,
       modelChange,
       error,
-      files
+      files,
+      tabClosed,
+      deleteQuestion
     }
   }
 }
@@ -288,127 +307,5 @@ export default {
   background-color: #4B5563;
   border-radius: 9999px;
   cursor: pointer;
-}
-
-.loading {
-  position: fixed;
-  z-index: 999;
-  height: 2em;
-  width: 2em;
-  overflow: visible;
-  margin: auto;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-}
-
-/* Transparent Overlay */
-.loading:before {
-  content: '';
-  display: block;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.3);
-}
-
-/* :not(:required) hides these rules from IE9 and below */
-.loading:not(:required) {
-  /* hide "loading..." text */
-  font: 0/0 a;
-  color: transparent;
-  text-shadow: none;
-  background-color: transparent;
-  border: 0;
-}
-
-.loading:not(:required):after {
-  content: '';
-  display: block;
-  font-size: 10px;
-  width: 1em;
-  height: 1em;
-  margin-top: -0.5em;
-  -webkit-animation: spinner 1500ms infinite linear;
-  -moz-animation: spinner 1500ms infinite linear;
-  -ms-animation: spinner 1500ms infinite linear;
-  -o-animation: spinner 1500ms infinite linear;
-  animation: spinner 1500ms infinite linear;
-  border-radius: 0.5em;
-  -webkit-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
-  box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) -1.5em 0 0 0, rgba(0, 0, 0, 0.75) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
-}
-
-/* Animation */
-
-@-webkit-keyframes spinner {
-  0% {
-    -webkit-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -ms-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-
-@-moz-keyframes spinner {
-  0% {
-    -webkit-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -ms-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-
-@-o-keyframes spinner {
-  0% {
-    -webkit-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -ms-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes spinner {
-  0% {
-    -webkit-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -ms-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
 }
 </style>
