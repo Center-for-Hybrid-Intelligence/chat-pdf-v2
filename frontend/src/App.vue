@@ -1,6 +1,5 @@
-<template>
-
-  <router-view/>
+<template >
+  <router-view  />
 </template>
 
 <style>
@@ -10,6 +9,7 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+
 }
 
 nav {
@@ -23,5 +23,24 @@ nav a {
 
 nav a.router-link-exact-active {
   color: #42b983;
+}
+/* Customize the width of the scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Customize the background color of the scrollbar track */
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+/* Customize the scrollbar thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+  background-color: #2c3e50;
+}
+
+/* Add a hover effect on the scrollbar thumb */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
 }
 </style>
