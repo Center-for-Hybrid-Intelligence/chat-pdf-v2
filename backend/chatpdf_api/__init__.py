@@ -76,6 +76,20 @@ def load_pdf():
     print(f"documentId: {request.form.get('documentId')}")
     print(f"author: {request.form.get('author')}")
 
+    if not (file_id or file):
+    #     Check for an already existing namespace
+        if namespace_name is None:
+            return "Please provide a namespace", 401
+        if not exists_namespace(namespace_name):
+            return "Please provide a file or a document id", 401
+        else:
+            session_id = retrieve_namespace(namespace_name)
+            qa_tool = retrieve_session(session_id)
+            update_session(session['session_id'], qa_tool)
+            g.qa_tool = qa_tool
+            return "Successfully retrieved session", 200
+
+
     # If the session id is used with a new namespace, throw an error asking to refresh the page
     if qa_tool.namespace is not None and qa_tool.namespace != namespace_name:
         print(qa_tool.namespace, namespace_name)
@@ -89,9 +103,6 @@ def load_pdf():
         update_session(session['session_id'], qa_tool)
     #     Retrieve the files that are already in the namespace
         documents = retrieve_documents(namespace_name)
-
-    if not (file_id and namespace_name and file):
-        return "Missing file or fileInfo", 439
 
     # Update the qa_tool
     qa_tool.set_chunks(chunk_size, chunk_overlap)
