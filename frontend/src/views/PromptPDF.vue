@@ -46,8 +46,7 @@
               <div class="w-10">{{ settings.llm_temperature }}</div>
               / 5)
             </h1>
-            <h1 class="normalText">The closer it gets to 0 zero the more rational it behaves, the higher the more
-              creative it gets. </h1>
+            <h1 class="normalText">The closer temperature gets to 0 (zero) the more rational the answers will be, while the higher the value of the temperature, the more creative they get. </h1>
             <input min="0" max="5" step="0.1" type="range" :value="settings.llm_temperature" @input="tempChange"
                    class="slider w-full mt-4"
                    id="weightSlider">
