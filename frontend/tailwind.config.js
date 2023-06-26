@@ -19,8 +19,8 @@ module.exports = {
       },
       colors: {
         neutral: '#e5e7eb',
-        darkGreen: "#579E81",
-        green: "#A3CD99",
+        darkGreen: "#3f8064",
+        green: "#80aa7a",
 
       },
       keyframes: {
