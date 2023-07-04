@@ -24,7 +24,9 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 import tiktoken
 from .database import remove_document
 
-from .database import add_document
+from .database import add_document, retrieve_documents
+
+import openai
 
 pinecone.init(api_key=PINE_API_KEY, environment=YOUR_ENV)
 
@@ -135,7 +137,7 @@ class QaTool:
         index = pinecone.GRPCIndex(self.index_name)  # we are connected to the pinecone index
         index.delete(ids=[document_id], namespace=self.namespace)
 
-    def __call__(self, query, top_closest, filter=None) -> Any:
+    def __call__(self, query, top_closest) -> Any:
         print("Loading embeddings")
         embed = OpenAIEmbeddings(
             model=self.embedding_model,
@@ -151,15 +153,50 @@ class QaTool:
             model_name='gpt-4',
             temperature=0.0
         )
-        print("Loading QA")
-        qa = RetrievalQA.from_chain_type(
-            llm=llm,
-            chain_type=self.chain_type,
-            retriever=vectorstore.as_retriever(search_kwargs={"k": top_closest, "filter": filter }),
-            return_source_documents=True,
-            verbose=True
+        
+        # Multiple answer mode
+        docs = retrieve_documents(self.namespace)
+        results = []
+        for doc in docs:
+            # filter = {"Title":{"$eq": doc.document_title}, "Author":{"$eq": doc.document_author}}
+            # filter = {'$and': [{"title":{"$eq": doc.document_title}}, {"author":{"$eq": doc.document_author}}]}
+            filter = {"title": {"$eq": doc.document_title}} #TODO : mark the filter works
+            print("Loading QA")
+            qa = RetrievalQA.from_chain_type(
+                llm=llm,
+                chain_type=self.chain_type,
+                retriever=vectorstore.as_retriever(search_kwargs={"k": top_closest, "filter": None}), #for now we are not applying any filter
+                return_source_documents=True,
+                verbose=True
         )
-        return qa({"query": query})
+            try:
+                print("Querying...")
+                results.append(qa({"query": query})) #TODO : Erreur après cette ligne : "illegal condition for field Title, got {\"eq\":\"Cover Letter EN.pdf\"}","details":[]}
+            except openai.error.InvalidRequestError as e:
+                print((f"Invalid request error: {e}"))
+                error_message = str(e)
+                return error_message, 401 #Invalid request, might have reached maximum tokens
+            
+         #docs : the title and author of the document, responses : the result of the query and the source documents
+        final_response = [(x.document_title, x.document_author, y) for x, y in zip(docs, results)]
+        return final_response
+        
+        # responses = []
+        # for result in results:
+        #     print(result.keys())
+        #     content = []
+        #     for doc in result['source_documents']:
+        #         content.append((doc.page_content.replace('\n', "").replace('\t', ""), doc.metadata['title']))
+        #     response = {"result": result['result'], "source_documents": content}
+        #     print(content)
+        #     #update_session(session['session_id'], qa)
+        #     responses.append(response)
+        # final_response = zip(docs, responses) #docs : the title and author of the document, responses : the result of the query and the source documents
+
+
+
+        # Single answer mode
+        # return qa({"query": query})
 
     def __repr__(self) -> str:
         return f"QaTool(chunk_size={self.chunk_size}, chunk_overlap={self.chunk_overlap}, chain_type={self.chain_type}), index_name={self.index_name}, namespace={self.namespace})"
