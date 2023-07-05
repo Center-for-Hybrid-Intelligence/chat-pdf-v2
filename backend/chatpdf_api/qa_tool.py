@@ -157,10 +157,9 @@ class QaTool:
         docs = retrieve_documents(self.namespace)
         results = []
         for doc in docs:
-            # filter = {"Title":{"$eq": doc.document_title}, "Author":{"$eq": doc.document_author}}
             # filter = {'$and': [{"title":{"$eq": doc.document_title}}, {"author":{"$eq": doc.document_author}}]}
-            # filter = {"title": {"$eq": doc.document_title}} #TODO : mark the filter works
-            filter = {"title": doc.document_title}
+            # filter = {"title": {"$eq": doc.document_title}}
+            filter = {"title": doc.document_title} #only one working for now. The other should ne working based on the source code and documentation but not in practice
             print("Loading QA")
             qa = RetrievalQA.from_chain_type(
                 llm=llm,
