@@ -124,7 +124,6 @@ class QaTool:
         if len(texts) > 0:
             ids = [str(uuid4()) for _ in range(len(texts))]
             embeds = embed.embed_documents(texts)
-
             index.upsert(vectors=zip(ids, embeds, metadatas), namespace=self.namespace)
         self.loaded_documents.append(data['Id'].tolist()[0])
     def delete_all(self):
@@ -160,12 +159,13 @@ class QaTool:
         for doc in docs:
             # filter = {"Title":{"$eq": doc.document_title}, "Author":{"$eq": doc.document_author}}
             # filter = {'$and': [{"title":{"$eq": doc.document_title}}, {"author":{"$eq": doc.document_author}}]}
-            filter = {"title": {"$eq": doc.document_title}} #TODO : mark the filter works
+            # filter = {"title": {"$eq": doc.document_title}} #TODO : mark the filter works
+            filter = {"title": doc.document_title}
             print("Loading QA")
             qa = RetrievalQA.from_chain_type(
                 llm=llm,
                 chain_type=self.chain_type,
-                retriever=vectorstore.as_retriever(search_kwargs={"k": top_closest, "filter": None}), #for now we are not applying any filter
+                retriever=vectorstore.as_retriever(search_kwargs={"k": top_closest, "filter": filter}), #for now we are not applying any filter
                 return_source_documents=True,
                 verbose=True
         )
