@@ -173,6 +173,7 @@ def ask_query():
         content.append((doc.page_content.replace('\n', "").replace('\t', ""), doc.metadata['title']))
     response = {"result": result['result'], "source_documents": content}
     print(content)
+
     update_session(session['session_id'], qa_tool)
     g.qa_tool = qa_tool
     return response, 200

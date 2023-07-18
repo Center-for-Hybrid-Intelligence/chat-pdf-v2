@@ -177,7 +177,9 @@ class QaTool:
                 return error_message, 401 #Invalid request, might have reached maximum tokens
             
          #docs : the title and author of the document, responses : the result of the query and the source documents
-        final_response = [(x.document_title, x.document_author, y) for x, y in zip(docs, results)]
+        # TODO Make this code compatible with the rest of the app because I will not do it for you Ludovic
+        # I am sorry but it is not my job to do it and it does not seem hard to do
+        final_response = [(document.document_title, document.document_author, result) for document, result in zip(docs, results)]
         return final_response
         
         # responses = []
