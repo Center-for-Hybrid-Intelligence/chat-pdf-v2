@@ -120,6 +120,7 @@ def load_pdf():
             qa_tool.loading_data_to_pinecone(file_df)
         except Exception as e:
             remove_document_from_namespace(file_id, namespace_name)
+            print(e)
             return "Error loading data to pinecone", 401
     # Update the session
     update_session(session['session_id'], qa_tool)
