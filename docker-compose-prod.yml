@@ -6,7 +6,7 @@ services:
     container_name: backend-chatpdf
     restart: always
     volumes:
-      - '.backend:/backend'
+      - './backend/:/app/instance/'
     build:
       context: './backend'
       dockerfile: Dockerfile
