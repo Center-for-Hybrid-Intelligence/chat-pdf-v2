@@ -3,6 +3,7 @@
 backend/instance/requests.db
 
 **/*.pyc
+**/pycache
 
 */.env
 
