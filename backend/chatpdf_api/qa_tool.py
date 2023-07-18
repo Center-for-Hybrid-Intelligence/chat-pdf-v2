@@ -160,7 +160,7 @@ class QaTool:
             # filter = {'$and': [{"title":{"$eq": doc.document_title}}, {"author":{"$eq": doc.document_author}}]}
             # filter = {"title": {"$eq": doc.document_title}}
             filter = {"title": doc.document_title} #only one working for now. The other should ne working based on the source code and documentation but not in practice
-            print("Loading QA")
+            print("Loading QA for document: ", doc.document_title)
             qa = RetrievalQA.from_chain_type(
                 llm=llm,
                 chain_type=self.chain_type,
