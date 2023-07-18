@@ -92,14 +92,6 @@ def remove_document(document_id):
     db.session.commit()
 
 
-def get_documents():
-    documents = Document.query.all()
-    result = []
-    for document in documents:
-        result.append((document.document_title, document.document_author))
-    return result
-
-
 def add_session(session_id, qa_tool):
     session = Session(session_id=session_id, qa_tool=qa_tool)
     db.session.add(session)
@@ -128,6 +120,7 @@ def exists_namespace(namespace_name):
 def retrieve_namespace(namespace_name):
     # Get the most recent namespace with the given name
     return Namespace.query.filter_by(namespace_name=namespace_name).order_by(Namespace.created_at.desc()).first().session_id
+
 def retrieve_documents(namespace_name):
     return Document.query.join(DocumentNamespace).filter_by(namespace_name=namespace_name).all()
 
