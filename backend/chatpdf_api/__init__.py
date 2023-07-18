@@ -157,7 +157,11 @@ def ask_query():
     top_closest = request.form.get('sources_number', 5)
     try:
         print("Querying...")
-        result = qa_tool(query=data['query'], top_closest=top_closest)
+        result = qa_tool(query=data['query'], top_closest=top_closest) 
+        #qa_tool now returns a list of tuples: one for each document in the database
+        #in the shape of (document_title, document_author, result)
+        #result is exactly the same as before with 'result' and 'source_document' but now document wise.
+        result = result[0][2] #for now we only return the first document
     except openai.error.InvalidRequestError as e:
         print((f"Invalid request error: {e}"))
         error_message = str(e)

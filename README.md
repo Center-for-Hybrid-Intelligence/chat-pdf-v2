@@ -13,7 +13,12 @@ The backend is a Flask RestAPI with 3 endpoints:
 /ask-query/ to query the database and ask a question.
 /erase-all/, automatically triggered when leaving the querying page. For now, the vector data is not stored anywhere.
 
-Outside the app, UWSGI is loaded on docker and handles multiple requests for us.
+Outside the app, UWSGI is loaded on docker and handles multiple instances for us.
+The python app is situated in the chatpdf_api folder, and the files around it are here to parametrize it.
+
+The Dockerfile manages the docker container, while the app.ini file manages the UWSGI app.
+
+In the app.ini file, several threads and processes are allowed, and it is very easy to scale them up by just changing the configuration numbers.
 
 ## Debug environment
 
