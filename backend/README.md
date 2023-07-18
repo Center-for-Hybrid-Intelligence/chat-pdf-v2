@@ -161,6 +161,11 @@ $lte - Less than or equal to (number)
 $in - In array (string or number)
 $nin - Not in array (string or number)
 
+more info here:
+https://docs.pinecone.io/docs/metadata-filtered-search
+
+for now the only filter working is by writing : {"title": doc.document_title}. thus $eq and others functions aren't used
+
 # Things to implement
 ## Self querying : choosing filter based on prompt
 https://python.langchain.com/docs/modules/data_connection/retrievers/how_to/self_query/

@@ -3,6 +3,7 @@
 backend/instance/requests.db
 
 **/*.pyc
+**/__pycache__
 
 */.env
 
@@ -29,9 +30,5 @@ backend/instance/requests.db
 */*.njsproj
 */*.sln
 */*.sw?
-.idea/inspectionProfiles/Project_Default.xml
-.idea/vcs.xml
-.idea/workspace.xml
-.idea/workspace.xml
-.idea/workspace.xml
-.idea/workspace.xml
+.idea/*
+.vscode/*
