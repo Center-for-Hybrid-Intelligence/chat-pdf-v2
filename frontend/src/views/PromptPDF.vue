@@ -213,6 +213,7 @@ export default {
           .then((response) => {
             console.log(response)
             answer.value = response.data;
+            console.log(answer.value, 'answer')
             loading_answer.value = false;
             for (let i = 0; i < files.value.length; i++) {
               questionList.questions.push(query.value);
