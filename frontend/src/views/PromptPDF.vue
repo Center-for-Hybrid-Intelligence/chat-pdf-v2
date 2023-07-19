@@ -219,7 +219,6 @@ export default {
               questionList.questions.push(query.value);
               questionList.answers.push(answer.value[i].result);
               questionList.sourceDocuments.push(answer.value[i].source_documents);
-
             }
             loading.value = false;
             query.value = '';
