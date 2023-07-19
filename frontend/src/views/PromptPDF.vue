@@ -70,7 +70,6 @@
           </template>
         </Button>
         <button @click="downloadJson">Download JSON</button>
-
         <h1 class="normalText"> {{ error }} </h1>
       </div>
     <div class="w-full flex flex-wrap justify-center gap-4 my-8" v-for="(question, index) in reversedQuestionList" :key="index">
