@@ -166,8 +166,8 @@ def ask_query():
         return error_message, 401  # Invalid request, might have reached maximum tokens
 
     response = []
-    content = []
     for res in result:
+        content = []
         document = res[2]
         print(res[0])
         print(document)
