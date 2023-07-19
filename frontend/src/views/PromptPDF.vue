@@ -78,32 +78,33 @@
       <div class="flex flex-col gap-4 border-2 border-green-600 w-full	 h8:max-w-2xl break-words rounded-s p-6" v-if="questionList.answers[questionList.questions.length - 1 - index]">
         <div class="block text-xs text-start font-medium text-gray-700">
           <div class="flex justify-between">
-          <h1 class="heading2"> {{ reversedQuestionList[index] }} </h1>
-          <div class="flex gap-4">
-            <button @click="tabClosed[question] = !tabClosed[question]" class="transition-all flex items-center align-middle duration-200" :class="{'transform ease-in-out rotate-180': tabClosed[question]}">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-            </svg>
-            </button>
-            <button @click="deleteQuestion(questionList.questions.length - 1 - index)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded max-h-12 items-center align-middle">Delete</button>
-          </div>
+            <h1 class="heading2"> {{ reversedQuestionList[index] }} </h1>
+            <div class="flex gap-4">
+              <button @click="tabClosed[question] = !tabClosed[question]" class="transition-all flex items-center align-middle duration-200" :class="{'transform ease-in-out rotate-180': tabClosed[question]}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+              </svg>
+              </button>
+              <button @click="deleteQuestion(questionList.questions.length - 1 - index)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded max-h-12 items-center align-middle">Delete</button>
+            </div>
           </div>
           <div :class="{'hidden': tabClosed[question]}">
           {{ questionList.answers[questionList.questions.length - 1 - index] }}
             <h1 class="heading2"> Source documents </h1>
             <div style="white-space: pre-wrap">
-              <div v-for="(source, index) in questionList.sourceDocuments[questionList.questions.length - 1 - index]"
-                   :key="index">
-                <h1 class="heading3">Source </h1>
-                <div class="mb-4" v-for="(specificSource, index) in source" :key="index">
-                  <div v-if="!(index % 2 === 0)"><h1 class="heading4">Found in</h1></div>
-                  <span :class="{'text-blue-600': !(index % 2 === 0)}">{{ specificSource }}</span>
+                <div v-for="(source, index) in questionList.sourceDocuments[questionList.questions.length - 1 - index]"
+                     :key="index">
+                  <h1 class="heading3">Source </h1>
+                  <div class="mb-4" v-for="(specificSource, index) in source" :key="index">
+                    <div v-if="!(index % 2 === 0)"><h1 class="heading4">Found in</h1></div>
+                    <span :class="{'text-blue-600': !(index % 2 === 0)}">{{ specificSource }}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+
     </div>
   </div>
     </div>   <div v-if="loading" class="loading">Loading&#8230;</div>
@@ -213,8 +214,12 @@ export default {
             console.log(response)
             answer.value = response.data;
             loading_answer.value = false;
-            questionList.answers.push(answer.value.result);
-            questionList.sourceDocuments.push(answer.value.source_documents);
+            for (let i = 0; i < files.value.length; i++) {
+              questionList.answers.push(response[i]);
+              questionList.answers.push(answer.value[i].result);
+              questionList.sourceDocuments.push(answer.value[i].source_documents);
+
+            }
             loading.value = false;
             query.value = '';
             ref.question.value = '';
