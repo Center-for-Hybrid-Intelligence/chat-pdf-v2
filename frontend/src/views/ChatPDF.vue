@@ -192,7 +192,7 @@ export default {
   const generated = ref(false);
 
     const settings = ref({
-      chunk_size: 200,
+      chunk_size: 400,
       chunk_overlap: 50,
     });
 
