@@ -24,12 +24,9 @@
 "
               >
                 {{ file.title }}
-
               </h1>
               <div v-if="file.author" class="flex align-middle h-full gap-2 ">
-
                 {{ file.author }}
-
               </div>
             </div>
           </div>

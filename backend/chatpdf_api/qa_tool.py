@@ -177,27 +177,10 @@ class QaTool:
                 return error_message, 401 #Invalid request, might have reached maximum tokens
             
          #docs : the title and author of the document, responses : the result of the query and the source documents
-        # TODO Make this code compatible with the rest of the app because I will not do it for you Ludovic
-        # I am sorry but it is not my job to do it and it does not seem hard to do
         final_response = [(document.document_title, document.document_author, result) for document, result in zip(docs, results)]
         return final_response
         
-        # responses = []
-        # for result in results:
-        #     print(result.keys())
-        #     content = []
-        #     for doc in result['source_documents']:
-        #         content.append((doc.page_content.replace('\n', "").replace('\t', ""), doc.metadata['title']))
-        #     response = {"result": result['result'], "source_documents": content}
-        #     print(content)
-        #     #update_session(session['session_id'], qa)
-        #     responses.append(response)
-        # final_response = zip(docs, responses) #docs : the title and author of the document, responses : the result of the query and the source documents
 
-
-
-        # Single answer mode
-        # return qa({"query": query})
 
     def __repr__(self) -> str:
         return f"QaTool(chunk_size={self.chunk_size}, chunk_overlap={self.chunk_overlap}, chain_type={self.chain_type}), index_name={self.index_name}, namespace={self.namespace})"
