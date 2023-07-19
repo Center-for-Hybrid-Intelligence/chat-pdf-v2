@@ -223,6 +223,7 @@ export default {
             loading.value = false;
             query.value = '';
             ref.question.value = '';
+            console.log(questionList)
           })
           .catch((error) => {
             error.value = error.response;

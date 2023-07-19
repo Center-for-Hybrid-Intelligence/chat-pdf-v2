@@ -77,7 +77,7 @@ def load_pdf():
     print(f"author: {request.form.get('author')}")
 
     if not (file_id or file):
-    #     Check for an already existing namespace
+        # Check for an already existing namespace
         if namespace_name is None:
             return "Please provide a namespace", 401
         if not exists_namespace(namespace_name):
@@ -88,7 +88,6 @@ def load_pdf():
             update_session(session['session_id'], qa_tool)
             g.qa_tool = qa_tool
             return "Successfully retrieved session", 200
-
 
     # If the session id is used with a new namespace, throw an error asking to refresh the page
     if qa_tool.namespace is not None and qa_tool.namespace != namespace_name:
