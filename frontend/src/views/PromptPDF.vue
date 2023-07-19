@@ -197,7 +197,7 @@ export default {
         return;
       }
       loading.value = true;
-      questionList.questions.push(query.value);
+      // questionList.questions.push(query.value);
       const request_data = {
         query: query.value,
         settings: settings.value,
@@ -215,7 +215,7 @@ export default {
             answer.value = response.data;
             loading_answer.value = false;
             for (let i = 0; i < files.value.length; i++) {
-              questionList.answers.push(response[i]);
+              questionList.questions.push(query.value);
               questionList.answers.push(answer.value[i].result);
               questionList.sourceDocuments.push(answer.value[i].source_documents);
 
@@ -223,7 +223,7 @@ export default {
             loading.value = false;
             query.value = '';
             ref.question.value = '';
-            console.log(questionList)
+            console.log(questionList, 'question list')
           })
           .catch((error) => {
             error.value = error.response;
