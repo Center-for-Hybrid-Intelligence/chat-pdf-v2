@@ -169,7 +169,7 @@ def ask_query():
     content = []
     for res in result:
         document = res[2]
-        print(res)
+        print(res[0])
         print(document)
         for doc in document['source_documents']:
             content.append((doc.page_content.replace('\n', "").replace('\t', ""), doc.metadata['title']))
@@ -179,36 +179,6 @@ def ask_query():
     update_session(session['session_id'], qa_tool)
     g.qa_tool = qa_tool
     return response, 200
-
-    # Changes of Ludo that do not work (filter error, so restored the previous version)
-    # Please keep this endpoint clean, put the complicated stuff in a functionà
-
-    # for doc in docs:
-    #     try:
-    #         print("Querying...")
-    #         results.append(qa_tool(query=data['query'],
-    #                                top_closest=top_closest,
-    #                                filter={"Title":{"eq": doc.document_title},
-    #                                        "Author":{"eq": doc.document_author},}))
-    #     except openai.error.InvalidRequestError as e:
-    #         print((f"Invalid request error: {e}"))
-    #         error_message = str(e)
-    #         return error_message, 401 #Invalid request, might have reached maximum tokens
-    # responses = []
-    # for result in results:
-    #     print(result.keys())
-    #     content = []
-    #     for doc in result['source_documents']:
-    #         content.append((doc.page_content.replace('\n', "").replace('\t', ""), doc.metadata['title']))
-    #     response = {"result": result['result'], "source_documents": content}
-    #     print(content)
-    #     update_session(session['session_id'], qa_tool)
-    #     responses.append(response)
-    # final_response = zip(docs, responses) #docs : the title and author of the document, responses : the result of the query and the source documents
-    # #TODO use the final_reponse to display the results
-    # #for now we will display only the first result without docs title and author
-    # g.qa_tool = qa_tool
-    # return responses[0], 200
 
     
 @app.route('/api/erase-all/', methods=['GET'])
