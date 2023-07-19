@@ -161,18 +161,21 @@ def ask_query():
         #qa_tool now returns a list of tuples: one for each document in the database
         #in the shape of (document_title, document_author, result)
         #result is exactly the same as before with 'result' and 'source_document' but now document wise.
-        result = result[0][2] #for now we only return the first document
     except openai.error.InvalidRequestError as e:
         print((f"Invalid request error: {e}"))
         error_message = str(e)
         return error_message, 401  # Invalid request, might have reached maximum tokens
 
-    print(result.keys())
+    response = []
     content = []
-    for doc in result['source_documents']:
-        content.append((doc.page_content.replace('\n', "").replace('\t', ""), doc.metadata['title']))
-    response = {"result": result['result'], "source_documents": content}
-    print(content)
+    for res in result:
+        document = res[2]
+        print(res)
+        print(document)
+        for doc in document['source_documents']:
+            content.append((doc.page_content.replace('\n', "").replace('\t', ""), doc.metadata['title']))
+        response.append({"result": document['result'], "source_documents": content})
+        print(content)
 
     update_session(session['session_id'], qa_tool)
     g.qa_tool = qa_tool
