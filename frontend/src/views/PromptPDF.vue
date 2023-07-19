@@ -69,6 +69,8 @@
             <div v-else>Submit</div>
           </template>
         </Button>
+        <button @click="downloadJson">Download JSON</button>
+
         <h1 class="normalText"> {{ error }} </h1>
       </div>
     <div class="w-full flex flex-wrap justify-center gap-4 my-8" v-for="(question, index) in reversedQuestionList" :key="index">
@@ -105,6 +107,7 @@
     </div>
   </div>
     </div>   <div v-if="loading" class="loading">Loading&#8230;</div>
+
 </template>
 
 <script>
@@ -115,6 +118,7 @@ import {onBeforeUnmount} from 'vue';
 import {authService} from "@/api";
 import DropdownSingle from "@/components/forms/DropdownSingle.vue";
 import {initializeSession} from "@/cookieHandler";
+import { saveAs } from 'file-saver';
 
 
 export default {
@@ -262,6 +266,10 @@ export default {
         console.error('Failed to send HTTP request:', error);
       }
     };
+    const downloadJson = () => {
+      const blob = new Blob([JSON.stringify(questionList)], { type: 'text/plain;charset=utf-8' });
+      saveAs(blob, 'data.json');
+    };
 
     return {
       answer,
@@ -278,7 +286,8 @@ export default {
       error,
       files,
       tabClosed,
-      deleteQuestion
+      deleteQuestion,
+      downloadJson
     }
   }
 }
