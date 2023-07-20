@@ -69,7 +69,7 @@
             <div v-else>Submit</div>
           </template>
         </Button>
-        <button @click="downloadJson">Download JSON</button>
+        <button @click="downloadCSV">Download CSV ("|" separator)</button>
         <h1 class="normalText"> {{ error }} </h1>
       </div>
     <div class="w-full flex flex-wrap justify-center gap-4 my-8" v-for="(question, index) in reversedQuestionList" :key="index">
@@ -120,6 +120,7 @@ import {initializeSession} from "@/cookieHandler";
 import { saveAs } from 'file-saver';
 
 
+
 export default {
   name: "PromptPDf",
   components: {DropdownSingle, Button, TextArea},
@@ -135,6 +136,8 @@ export default {
       questions: [],
       answers: [],
       sourceDocuments: [],
+      authors: [],
+      titles: [],
     });
 
     const tabClosed = reactive({})
@@ -219,6 +222,8 @@ export default {
               questionList.questions.push(query.value);
               questionList.answers.push(answer.value[i].result);
               questionList.sourceDocuments.push(answer.value[i].source_documents);
+              questionList.authors.push(answer.value[i].author);
+              questionList.titles.push(answer.value[i].title);
             }
             loading.value = false;
             query.value = '';
@@ -265,10 +270,41 @@ export default {
         console.error('Failed to send HTTP request:', error);
       }
     };
-    const downloadJson = () => {
-      const blob = new Blob([JSON.stringify(questionList)], { type: 'text/plain;charset=utf-8' });
-      saveAs(blob, 'data.json');
-    };
+    function downloadCSV() {
+      let data = questionList;
+
+      let flatData = [];
+
+      // Flatten the object
+      for (let key in data) {
+        data[key].forEach((item, index) => {
+          if (flatData[index]) {
+            flatData[index][key] = item;
+          } else {
+            flatData[index] = { [key]: item };
+          }
+        });
+      }
+
+      // Convert the flattened object to CSV
+      let csvContent = '';
+      let separator = '|';
+      let header = Object.keys(flatData[0]).join(separator) + '\r\n';
+      csvContent += header;
+
+      flatData.forEach(function(row) {
+        let rowData = Object.values(row).join(separator) + '\r\n';
+        csvContent += rowData;
+      });
+
+      // Create a Blob with the CSV data
+      let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+      saveAs(blob, "data.csv");
+    }
+
+
+
 
     return {
       answer,
@@ -286,7 +322,7 @@ export default {
       files,
       tabClosed,
       deleteQuestion,
-      downloadJson
+      downloadCSV
     }
   }
 }
