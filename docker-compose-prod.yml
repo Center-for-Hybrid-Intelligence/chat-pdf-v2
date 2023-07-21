@@ -11,7 +11,7 @@ services:
       context: './backend'
       dockerfile: Dockerfile
     ports:
-      - '3052:3013'
+      - '3059:3013'
     networks:
       - bridge
 
@@ -25,7 +25,7 @@ services:
       context: './frontend'
       dockerfile: Dockerfile
     ports:
-      - '3051:800'
+      - '3058:800'
 
 networks:
   bridge:
