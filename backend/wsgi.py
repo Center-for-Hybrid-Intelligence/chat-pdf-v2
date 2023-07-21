@@ -1,4 +1,4 @@
-from chatpdf_api import app
+from onepdf_api import app
 
 if __name__ == '__main__':
     app.run(debug=True)
