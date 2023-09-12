@@ -154,6 +154,7 @@ class QaTool:
         )
         
         # Multiple answer mode
+        # If we want to ask a single question to whole data base of document see the following commented code
         docs = retrieve_documents(self.namespace)
         results = []
         for doc in docs:
@@ -179,6 +180,28 @@ class QaTool:
          #docs : the title and author of the document, responses : the result of the query and the source documents
         final_response = [(document.document_title, document.document_author, result) for document, result in zip(docs, results)]
         return final_response
+    
+        # # Unique answer mode based on the entire set of pdf in the namespace
+        # results = []
+        # print("Loading QA for document: ", doc.document_title)
+        # qa = RetrievalQA.from_chain_type(
+        #     llm=llm,
+        #     chain_type=self.chain_type,
+        #     retriever=vectorstore.as_retriever(search_kwargs={"k": top_closest}), #for now we are not applying any filter
+        #     return_source_documents=True,
+        #     verbose=True
+        # )
+        # try:
+        #     print("Querying...")
+        #     results.append(qa({"query": query})) #TODO : Erreur après cette ligne : "illegal condition for field Title, got {\"eq\":\"Cover Letter EN.pdf\"}","details":[]}
+        # except openai.error.InvalidRequestError as e:
+        #     print((f"Invalid request error: {e}"))
+        #     error_message = str(e)
+        #     return error_message, 401 #Invalid request, might have reached maximum tokens
+        #     
+        #  #docs : the title and author of the document, responses : the result of the query and the source documents
+        # final_response = [document.document_title, document.document_author, result]
+        # return final_response
         
 
 
