@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from langchain.chains import AnalyzeDocumentChain
-from langchain.chains.summarize import load_summarize_chain
+from langchain.chains import AnalyzeDocumentChain # The AnalyzeDocumentChain takes in a single document, splits it up, and then runs it through a CombineDocumentsChain.
+from langchain.chains.summarize import load_summarize_chain # The load_summarize_chain function loads a chain that summarizes text.
 from langchain.llms import OpenAI
 
 
@@ -63,17 +63,27 @@ def read_from_url(url, author,identifier, namespace):
     
     return df
 
+########### OBS: THIS IS THE ONLY FUNCTION THAT IS USED IN THE __init__.py SCRIPT ###########
+
+# This function scrapes the PDF file from the frontend and adds it to the database.
+# It returns a dataframe with the document's title, author, and content.
+# The dataframe is used to load the document to Pinecone.
 def read_from_encode(file, author, identifier, namespace, title, session_id):
+
+    # Load the PDF
     pdf_reader = PdfReader(file)
 
     # Get the number of pages in the PDF
     num_pages = len(pdf_reader.pages)
     pages = ""
-    # Read the contents of each page
+
+    # Read the contents of each page. For each page, add the text to the string, pages.
     for page_num in range(num_pages):
         page = pdf_reader.pages[page_num]
         text = page.extract_text()
         pages += text
+
+    # Add the document to the database
     new_id = add_document(document_id=identifier, document_title=title , document_author=author, document_file=pages, namespace_name=namespace, session_id=session_id)
     identifier = new_id if new_id is not None else identifier
     df = create_dataframe(title, identifier, author, pages)
