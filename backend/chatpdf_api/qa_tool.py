@@ -54,6 +54,7 @@ class QaTool: # class for the QA tool
         self.model_temperature = 0.0                    # temperature for LLM
 
         self.index_name = 'chatpdf-langchain-retrieval-agent' # name of the pinecone index, go to https://www.pinecone.io/ to see it
+        pinecone.list_indexes() # list all indexes in pinecone
         if self.index_name not in pinecone.list_indexes():
             # we create a new index
             pinecone.create_index(
