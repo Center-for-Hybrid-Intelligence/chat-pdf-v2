@@ -5,9 +5,9 @@ backend/instance/requests.db
 **/*.pyc
 **/__pycache__
 
-*/.env
+*.env
 
-*/.DS_Store
+*.DS_Store
 */node_modules
 node_modules
 */dist
