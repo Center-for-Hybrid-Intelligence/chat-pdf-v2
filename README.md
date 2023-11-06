@@ -24,7 +24,16 @@ In the app.ini file, several threads and processes are allowed, and it is very e
 
 ### Backend
 
-Go to the backend folder and run:
+Go to the backend folder and run
+
+in unix:
+```bash
+python3 -m venv venv
+source ./venv/bin/activate
+pip3 install -r requirements.txt
+```
+
+in windows:
 
 ```bash
 python -m venv venv
@@ -39,6 +48,8 @@ and then, to run the backend:
 ```python
 python wsgi.py
 ```
+
+copy the untracked (secret) `.env` file into `./backend` 
 
 ### Frontend
 
