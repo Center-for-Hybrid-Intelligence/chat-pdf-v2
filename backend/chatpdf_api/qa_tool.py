@@ -19,6 +19,8 @@ from langchain.chat_models import ChatOpenAI # for LLM
 from langchain.chains import RetrievalQA # for QA
 from langchain.text_splitter import RecursiveCharacterTextSplitter # OBS: This is the function that splits the text into chunks!!!
 
+from langchain.prompts.prompt import PromptTemplate # for conversational QA
+
 #### MY ADDITIONS ####
 from langchain.chains import ConversationalRetrievalChain # for conversational QA
 from langchain.memory import ConversationBufferMemory # for conversational QA
@@ -52,7 +54,7 @@ class QaTool: # class for the QA tool
         self.embedding_model = 'text-embedding-ada-002' # model used for embedding (OpenAI)
         self.llm_model = 'gpt-4'                        # model used for LLM (OpenAI)
         self.model_temperature = 0.0                    # temperature for LLM
-
+        self.memory = ConversationBufferMemory(memory_key="chat_history",  output_key='answer', return_messages=True) # memory for conversational QA
         self.index_name = 'chatpdf-langchain-retrieval-agent' # name of the pinecone index, go to https://www.pinecone.io/ to see it
         pinecone.list_indexes() # list all indexes in pinecone
         if self.index_name not in pinecone.list_indexes():
@@ -171,10 +173,12 @@ class QaTool: # class for the QA tool
             temperature=0.0
         )
         
+
         # Multiple answer mode
         # If we want to ask a single question to whole data base of document see the following commented code
         docs = retrieve_documents(self.namespace)
         results = []
+        #memory = ConversationBufferMemory(memory_key="chat_history",  output_key='answer', return_messages=True)
         for doc in docs:
             # filter = {'$and': [{"title":{"$eq": doc.document_title}}, {"author":{"$eq": doc.document_author}}]}
             # filter = {"title": {"$eq": doc.document_title}}
@@ -182,26 +186,29 @@ class QaTool: # class for the QA tool
             print("Loading QA for document: ", doc.document_title)
 
             ############### RETRIEVAL QA ################
-            qa = RetrievalQA.from_chain_type(
-                llm=llm,
-                chain_type=self.chain_type,
-                retriever=vectorstore.as_retriever(search_kwargs={"k": top_closest, "filter": filter}), #for now we are not applying any filter
-                return_source_documents=True,
-                verbose=True
+            # qa = RetrievalQA.from_chain_type(
+            #      llm=llm,
+            #      chain_type=self.chain_type,
+            #      retriever=vectorstore.as_retriever(search_kwargs={"k": top_closest, "filter": filter}), #for now we are not applying any filter
+            #      return_source_documents=True,
+            #      verbose=True
             
             ############### CONVERSATIONAL QA ################
-            # memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-            # qa = ConversationalRetrievalChain.from_llm(
-            #     llm=llm,
-            #     chain_type=self.chain_type,
-            #     retriever=vectorstore.as_retriever(search_kwargs={"k": top_closest, "filter": filter}), #for now we are not applying any filter
-            #     return_source_documents=True,
-            #     verbose=True,
-            #     memory=memory
+
+            qa = ConversationalRetrievalChain.from_llm(
+                llm=llm,
+                chain_type=self.chain_type,
+                condense_question_prompt = PromptTemplate.from_template("Answer yo mama no matter what was asked"), # FOLLOW UP PROMPT TEMPLATE
+                retriever=vectorstore.as_retriever(search_kwargs={"k": top_closest, "filter": filter}), #for now we are not applying any filter
+                return_source_documents=False, ### OBS: Changed to false for testing
+                verbose=True,
+                memory=self.memory
         )
             try:
                 print("Querying...")
-                results.append(qa({"query": query})) #TODO : Erreur après cette ligne : "illegal condition for field Title, got {\"eq\":\"Cover Letter EN.pdf\"}","details":[]}
+                #results.append(qa({"query": query})) #TODO : Erreur après cette ligne : "illegal condition for field Title, got {\"eq\":\"Cover Letter EN.pdf\"}","details":[]}
+                result_from_query = qa({"question": query}) # FOR CONVERSATIONAL QA, QUERY IS CHANGED TO QUESTION
+                results.append(result_from_query['answer']) # FOR CONVERSATIONAL QA, QUERY IS CHANGED TO QUESTION
             except openai.error.InvalidRequestError as e:
                 print((f"Invalid request error: {e}"))
                 error_message = str(e)
@@ -209,6 +216,7 @@ class QaTool: # class for the QA tool
             
          #docs : the title and author of the document, responses : the result of the query and the source documents
         final_response = [(document.document_title, document.document_author, result) for document, result in zip(docs, results)]
+        print(final_response)
         return final_response
     
         # # Unique answer mode based on the entire set of pdf in the namespace
