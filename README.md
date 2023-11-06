@@ -24,13 +24,19 @@ In the app.ini file, several threads and processes are allowed, and it is very e
 
 ### Backend
 
-Go to the backend folder and run
+Go to the backend folder 
+
+```bash
+cd backend
+```
+
+and run
 
 in unix:
 ```bash
 python3 -m venv venv
-source ./venv/bin/activate
-pip3 install -r requirements.txt
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
 in windows:
@@ -53,7 +59,13 @@ copy the untracked (secret) `.env` file into `./backend`
 
 ### Frontend
 
-Go to the frontend folder and run
+Go to the frontend folder (in a new terminal) 
+
+```bash
+cd frontend
+```
+
+and run
 
 ```bash
 npm install
@@ -62,7 +74,7 @@ npm install
 and then to run the frontend:
 
 ```bash
-npm run serve
+npm start
 ```
 
 ## Deployment environment
