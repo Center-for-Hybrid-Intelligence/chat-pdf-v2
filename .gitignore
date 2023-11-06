@@ -1,13 +1,17 @@
 */.idea/*
+*/.idea
+.idea
+
 */venv/*
 backend/instance/requests.db
 
 **/*.pyc
 **/__pycache__
 
-*.env
+.env
+package-lock.json
+.DS_Store
 
-*.DS_Store
 */node_modules
 node_modules
 */dist
@@ -24,17 +28,17 @@ node_modules
 */pnpm-debug.log*
 
 # Editor directories and files
-*/.idea
 */.vscode
 */*.suo
 */*.ntvs*
 */*.njsproj
 */*.sln
 */*.sw?
-.idea
+
 .vscode
 
 # docker
 */.dockerignore
 */Dockerfile
 Dockerfile
+
