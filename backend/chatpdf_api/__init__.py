@@ -189,7 +189,9 @@ def ask_query():
     top_closest = request.form.get('sources_number', 5) # Get the number of sources from the frontend
     try:
         print("Querying...")
+        print(data['query']) # Simply the query string
         result = qa_tool(query=data['query'], top_closest=top_closest) ##### OBS: Calling the __call__ function in qa_tool.py, query is the question and top_closest is the number of sources.
+        print(result)
         #qa_tool now returns a list of tuples: one for each document in the database
         #in the shape of (document_title, document_author, result)
         #result is exactly the same as before with 'result' and 'source_document' but now document wise.
@@ -205,9 +207,10 @@ def ask_query():
         document = res[2]
         print(res[0])
         print(document)
-        for doc in document['source_documents']:
-            content.append((doc.page_content.replace('\n', "").replace('\t', ""), doc.metadata['title']))
-        response.append({"result": document['result'], "source_documents": content})
+        # for doc in document['source_documents']:
+        #     content.append((doc.page_content.replace('\n', "").replace('\t', ""), doc.metadata['title']))
+        # response.append({"result": document['result'], "source_documents": content})
+        response.append({"result": document})
         print(content)
 
     update_session(session['session_id'], qa_tool)

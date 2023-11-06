@@ -10,12 +10,13 @@ COPY . .
 # Install the python dependencies
 RUN pip install -r requirements.txt
 RUN pip install uwsgi
+RUN python3 -m load_dotenv load
 
 ENV DATABASE_URL='sqlite:///site.db'
-ENV OPENAI_API_KEY=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
-ENV OPENAI_ORGANIZATION=org-3WL1stoahVKNtlth6bdytR9b
-ENV PINECONE_API_KEY=e469bfb4-68de-4520-85eb-4c295b95b446
-ENV YOUR_ENV=us-west4-gcp-free
+ENV OPENAI_API_KEY='insert_key'
+ENV OPENAI_ORGANIZATION='insert_key'
+ENV PINECONE_API_KEY='insert_key'
+ENV YOUR_ENV='insert_key'
 
 # start the uWSGI
 CMD ["uwsgi", "app.ini"]
