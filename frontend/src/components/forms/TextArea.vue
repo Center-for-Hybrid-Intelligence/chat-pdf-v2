@@ -8,13 +8,14 @@
         ref="input"
         class="textArea
           block
-          p-2.5
+          p-2
           w-full
           h-full
           text-lg
+          rounded-lg
           text-gray-500 dark:text-white
-          bg-gray-50 dark:bg-gray-700
-          rounded-lg border border-cvblue
+           dark:bg-gray-700
+          border border-cvblue
           dark:border-gray-600
           dark:placeholder-gray-400
           focus:ring-indigo-500 dark:focus:ring-indigo-500
