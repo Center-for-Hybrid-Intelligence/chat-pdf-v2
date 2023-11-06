@@ -5,15 +5,15 @@ backend/instance/requests.db
 **/*.pyc
 **/__pycache__
 
-*/.env
+*.env
 
-*/.DS_Store
+*.DS_Store
 */node_modules
 node_modules
 */dist
 
 
-# local env files
+# local .env files
 */.env.local
 */.env.*.local
 
