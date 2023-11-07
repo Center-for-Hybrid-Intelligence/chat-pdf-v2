@@ -170,11 +170,11 @@
 import TextArea from "@/components/forms/TextArea.vue";
 import Button from "@/components/forms/Button.vue";
 import {ref, reactive, computed, onMounted} from "vue";
-import {onBeforeUnmount} from 'vue';
+// import {onBeforeUnmount} from 'vue';
 import {authService} from "@/api";
 import DropdownSingle from "@/components/forms/DropdownSingle.vue";
 import {initializeSession} from "@/cookieHandler";
-import {saveAs} from 'file-saver';
+// import {saveAs} from 'file-saver';
 import ArrowIcon from "@/components/Arrow.vue";
 import Router from "@/router";
 
@@ -303,51 +303,51 @@ export default {
             loading.value = false;
           });
     }
-    onBeforeUnmount(async () => {
-      await console.log('todo: eraseEntries()?')
-    })
+    // onBeforeUnmount(async () => {
+      // await console.log('todo: eraseEntries()?')
+    // })
 
-    const eraseEntries = async () => {
-      try {
-        await authService.delete('/erase-all/');
-        console.log('HTTP request sent!');
-      } catch (error) {
-        console.error('Failed to send HTTP request:', error);
-      }
-    };
+    // const eraseEntries = async () => {
+    //   try {
+    //     await authService.delete('/erase-all/');
+    //     console.log('HTTP request sent!');
+    //   } catch (error) {
+    //     console.error('Failed to send HTTP request:', error);
+    //   }
+    // };
 
-    function downloadCSV() {
-      let data = questionList;
-
-      let flatData = [];
-
-      // Flatten the object
-      for (let key in data) {
-        data[key].forEach((item, index) => {
-          if (flatData[index]) {
-            flatData[index][key] = item;
-          } else {
-            flatData[index] = {[key]: item};
-          }
-        });
-      }
-
-      // Convert the flattened object to CSV
-      let csvContent = '';
-      let separator = '|';
-      let header = Object.keys(flatData[0]).join(separator) + '\r\n';
-      csvContent += header;
-
-      flatData.forEach(function (row) {
-        let rowData = Object.values(row).join(separator) + '\r\n';
-        csvContent += rowData;
-      });
-
-      // Create a Blob with the CSV data
-      let blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
-
-      saveAs(blob, "data.csv");
-    }
+    // function downloadCSV() {
+    //   let data = questionList;
+    //
+    //   let flatData = [];
+    //
+    //   // Flatten the object
+    //   for (let key in data) {
+    //     data[key].forEach((item, index) => {
+    //       if (flatData[index]) {
+    //         flatData[index][key] = item;
+    //       } else {
+    //         flatData[index] = {[key]: item};
+    //       }
+    //     });
+    //   }
+    //
+    //   // Convert the flattened object to CSV
+    //   let csvContent = '';
+    //   let separator = '|';
+    //   let header = Object.keys(flatData[0]).join(separator) + '\r\n';
+    //   csvContent += header;
+    //
+    //   flatData.forEach(function (row) {
+    //     let rowData = Object.values(row).join(separator) + '\r\n';
+    //     csvContent += rowData;
+    //   });
+    //
+    //   // Create a Blob with the CSV data
+    //   let blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
+    //
+    //   saveAs(blob, "data.csv");
+    // }
 
 
     return {

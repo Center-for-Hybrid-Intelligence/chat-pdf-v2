@@ -7,6 +7,9 @@ const path = require('path')
 const basePath = '/chat-pdf'
 
 module.exports = {
+  devServer: {
+    port: 3051,
+  },
   publicPath: process.env.NODE_ENV === 'production' ? basePath : '/',
   configureWebpack: {
     resolve: {

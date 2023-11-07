@@ -1,0 +1,14 @@
+[Unit]
+Description=Chat PDF v2 Backend (conversationalRetrievalChain)
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=15
+User=web
+WorkingDirectory=/home/sah-admin/webservices/nodejs/flask/chat-pdf-2/backend
+ExecStart=/home/sah-admin/webservices/nodejs/flask/chat-pdf-2/backend/venv/bin/python /home/sah-admin/webservices/nodejs/flask/chat-pdf-2/backend/wsgi.py
+
+[Install]
+WantedBy=multi-user.target

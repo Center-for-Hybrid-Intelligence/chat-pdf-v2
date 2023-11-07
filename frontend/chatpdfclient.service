@@ -1,0 +1,14 @@
+[Unit]
+Description=Chat PDF v2 Frontend
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=15
+User=web
+WorkingDirectory=/home/sah-admin/webservices/nodejs/flask/chat-pdf-2/frontend
+ExecStart=/usr/local/bin/npm run serve
+
+[Install]
+WantedBy=multi-user.target
