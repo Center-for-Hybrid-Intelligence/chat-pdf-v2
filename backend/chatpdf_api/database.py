@@ -1,16 +1,18 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.sql import text, func
-from sqlalchemy.types import TypeDecorator, LargeBinary, UUID
+from sqlalchemy.sql import func
+from sqlalchemy.types import TypeDecorator, LargeBinary
 
 import dill
 import uuid
 
 db = SQLAlchemy()
 
-
-# def generate_id():
-#     return uuid.uuid4()
-
+def normalize_session_id(session_id):
+    if session_id is None:
+        session_id = uuid.uuid4()
+    if isinstance(session_id, str):
+        session_id = uuid.UUID(session_id) # force valid UUID
+    return str(session_id)
 
 class DillObjectType(TypeDecorator):
     impl = LargeBinary
@@ -27,7 +29,7 @@ class DillObjectType(TypeDecorator):
 
 
 class Namespace(db.Model):
-    session_id = db.Column(UUID(), db.ForeignKey('session.session_id'), nullable=False, primary_key=True)
+    session_id = db.Column(db.String(36), db.ForeignKey('session.session_id'), nullable=False, primary_key=True)
     namespace_name = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
@@ -51,15 +53,21 @@ class DocumentNamespace(db.Model):
         return f'<Prompt {self.document_id}, created at {self.created_at}>'
 
 
+def generate_session_id():
+    return str(uuid.uuid4())
+
+
 class Session(db.Model):
-    session_id = db.Column(UUID(), primary_key=True, nullable=False, default=uuid.uuid4)
+    session_id = db.Column(db.String(36), primary_key=True, nullable=False, default=generate_session_id)
     qa_tool = db.Column(DillObjectType)
+    system_prompt = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
         return f'<Session {self.session_id}>'
 
 
 def add_document(document_id, document_title, document_author, document_file, namespace_name, session_id):
+    session_id = normalize_session_id(session_id)
     # Check if the namespace exists
     namespace = Namespace.query.filter_by(namespace_name=namespace_name, session_id=session_id).first()
     # If the namespace does not exist, create it
@@ -81,8 +89,10 @@ def add_document(document_id, document_title, document_author, document_file, na
         print(f"ID : {has_same_id}, content: {has_same_file}")
     if has_same_file:
         return Document.query.filter_by(document_file=document_file).first().document_id
+
 def add_document_to_namespace(document_id, namespace_name, session_id):
     # Add the document to the namespace
+    session_id = normalize_session_id(session_id)
     namespace = Namespace.query.filter_by(namespace_name=namespace_name, session_id=session_id).first()
     if not is_document_in_namespace(document_id, namespace_name):
         print("Adding document to the namespace")
@@ -98,27 +108,32 @@ def remove_document(document_id):
     db.session.commit()
 
 
-def add_session(qa_tool, session_id):
+def add_session(session_id, qa_tool):
+    session_id = normalize_session_id(session_id)
     session = Session(session_id=session_id, qa_tool=qa_tool)
     db.session.add(session)
     db.session.commit()
 
+
 def retrieve_session(session_id):
-    print('session id type')
-    print(type(session_id))
-    session_id = uuid.UUID(session_id)
+    session_id = normalize_session_id(session_id)
     session = Session.query.filter_by(session_id=session_id).first()
     if session is None:
         return None
     return session.qa_tool
 
+
 def delete_session(session_id):
+    session_id = normalize_session_id(session_id)
     Session.query.filter_by(session_id=session_id).delete()
     db.session.commit()
 
-def update_session(session_id, qa_tool):
+def update_session(session_id, qa_tool, system_prompt=''):
+    session_id = normalize_session_id(session_id)
     session = Session.query.filter_by(session_id=session_id).first()
     session.qa_tool = qa_tool
+    if system_prompt:
+        session.system_prompt = system_prompt
     db.session.commit()
 
 def exists_namespace(namespace_name):

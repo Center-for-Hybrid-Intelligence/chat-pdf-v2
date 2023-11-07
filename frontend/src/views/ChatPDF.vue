@@ -219,7 +219,6 @@ export default {
 
     const previewList = ref([]);
 
-    console.log(previewList,)
     const nameSpaceRender = ref('');
     const generated = ref(false);
 
@@ -336,6 +335,7 @@ export default {
       files.value.splice(index, 1);
       emit("update:modelValue", files.value);
     };
+
     return {
       files,
       onFileChange,

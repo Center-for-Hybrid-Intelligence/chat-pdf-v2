@@ -17,11 +17,12 @@
               <div
                   class="flex gap-2 py-2 bg-blue-50 h-fit px-2 pr-8 items-center shadow-md rounded-full ">
                 <div class="w-5 h-5">
-                <svg class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                     fill="none" viewBox="0 0 16 20">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4.828 10h6.239m-6.239 4h6.239M6 1v4a1 1 0 0 1-1 1H1m14-4v16a.97.97 0 0 1-.933 1H1.933A.97.97 0 0 1 1 18V5.828a2 2 0 0 1 .586-1.414l2.828-2.828A2 2 0 0 1 5.828 1h8.239A.97.97 0 0 1 15 2Z"/>
-                </svg>
+                  <svg class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true"
+                       xmlns="http://www.w3.org/2000/svg"
+                       fill="none" viewBox="0 0 16 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4.828 10h6.239m-6.239 4h6.239M6 1v4a1 1 0 0 1-1 1H1m14-4v16a.97.97 0 0 1-.933 1H1.933A.97.97 0 0 1 1 18V5.828a2 2 0 0 1 .586-1.414l2.828-2.828A2 2 0 0 1 5.828 1h8.239A.97.97 0 0 1 15 2Z"/>
+                  </svg>
                 </div>
                 <div class="flex flex-col justify-center w-full ">
                   <h1 class="text-start break-words" style="
@@ -68,8 +69,12 @@
             </div>
           </div>
           <div class="bg-[#001529]  rounded-lg p-2">
-              <TextArea ref="question" :placeholder="'Write a system prompt here'" :isDisabled="loading"
-                        @input="onSystemPromptChange"
+              <TextArea
+                  ref="question"
+                  :placeholder="'Write a system prompt here'"
+                  :isDisabled="loading"
+                  :value="systemPrompt"
+                  @input="onSystemPromptChange"
               >
             </TextArea>
           </div>
@@ -118,30 +123,29 @@
       <div class=" col-span-2 max-h-screen shadow-xl ">
         <div class="bg-white rounded-xl h-full flex flex-col items-center justify-center ">
           <div class=" bg-slate-100 p-2 w-full h-fit ">
-            Ask ChatPDF any question
+            Ask ChatPDF any question about the provided PDF files
           </div>
           <div class="max-w-3xl w-full h-full flex justify-between flex-col ">
             <div class=" h-full overflow-auto p-2 ">
-              <div class="h-fit max-w-[70%] shadow-md w-fit bg-slate-100 rounded-lg p-2 my-4 text-start">
-                <h1>Ask ChatPDF any question about the provided PDF files </h1>
-              </div>
-              <div class="" v-for="(question, index) in reversedQuestionList"
-                   :key="index">
+              <div
+                  v-for="(question, index) in chat"
+                  :key="index"
+              >
                 <div
                     class="h-fit ml-auto shadow-md max-w-[70%] !bg-blue-500 text-white w-fit bg-slate-200 rounded-lg p-2 my-4 text-start">
-                  <h1>{{ reversedQuestionList[index] }}</h1>
+                  <h1>{{ chat[index] }}</h1>
                 </div>
                 <div class="h-fit max-w-[70%] shadow-md relative w-fit bg-slate-100 rounded-lg p-2 my-4 text-start">
                   <div v-if="loading" class="loading">Loading&#8230;</div>
-                  <h1>{{ questionList.answers[questionList.questions.length - 1 - index] }} </h1>
+                  <h1>{{ questionList.answers[index] }} </h1>
                 </div>
               </div>
             </div>
             <h1 class="normalText px-4 w-full h-fit mt-auto"> {{ error }} </h1>
             <div class="p-2 bg-white flex ">
-            <TextArea ref="question" :placeholder="'Write your text here'" :isDisabled="loading" @input="onChange"
-                      class="w-full !rounded-r-none">
-            </TextArea>
+              <TextArea ref="question" :placeholder="'Write your text here'" :isDisabled="loading" @input="onChange"
+                        class="w-full !rounded-r-none">
+              </TextArea>
               <Button :isDisabled="loading" class="text-white rounded-r-lg !bg-blue-500" @click="sendRequest">
                 <template #right>
                   <div v-if="loading">Loading results</div>
@@ -157,7 +161,6 @@
         </div>
       </div>
       <div v-if="loading" class="loading">Loading&#8230;</div>
-
     </div>
   </div>
 
@@ -234,7 +237,7 @@ export default {
       query.value = value
     }
     const onSystemPromptChange = (value) => {
-      systemPrompt.value = value
+      systemPrompt.value = value || ''
     }
 
     const deleteQuestion = (index) => {
@@ -249,8 +252,8 @@ export default {
       }
     });
 
-    const reversedQuestionList = computed(() => { // Define computed property
-      return questionList.questions.slice().reverse();
+    const chat = computed(() => { // Define computed property
+      return questionList.questions.slice();
     });
 
     const goHome = () => {
@@ -269,6 +272,7 @@ export default {
       const request_data = {
         query: query.value,
         settings: settings.value,
+        system_prompt: systemPrompt.value
       };
       loading_answer.value = true;
       has_answer.value = true;
@@ -299,36 +303,13 @@ export default {
             loading.value = false;
           });
     }
-
-    const handleBeforeUnload = () => {
-      eraseEntries();
-    };
-
-    const handlePopstate = () => {
-      eraseEntries();
-    };
-
-
-    // Hook to execute the handleBeforeUnload function when the component is being unmounted
-    onBeforeUnmount(() => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    });
-
-    // Attach the event listener to the window's onbeforeunload event
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    // Hook to execute the handlePopstate function when the component is being unmounted
-    onBeforeUnmount(() => {
-      window.removeEventListener('popstate', handlePopstate);
-    });
-
-    // Attach the event listener to the window's onpopstate event
-    window.addEventListener('popstate', handlePopstate);
-
+    onBeforeUnmount(async () => {
+      await console.log('todo: eraseEntries()?')
+    })
 
     const eraseEntries = async () => {
       try {
-        await authService.get('/erase-all/');
+        await authService.delete('/erase-all/');
         console.log('HTTP request sent!');
       } catch (error) {
         console.error('Failed to send HTTP request:', error);
@@ -377,7 +358,7 @@ export default {
       onChange,
       questionList,
       loading,
-      reversedQuestionList,
+      chat,
       tempChange,
       settings,
       modelChange,
@@ -387,7 +368,6 @@ export default {
       files,
       tabClosed,
       deleteQuestion,
-      downloadCSV,
       goHome
     }
   }

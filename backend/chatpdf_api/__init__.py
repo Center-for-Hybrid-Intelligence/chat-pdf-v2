@@ -1,10 +1,8 @@
 ############ IMPORTS ############
-import uuid
-
 import numpy as np
 from flask_cors import CORS
 from flask import g, Flask, request, session
-from .database import db, add_session, retrieve_session, delete_session, update_session, exists_namespace, retrieve_namespace, retrieve_documents, remove_document, remove_document_from_namespace, add_document_to_namespace
+from .database import db, normalize_session_id, add_session, retrieve_session, delete_session, update_session, exists_namespace, retrieve_namespace, retrieve_documents, remove_document, remove_document_from_namespace, add_document_to_namespace
 from .readpdf import read_from_encode
 from .qa_tool import QaTool # Import tool from qa_tool.py!!!!
 import json
@@ -26,7 +24,6 @@ if not os.getenv("DATABASE_URL"):
 ########## INITIALIZE FLASK ##########
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:8080', 'https://127.0.0.1:8080', r'^https://hybridintelligence.eu$'])
-app.config['CORS_HEADERS'] = 'Content-Type'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL") # "sqlite:///site.db" in .env file
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -45,9 +42,10 @@ app.secret_key = "pietervandeawiff0000"
 @app.after_request
 def add_header(response):
     response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Auth-Token'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Auth-Token, Session'
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST'
-    # response.headers['Access-Control-Allow-Origin'] = 'http://localhost:8080'
+    response.headers['Access-Control-Allow-Origin'] = request.origin # '*'
+
     return response
 
 #################### ROUTES ####################
@@ -58,14 +56,15 @@ def initialize_qa_tool():
     if request.method == 'OPTIONS':
         return None
     session_id = request.cookies.get('sessionID')
-    if session_id:
-        print("Resuming stored session")
+    qa_tool = None
+    if session_id is not None:
+        print('32 ' + session_id)
         qa_tool = retrieve_session(session_id)
-    else:
+    if qa_tool is None:
         print("Creating new session")
         qa_tool = QaTool()
-        session_id = uuid.uuid4()
-        add_session(qa_tool, session_id)
+        session_id = normalize_session_id(session_id)
+        add_session(session_id, qa_tool)
     session['session_id'] = session_id
     print(session)
     print(qa_tool)
@@ -107,14 +106,13 @@ def load_pdf():
             return "Successfully retrieved session", 200
 
     # If the session id is used with a new namespace, throw an error asking to refresh the page
-    if qa_tool and qa_tool.namespace and qa_tool.namespace != namespace_name:
+    if qa_tool.namespace is not None and qa_tool.namespace != namespace_name:
         print(qa_tool.namespace, namespace_name)
         return "You already created a namespace in the session, please refresh the page", 401
 
     # If the namespace is already used, retrieve the qa_tool from the database
-    if qa_tool is None or qa_tool.namespace is None and exists_namespace(namespace_name):
+    if qa_tool.namespace is None and exists_namespace(namespace_name):
         print("Found existing namespace, retrieving session")
-        print(namespace_name)
         session_id = retrieve_namespace(namespace_name)
         qa_tool = retrieve_session(session_id)
         update_session(session['session_id'], qa_tool)
@@ -169,6 +167,7 @@ def load_pdf():
 def ask_query():
     qa_tool = g.qa_tool
     print(qa_tool)
+    system_prompt = ''
     # Check that every file in the namespace is loaded to pinecone
     namespace_name = qa_tool.namespace
     documents = retrieve_documents(namespace_name)
@@ -182,11 +181,14 @@ def ask_query():
             except Exception as e:
                 return "Error loading data to pinecone", 401
     # Update the session
-    update_session(session['session_id'], qa_tool)
+    update_session(session['session_id'], qa_tool, system_prompt)
     print(qa_tool)
     g.qa_tool = qa_tool
 
     data = request.get_json() # Get the query from the frontend. Could this be turned into a chatbot?
+    if data['system_prompt']:
+        system_prompt = data['system_prompt']
+    print(system_prompt)
     settings = data['settings'] # Get the settings from the frontend
     llm_model = settings['llm_model'] # Get the llm model from the settings (gpt-3.5-turbo or gpt-4)
     llm_temperature = float(settings['llm_temperature']) # Get the llm temperature from the settings
@@ -195,7 +197,7 @@ def ask_query():
     try:
         print("Querying...")
         print(data['query']) # Simply the query string
-        result = qa_tool(query=data['query'], top_closest=top_closest) ##### OBS: Calling the __call__ function in qa_tool.py, query is the question and top_closest is the number of sources.
+        result = qa_tool(query=data['query'], top_closest=top_closest, system_prompt=system_prompt) ##### OBS: Calling the __call__ function in qa_tool.py, query is the question and top_closest is the number of sources.
         print(result)
         #qa_tool now returns a list of tuples: one for each document in the database
         #in the shape of (document_title, document_author, result)
@@ -208,22 +210,23 @@ def ask_query():
     # OBS: This section is closely related to the dialogue flow in the gptPublic tool.
     response = []
     for res in result:
-        content = []
+        # content = []
         document = res[2]
-        print(res[0])
-        print(document)
+        # print(res[0])
+        # print(document)
         # for doc in document['source_documents']:
         #     content.append((doc.page_content.replace('\n', "").replace('\t', ""), doc.metadata['title']))
         # response.append({"result": document['result'], "source_documents": content})
         response.append({"result": document})
-        print(content)
+        # print(content)
 
     update_session(session['session_id'], qa_tool)
     g.qa_tool = qa_tool
     return response, 200
 
+
 ########## DELETE DOCUMENT ##########
-@app.route('/api/erase-all/', methods=['GET'])
+@app.route('/api/erase-all/', methods=['DELETE'])
 def erase_all():
     qa_tool = g.qa_tool
     print(qa_tool)
@@ -236,10 +239,12 @@ def erase_all():
 
     return "Successfully deleted all data", 200
 
+
 ########## TEST ##########
 @app.route('/api/hello/', methods=['GET'])
 def hello():
     return "Hello world", 200
+
 
 ########## GET FILES ##########
 @app.route('/api/get-files/', methods=['GET'])
@@ -252,4 +257,12 @@ def get_files():
     for document in documents:
         result.append({"title": document.document_title,"author": document.document_author})
     return result
-    return files, 200
+
+
+@app.route('/api/set-system-prompt/', methods=['POST'])
+def set_system_prompt():
+    print('setting system prompt')
+    system_prompt = request.form.get('system_prompt')
+    print(system_prompt)
+    update_session(session['session_id'], g.qa_tool, system_prompt)
+    return 'Successfully replaced system prompt', 200
