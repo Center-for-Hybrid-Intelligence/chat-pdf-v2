@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
-from sqlalchemy.types import TypeDecorator, LargeBinary, UUID
+from sqlalchemy.types import TypeDecorator, LargeBinary
 
 import dill
 import uuid
@@ -11,8 +11,8 @@ def normalize_session_id(session_id):
     if session_id is None:
         session_id = uuid.uuid4()
     if isinstance(session_id, str):
-        session_id = uuid.UUID(session_id)
-    return session_id
+        session_id = uuid.UUID(session_id) # force valid UUID
+    return str(session_id)
 
 class DillObjectType(TypeDecorator):
     impl = LargeBinary
@@ -29,7 +29,7 @@ class DillObjectType(TypeDecorator):
 
 
 class Namespace(db.Model):
-    session_id = db.Column(UUID(), db.ForeignKey('session.session_id'), nullable=False, primary_key=True)
+    session_id = db.Column(db.String(36), db.ForeignKey('session.session_id'), nullable=False, primary_key=True)
     namespace_name = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
@@ -53,8 +53,12 @@ class DocumentNamespace(db.Model):
         return f'<Prompt {self.document_id}, created at {self.created_at}>'
 
 
+def generate_session_id():
+    return str(uuid.uuid4())
+
+
 class Session(db.Model):
-    session_id = db.Column(UUID(), primary_key=True, nullable=False, default=uuid.uuid4)
+    session_id = db.Column(db.String(36), primary_key=True, nullable=False, default=generate_session_id)
     qa_tool = db.Column(DillObjectType)
 
     def __repr__(self):
