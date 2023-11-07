@@ -104,6 +104,8 @@ def add_session(qa_tool, session_id):
     db.session.commit()
 
 def retrieve_session(session_id):
+    print('session id type')
+    print(type(session_id))
     session_id = uuid.UUID(session_id)
     session = Session.query.filter_by(session_id=session_id).first()
     if session is None:

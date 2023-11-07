@@ -25,7 +25,7 @@ if not os.getenv("DATABASE_URL"):
 
 ########## INITIALIZE FLASK ##########
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=['http://localhost:8080', 'https://127.0.0.1:8080', r'^https://hybridintelligence.eu$'])
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL") # "sqlite:///site.db" in .env file
@@ -47,7 +47,7 @@ def add_header(response):
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Auth-Token'
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST'
-    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:8080'
+    # response.headers['Access-Control-Allow-Origin'] = 'http://localhost:8080'
     return response
 
 #################### ROUTES ####################
