@@ -44,6 +44,8 @@ def add_header(response):
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Auth-Token'
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST'
+    response.headers['Access-Control-Allow-Origin'] = request.origin # '*'
+
     return response
 
 #################### ROUTES ####################
@@ -54,9 +56,13 @@ def initialize_qa_tool():
     if request.method == 'OPTIONS':
         return None
     session_id = request.cookies.get('sessionID')
+    qa_tool = None
+    print(session_id)
     if session_id:
+        print('32 ' + session_id)
         qa_tool = retrieve_session(session_id)
     if qa_tool is None:
+        print('32.2 ' + session_id)
         print("Creating new session")
         qa_tool = QaTool()
         session_id = normalize_session_id(session_id)

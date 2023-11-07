@@ -29,7 +29,7 @@ class DillObjectType(TypeDecorator):
 
 
 class Namespace(db.Model):
-    session_id = db.Column(db.String, db.ForeignKey('session.session_id'), nullable=False, primary_key=True)
+    session_id = db.Column(UUID(), db.ForeignKey('session.session_id'), nullable=False, primary_key=True)
     namespace_name = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
