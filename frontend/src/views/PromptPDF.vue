@@ -122,19 +122,20 @@
           </div>
           <div class="max-w-3xl w-full h-full flex justify-between flex-col ">
             <div class=" h-full overflow-auto p-2 ">
-              <div class="h-fit max-w-[70%] shadow-md w-fit bg-slate-100 rounded-lg p-2 my-4 text-start">
-                <h1>Ask ChatPDF any question about the provided PDF files </h1>
-              </div>
-              <div class="" v-for="(question, index) in reversedQuestionList"
-                   :key="index">
-                <div
-                    class="h-fit ml-auto shadow-md max-w-[70%] !bg-blue-500 text-white w-fit bg-slate-200 rounded-lg p-2 my-4 text-start">
-                  <h1>{{ reversedQuestionList[index] }}</h1>
-                </div>
+              <div
+                  v-for="(question, index) in reversedQuestionList"
+                 :key="index">
                 <div class="h-fit max-w-[70%] shadow-md relative w-fit bg-slate-100 rounded-lg p-2 my-4 text-start">
                   <div v-if="loading" class="loading">Loading&#8230;</div>
                   <h1>{{ questionList.answers[questionList.questions.length - 1 - index] }} </h1>
                 </div>
+                <div
+                    class="h-fit ml-auto shadow-md max-w-[70%] !bg-blue-500 text-white w-fit bg-slate-200 rounded-lg p-2 my-4 text-start">
+                  <h1>{{ reversedQuestionList[index] }}</h1>
+                </div>
+              </div>
+              <div class="h-fit max-w-[70%] shadow-md w-fit bg-slate-100 rounded-lg p-2 my-4 text-start">
+                <h1>Ask ChatPDF any question about the provided PDF files </h1>
               </div>
             </div>
             <h1 class="normalText px-4 w-full h-fit mt-auto"> {{ error }} </h1>

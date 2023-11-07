@@ -1,10 +1,18 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.sql import text, func
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.types import TypeDecorator, LargeBinary
+from sqlalchemy.sql import func
+from sqlalchemy.types import TypeDecorator, LargeBinary, UUID
+
 import dill
+import uuid
+
 db = SQLAlchemy()
 
+def normalize_session_id(session_id):
+    if session_id is None:
+        session_id = uuid.uuid4()
+    if isinstance(session_id, str):
+        session_id = uuid.UUID(session_id)
+    return session_id
 
 class DillObjectType(TypeDecorator):
     impl = LargeBinary
@@ -46,7 +54,7 @@ class DocumentNamespace(db.Model):
 
 
 class Session(db.Model):
-    session_id = db.Column(db.String, primary_key=True, nullable=False)
+    session_id = db.Column(UUID(), primary_key=True, nullable=False, default=uuid.uuid4)
     qa_tool = db.Column(DillObjectType)
 
     def __repr__(self):
@@ -54,6 +62,7 @@ class Session(db.Model):
 
 
 def add_document(document_id, document_title, document_author, document_file, namespace_name, session_id):
+    session_id = normalize_session_id(session_id)
     # Check if the namespace exists
     namespace = Namespace.query.filter_by(namespace_name=namespace_name, session_id=session_id).first()
     # If the namespace does not exist, create it
@@ -75,8 +84,10 @@ def add_document(document_id, document_title, document_author, document_file, na
         print(f"ID : {has_same_id}, content: {has_same_file}")
     if has_same_file:
         return Document.query.filter_by(document_file=document_file).first().document_id
+
 def add_document_to_namespace(document_id, namespace_name, session_id):
     # Add the document to the namespace
+    session_id = normalize_session_id(session_id)
     namespace = Namespace.query.filter_by(namespace_name=namespace_name, session_id=session_id).first()
     if not is_document_in_namespace(document_id, namespace_name):
         print("Adding document to the namespace")
@@ -93,12 +104,14 @@ def remove_document(document_id):
 
 
 def add_session(session_id, qa_tool):
+    session_id = normalize_session_id(session_id)
     session = Session(session_id=session_id, qa_tool=qa_tool)
     db.session.add(session)
     db.session.commit()
 
 
 def retrieve_session(session_id):
+    session_id = normalize_session_id(session_id)
     session = Session.query.filter_by(session_id=session_id).first()
     if session is None:
         return None
@@ -106,10 +119,12 @@ def retrieve_session(session_id):
 
 
 def delete_session(session_id):
+    session_id = normalize_session_id(session_id)
     Session.query.filter_by(session_id=session_id).delete()
     db.session.commit()
 
 def update_session(session_id, qa_tool):
+    session_id = normalize_session_id(session_id)
     session = Session.query.filter_by(session_id=session_id).first()
     session.qa_tool = qa_tool
     db.session.commit()

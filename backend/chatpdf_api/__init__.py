@@ -2,7 +2,7 @@
 import numpy as np
 from flask_cors import CORS
 from flask import g, Flask, request, session
-from .database import db, add_session, retrieve_session, delete_session, update_session, exists_namespace, retrieve_namespace, retrieve_documents, remove_document, remove_document_from_namespace, add_document_to_namespace
+from .database import db, normalize_session_id, add_session, retrieve_session, delete_session, update_session, exists_namespace, retrieve_namespace, retrieve_documents, remove_document, remove_document_from_namespace, add_document_to_namespace
 from .readpdf import read_from_encode
 from .qa_tool import QaTool # Import tool from qa_tool.py!!!!
 import json
@@ -54,11 +54,12 @@ def initialize_qa_tool():
     if request.method == 'OPTIONS':
         return None
     session_id = request.cookies.get('sessionID')
-    print(session_id)
-    qa_tool = retrieve_session(session_id)
+    if session_id:
+        qa_tool = retrieve_session(session_id)
     if qa_tool is None:
         print("Creating new session")
         qa_tool = QaTool()
+        session_id = normalize_session_id(session_id)
         add_session(session_id, qa_tool)
     session['session_id'] = session_id
     print(session)
