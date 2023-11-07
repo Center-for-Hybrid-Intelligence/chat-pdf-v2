@@ -27,7 +27,7 @@ class DillObjectType(TypeDecorator):
 
 
 class Namespace(db.Model):
-    session_id = db.Column(db.String, db.ForeignKey('session.session_id'), nullable=False, primary_key=True)
+    session_id = db.Column(UUID(), db.ForeignKey('session.session_id'), nullable=False, primary_key=True)
     namespace_name = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
@@ -83,7 +83,6 @@ def add_document(document_id, document_title, document_author, document_file, na
         return Document.query.filter_by(document_file=document_file).first().document_id
 def add_document_to_namespace(document_id, namespace_name, session_id):
     # Add the document to the namespace
-    session_id = uuid.UUID(session_id)
     namespace = Namespace.query.filter_by(namespace_name=namespace_name, session_id=session_id).first()
     if not is_document_in_namespace(document_id, namespace_name):
         print("Adding document to the namespace")
