@@ -11,7 +11,8 @@ module.exports = {
     port: 3051,
     allowedHosts: "all",
   },
-  publicPath: process.env.NODE_ENV === 'production' ? basePath : '/',
+  // publicPath: process.env.NODE_ENV === 'production' ? basePath : '/',
+  publicPath: basePath, // todo: reverse for development
   configureWebpack: {
     resolve: {
       symlinks: false,
