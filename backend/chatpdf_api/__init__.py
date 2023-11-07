@@ -42,9 +42,12 @@ app.secret_key = "pietervandeawiff0000"
 @app.after_request
 def add_header(response):
     response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Auth-Token'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Auth-Token, Session'
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST'
     response.headers['Access-Control-Allow-Origin'] = request.origin # '*'
+
+    print('origin')
+    print(request.origin)
 
     return response
 
@@ -57,7 +60,6 @@ def initialize_qa_tool():
         return None
     session_id = request.cookies.get('sessionID')
     qa_tool = None
-    print(session_id)
     if session_id is not None:
         print('32 ' + session_id)
         qa_tool = retrieve_session(session_id)

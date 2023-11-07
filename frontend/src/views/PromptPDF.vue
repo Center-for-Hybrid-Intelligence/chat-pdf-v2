@@ -158,7 +158,6 @@
         </div>
       </div>
       <div v-if="loading" class="loading">Loading&#8230;</div>
-
     </div>
   </div>
 
@@ -198,6 +197,8 @@ export default {
     });
 
     const tabClosed = reactive({})
+
+    console.log(324, document.cookie)
 
     let files = ref([])
     onMounted(() => {
