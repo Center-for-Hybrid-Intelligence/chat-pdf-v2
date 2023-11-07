@@ -60,8 +60,6 @@ class Session(db.Model):
 
 
 def add_document(document_id, document_title, document_author, document_file, namespace_name, session_id):
-
-    session_id = uuid.UUID(session_id)
     # Check if the namespace exists
     namespace = Namespace.query.filter_by(namespace_name=namespace_name, session_id=session_id).first()
     # If the namespace does not exist, create it
@@ -114,12 +112,10 @@ def retrieve_session(session_id):
     return session.qa_tool
 
 def delete_session(session_id):
-    session_id = uuid.UUID(session_id)
     Session.query.filter_by(session_id=session_id).delete()
     db.session.commit()
 
 def update_session(session_id, qa_tool):
-    session_id = uuid.UUID(session_id)
     session = Session.query.filter_by(session_id=session_id).first()
     session.qa_tool = qa_tool
     db.session.commit()
