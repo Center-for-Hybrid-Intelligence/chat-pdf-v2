@@ -58,11 +58,10 @@ def initialize_qa_tool():
     session_id = request.cookies.get('sessionID')
     qa_tool = None
     print(session_id)
-    if session_id:
+    if session_id is not None:
         print('32 ' + session_id)
         qa_tool = retrieve_session(session_id)
     if qa_tool is None:
-        print('32.2 ' + session_id)
         print("Creating new session")
         qa_tool = QaTool()
         session_id = normalize_session_id(session_id)
