@@ -60,6 +60,7 @@ def generate_session_id():
 class Session(db.Model):
     session_id = db.Column(db.String(36), primary_key=True, nullable=False, default=generate_session_id)
     qa_tool = db.Column(DillObjectType)
+    system_prompt = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
         return f'<Session {self.session_id}>'
@@ -127,10 +128,12 @@ def delete_session(session_id):
     Session.query.filter_by(session_id=session_id).delete()
     db.session.commit()
 
-def update_session(session_id, qa_tool):
+def update_session(session_id, qa_tool, system_prompt=''):
     session_id = normalize_session_id(session_id)
     session = Session.query.filter_by(session_id=session_id).first()
     session.qa_tool = qa_tool
+    if system_prompt:
+        session.system_prompt = system_prompt
     db.session.commit()
 
 def exists_namespace(namespace_name):
