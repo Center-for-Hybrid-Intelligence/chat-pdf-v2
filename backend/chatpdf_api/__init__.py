@@ -46,9 +46,6 @@ def add_header(response):
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST'
     response.headers['Access-Control-Allow-Origin'] = request.origin # '*'
 
-    print('origin')
-    print(request.origin)
-
     return response
 
 #################### ROUTES ####################
