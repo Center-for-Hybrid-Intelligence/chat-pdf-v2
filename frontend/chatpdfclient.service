@@ -7,7 +7,7 @@ Type=simple
 Restart=always
 RestartSec=15
 User=web
-WorkingDirectory=/home/sah-admin/webservices/nodejs/flask/chat-pdf-2/frontend
+WorkingDirectory=/home/sah-admin/webservices/nodejs/flask/chat-pdf-v2/frontend
 ExecStart=/usr/local/bin/npm run serve
 
 [Install]
