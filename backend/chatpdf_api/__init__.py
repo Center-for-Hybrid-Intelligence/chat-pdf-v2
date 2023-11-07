@@ -1,4 +1,6 @@
 ############ IMPORTS ############
+import uuid
+
 import numpy as np
 from flask_cors import CORS
 from flask import g, Flask, request, session
@@ -56,12 +58,14 @@ def initialize_qa_tool():
     if request.method == 'OPTIONS':
         return None
     session_id = request.cookies.get('sessionID')
-    print(session_id)
-    qa_tool = retrieve_session(session_id)
-    if qa_tool is None:
+    if session_id:
+        print("Resuming stored session")
+        qa_tool = retrieve_session(session_id)
+    else:
         print("Creating new session")
         qa_tool = QaTool()
-        add_session(session_id, qa_tool)
+        session_id = uuid.uuid4()
+        add_session(qa_tool, session_id)
     session['session_id'] = session_id
     print(session)
     print(qa_tool)
@@ -103,13 +107,14 @@ def load_pdf():
             return "Successfully retrieved session", 200
 
     # If the session id is used with a new namespace, throw an error asking to refresh the page
-    if qa_tool.namespace is not None and qa_tool.namespace != namespace_name:
+    if qa_tool and qa_tool.namespace and qa_tool.namespace != namespace_name:
         print(qa_tool.namespace, namespace_name)
         return "You already created a namespace in the session, please refresh the page", 401
 
     # If the namespace is already used, retrieve the qa_tool from the database
-    if qa_tool.namespace is None and exists_namespace(namespace_name):
+    if qa_tool is None or qa_tool.namespace is None and exists_namespace(namespace_name):
         print("Found existing namespace, retrieving session")
+        print(namespace_name)
         session_id = retrieve_namespace(namespace_name)
         qa_tool = retrieve_session(session_id)
         update_session(session['session_id'], qa_tool)
