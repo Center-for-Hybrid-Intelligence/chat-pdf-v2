@@ -198,7 +198,7 @@ class QaTool: # class for the QA tool
             qa = ConversationalRetrievalChain.from_llm(
                 llm=llm,
                 chain_type=self.chain_type,
-                condense_question_prompt = PromptTemplate.from_template("Answer yo mama no matter what was asked"), # FOLLOW UP PROMPT TEMPLATE
+                condense_question_prompt = PromptTemplate.from_template("Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language."), # default prompt. tweak for wins
                 retriever=vectorstore.as_retriever(search_kwargs={"k": top_closest, "filter": filter}), #for now we are not applying any filter
                 return_source_documents=False, ### OBS: Changed to false for testing
                 verbose=True,
