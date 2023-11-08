@@ -169,7 +169,7 @@
 <script>
 import TextArea from "@/components/forms/TextArea.vue";
 import Button from "@/components/forms/Button.vue";
-import {ref, reactive, computed, onMounted} from "vue";
+import {ref, reactive, computed, onMounted, onBeforeUnmount} from "vue";
 // import {onBeforeUnmount} from 'vue';
 import {authService} from "@/api";
 import DropdownSingle from "@/components/forms/DropdownSingle.vue";
@@ -303,18 +303,17 @@ export default {
             loading.value = false;
           });
     }
-    // onBeforeUnmount(async () => {
-      // await console.log('todo: eraseEntries()?')
-    // })
 
-    // const eraseEntries = async () => {
-    //   try {
-    //     await authService.delete('/erase-all/');
-    //     console.log('HTTP request sent!');
-    //   } catch (error) {
-    //     console.error('Failed to send HTTP request:', error);
-    //   }
-    // };
+    const eraseEntries = async () => {
+      try {
+        await authService.delete('/erase-all/');
+        console.log('HTTP request sent!');
+      } catch (error) {
+        console.error('Failed to send HTTP request:', error);
+      }
+    };
+
+    onBeforeUnmount(async () => await eraseEntries())
 
     // function downloadCSV() {
     //   let data = questionList;
