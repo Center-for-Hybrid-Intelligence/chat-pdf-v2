@@ -64,7 +64,7 @@
                 Model used
               </h1>
               <h1 class="normalText">Different models interpret text differently. </h1>
-              <DropdownSingle class="mt-4 flex" :items="['gpt-3.5-turbo', 'gpt-4']" :selected="settings.llm_model"
+              <DropdownSingle class="mt-4 flex" :items="['gpt-3.5-turbo', 'gpt-4', 'gpt-3.5-turbo-1106', 'gpt-4-1106-preview']" :selected="settings.llm_model"
                               @select="modelChange"></DropdownSingle>
             </div>
           </div>
@@ -220,7 +220,7 @@ export default {
 
     const settings = ref({
       llm_temperature: 0,
-      llm_model: "gpt-4",
+      llm_model: "gpt-3.5-turbo-1106",
     })
 
     const tempChange = (e) => {

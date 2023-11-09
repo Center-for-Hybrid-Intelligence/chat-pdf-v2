@@ -4,7 +4,7 @@ from flask_cors import CORS
 from flask import g, Flask, request, session
 from .database import db, normalize_session_id, add_session, retrieve_session, delete_session, update_session, exists_namespace, retrieve_namespace, retrieve_documents, remove_document, remove_document_from_namespace, add_document_to_namespace
 from .readpdf import read_from_encode
-from .qa_tool import QaTool # Import tool from qa_tool.py!!!!
+from .qa_tool import QaTool # Import tool from qa_tool.py
 import json
 import os
 from dotenv import load_dotenv
@@ -23,7 +23,7 @@ if not os.getenv("DATABASE_URL"):
 
 ########## INITIALIZE FLASK ##########
 app = Flask(__name__)
-CORS(app, origins=['http://localhost:8080', 'https://127.0.0.1:8080', r'^https://hybridintelligence.eu$'])
+CORS(app, origins=['http://localhost:3053', 'http://localhost:8080', 'https://127.0.0.1:8080', r'^https://hybridintelligence.eu$', r'^https://www.hybridintelligence.eu$'])
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL") # "sqlite:///site.db" in .env file
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -34,10 +34,10 @@ with app.app_context():
     db.create_all()
 
 
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "sqlalchemy"
+app.config["SESSION_PERMANENT"] = False # If the session is not permanent, the session will be deleted when the browser is closed.
+app.config["SESSION_TYPE"] = "sqlalchemy" # The session is stored in the database.
 
-app.secret_key = "pietervandeawiff0000"
+app.secret_key = "pietervandeawiff0000" # IS THIS NEEDED?
 
 @app.after_request
 def add_header(response):
@@ -143,25 +143,6 @@ def load_pdf():
     g.qa_tool = qa_tool
     return f"Successfully loaded {file_id} to pinecone", 200
 
-# GitHub Copilot
-#To create a chat bot, you would need to modify the code to handle multiple queries from the user.
-#One way to do this is to create a new Flask route that accepts user input and returns a response.
-# Here's an example of how you could modify the code to create a simple chat bot:
-
-########## CHAT BOT ##########
-# @app.route('/api/chat', methods=['POST'])
-# def chat():
-#     data = request.get_json()
-#     message = data['message']
-#     qa_tool = g.qa_tool
-#     response = qa_tool.ask_question(message) # Doesn't exist yet
-#     return json.dumps({'response': response})
-
-# In this modified code, we added a new Flask route called /api/chat that accepts a POST request with a JSON payload containing a message field.
-# The chat function extracts the message from the payload, retrieves the QA tool from the global context,
-# and calls the ask_question method of the QA tool to generate a response.
-# The response is then returned as a JSON object with a response field.
-
 ########## ASK QUERY ##########
 @app.route('/api/ask-query/', methods=['POST'])
 def ask_query():
@@ -174,12 +155,15 @@ def ask_query():
     print(documents)
     for document in documents:
         if not document.document_id in qa_tool.loaded_documents: # If the document is not loaded to pinecone already??
-    #          Load the document to pinecone
+    #       Load the document to pinecone
             file_df, identifier = read_from_encode(document.document_file, document.author, document.document_id, namespace_name, document.title, session['session_id'])
             try:
-                qa_tool.loading_data_to_pinecone(file_df) # SEE FUNCTION IN qa_tool.py. This function loads the document to pinecone.
+                qa_tool.loading_data_to_pinecone(file_df) # SEE FUNCTION in qa_tool.py. This function loads the document to pinecone.
             except Exception as e:
                 return "Error loading data to pinecone", 401
+            
+            # NOTE: The data is only loaded to pinecone once. If the data is already loaded, it will not be loaded again.
+
     # Update the session
     update_session(session['session_id'], qa_tool, system_prompt)
     print(qa_tool)
@@ -199,6 +183,7 @@ def ask_query():
         print(data['query']) # Simply the query string
         result = qa_tool(query=data['query'], top_closest=top_closest, system_prompt=system_prompt) ##### OBS: Calling the __call__ function in qa_tool.py, query is the question and top_closest is the number of sources.
         print(result)
+        print(f"GPT model used: {qa_tool.llm_model}")
         #qa_tool now returns a list of tuples: one for each document in the database
         #in the shape of (document_title, document_author, result)
         #result is exactly the same as before with 'result' and 'source_document' but now document wise.
