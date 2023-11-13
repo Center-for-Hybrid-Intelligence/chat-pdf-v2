@@ -182,7 +182,7 @@ def ask_query():
         print("Querying...")
         print(data['query']) # Simply the query string
         result = qa_tool(query=data['query'], top_closest=top_closest, system_prompt=system_prompt) ##### OBS: Calling the __call__ function in qa_tool.py, query is the question and top_closest is the number of sources.
-        print(result)
+        #print(result)
         print(f"GPT model used: {qa_tool.llm_model}")
         #qa_tool now returns a list of tuples: one for each document in the database
         #in the shape of (document_title, document_author, result)
@@ -203,7 +203,7 @@ def ask_query():
         #     content.append((doc.page_content.replace('\n', "").replace('\t', ""), doc.metadata['title']))
         # response.append({"result": document['result'], "source_documents": content})
         response.append({"result": document})
-        # print(content)
+    print(response)
 
     update_session(session['session_id'], qa_tool)
     g.qa_tool = qa_tool
