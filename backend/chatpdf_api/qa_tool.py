@@ -242,7 +242,6 @@ class QaTool:  # class for the QA tool
         # docs : the title and author of the document, responses : the result of the query and the source documents
         final_response = [(document.document_title, document.document_author, result) for document, result in
                           zip(docs, results)]
-        print(final_response)
         return final_response
 
         # # Unique answer mode based on the entire set of pdf in the namespace
